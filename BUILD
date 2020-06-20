@@ -1,7 +1,6 @@
 package(default_visibility = ["//visibility:public"])
 
 load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
-load("@bazel_gazelle//:def.bzl", "gazelle")
 load("@com_github_grpc_grpc//bazel:cc_grpc_library.bzl", "cc_grpc_library")
 load("//:build/workspace.bzl", "RELEASE_VERSION")
 

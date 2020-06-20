@@ -5,8 +5,8 @@
 #include <include/base.h>
 #include "grpcpp/grpcpp.h"
 #include "grpc/support/log.h"
-#include "build/protos/cpp/runtime.pb.h"
-#include "build/protos/cpp/runtime.grpc.pb.h"
+#include "build/protos/runtime.pb.h"
+#include "build/protos/runtime.grpc.pb.h"
 
 namespace server
 {

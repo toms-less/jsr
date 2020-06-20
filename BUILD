@@ -43,9 +43,9 @@ cc_binary(
 cc_library(
     name = "main",
     hdrs = [":headers"],
-    includes = [
-        "include",
-    ],
+    # includes = [
+    #     ".",
+    # ],
     srcs = [
         ":base",
         ":config",

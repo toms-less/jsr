@@ -33,7 +33,7 @@ cc_binary(
     linkstatic = True,
     copts = [
         "-std=c++11",
-        "-Iinclude"
+        "-I."
     ],
     linkopts = ["-lpthread -lrt"],
     deps = [
@@ -49,7 +49,7 @@ cc_library(
     # ],
     copts = [
         "-std=c++11",
-        "-Iinclude",
+        "-I.",
     ],
     srcs = [
         ":base",

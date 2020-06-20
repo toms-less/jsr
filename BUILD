@@ -32,7 +32,7 @@ cc_binary(
     ],
     linkstatic = True,
     copts = [
-        "-std=c++11",
+        "-std=c++11 -Iinclude",
     ],
     linkopts = ["-lpthread -lrt"],
     deps = [

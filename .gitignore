@@ -1,0 +1,9 @@
+.vscode
+bazel-bin
+bazel-out
+bazel-testlogs
+bazel-jsr
+deps/libs/
+deps/bin/
+deps/grpc/
+src/grpc/

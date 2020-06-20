@@ -1,0 +1,34 @@
+# Runtime server configuration.
+---
+server:
+  port: 6666
+
+# Log configuration.
+---
+log:
+  debug: "logs/debug.log"
+  server: "logs/server.log"
+  instance: "logs/instance.log"
+  maxSize: 50 # in MB.
+  rotate: 10
+
+# V8 instance configuration.
+---
+instance:
+  startupData: "data/"
+  stackLimit: 1000
+  physicalMemory: 2048
+  virtualMemoryLimit: 0
+  maxOldeGenerationSize: 500
+  initialOldGenerationSize: 200
+  maxYounGenerationSize: 500
+  initialYoungGenerationSize: 200
+  codeRangeSize: 500
+  maxZonePoolSize: 500
+  instanceCount: 50
+
+# system function configuration.
+---
+sysfunc:
+  requireRemote: false
+  requireRemoteServer: ""

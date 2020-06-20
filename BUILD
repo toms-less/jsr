@@ -46,6 +46,9 @@ cc_library(
     # includes = [
     #     ".",
     # ],
+    copts = [
+        "-std=c++11 -Iinclude",
+    ],
     srcs = [
         ":base",
         ":config",

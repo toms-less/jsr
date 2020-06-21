@@ -1,8 +1,9 @@
 #include <include/server.h>
 
-server::Runtime::Runtime(server::ServerConfig &_config)
+server::Runtime::Runtime(server::ServerConfig &_config, instance::IntanceManager *instanceManager)
 {
     this->config = _config;
+    this->instanceManager = instanceManager;
 }
 
 server::Runtime::~Runtime()
@@ -34,7 +35,7 @@ void server::Runtime::Start()
 
 void server::Runtime::ServerHandle()
 {
-    new server::Context(&service_, cq_.get());
+    new server::Context(&service_, cq_.get(), instanceManager);
     void *tag;
     bool ok;
     while (true)

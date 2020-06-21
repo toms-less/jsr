@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  server::Runtime runtime(configManager.GetServerConfig());
+  server::Runtime runtime(configManager.GetServerConfig(), &instanceManager);
   runtime.Start();
   return 0;
 }

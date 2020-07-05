@@ -40,7 +40,7 @@ namespace base
          * initialize module.
          * 
          */
-        virtual bool Initialize() = 0;
+        virtual bool initialize() = 0;
 
         /**
          * set the status of initialization.

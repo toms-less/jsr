@@ -7,20 +7,20 @@
 int main(int argc, char *argv[])
 {
   config::ConfigManager configManager;
-  if (!configManager.Initialize())
+  if (!configManager.initialize())
   {
     return 1;
   }
 
   base::Log logger(&configManager.GetLogConfig());
-  if (logger.Initialize())
+  if (logger.initialize())
   {
     return 1;
   }
   auto serverLog = base::Log::GetServerLogger();
 
   sysfunc::SystemFuncManager sysfuncManager(configManager.GetSysFunctionConfig());
-  if (!sysfuncManager.Initialize())
+  if (!sysfuncManager.initialize())
   {
     serverLog->error("System function manager initialized failure.");
     return 1;

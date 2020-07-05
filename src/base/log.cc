@@ -11,7 +11,7 @@ base::Log::~Log()
 {
 }
 
-bool base::Log::Initialize()
+bool base::Log::initialize()
 {
     this->inited = true;
     return this->inited;

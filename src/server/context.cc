@@ -1,9 +1,8 @@
 #include <include/server.h>
 
 server::Context::Context(protos::RuntimeService::AsyncService *service, grpc::ServerCompletionQueue *cq, instance::IntanceManager *instances)
-    : service_(service), cq_(cq), writer_(&ctx_), status_(CREATE)
+    : service_(service), cq_(cq), writer_(&ctx_), instances_(instances), status_(CREATE)
 {
-    this->instances_ = instances;
     dispatch();
 }
 
@@ -60,8 +59,8 @@ void server::Context::dispatch()
 void server::Context::call_handler()
 {
     // build execution context of instance.
-    instance::ExecuteContext context(&request_,&response_,&writer_);
-    instances->execute(context);
+    instance::ExecuteContext context(&request_, &response_, &writer_);
+    instances_->execute(context);
     switch (context.status())
     {
     case instance::ExecuteStatus::FINISH:

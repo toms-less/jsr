@@ -85,7 +85,7 @@ namespace server
     class Context
     {
     public:
-        Context(protos::RuntimeService::AsyncService *service, grpc::ServerCompletionQueue *cq, instance::IntanceManager *instanceManager);
+        Context(protos::RuntimeService::AsyncService *service, grpc::ServerCompletionQueue *cq, instance::IntanceManager *instances);
 
         /**
          * dispatch requesting by requesting type.

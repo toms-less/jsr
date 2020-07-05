@@ -47,7 +47,7 @@ sysfunc::SystemFuncManager::~SystemFuncManager()
 {
 }
 
-bool sysfunc::SystemFuncManager::Initialize()
+bool sysfunc::SystemFuncManager::initialize()
 {
     /**
      * build system function of 'require'.

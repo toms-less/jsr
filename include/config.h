@@ -49,7 +49,7 @@ public:
      *   requireRemoteServer: ""
      * 
     */
-    virtual bool Initialize();
+    virtual bool initialize();
 
     /**
      * get server configuration.

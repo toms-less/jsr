@@ -155,7 +155,7 @@ namespace base
          * initialize logger.
          *  
          */
-        virtual bool Initialize();
+        virtual bool initialize();
 
         /**
          * get debug logger for logging.

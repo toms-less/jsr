@@ -9,7 +9,7 @@ config::ConfigManager::~ConfigManager()
 {
 }
 
-bool config::ConfigManager::Initialize()
+bool config::ConfigManager::initialize()
 {
     // read configuration from 'config/config.yaml' file.
     YAML::Node config = YAML::LoadFile("config/config.yaml");

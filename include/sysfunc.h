@@ -205,7 +205,7 @@ public:
     SystemFuncManager(SystemFunctionConfig &config);
     ~SystemFuncManager();
 
-    virtual bool Initialize();
+    virtual bool initialize();
     std::vector<ObjectFunction> &GetObjectFuncList();
     std::vector<PureFunction> &GetPureFuncList();
 

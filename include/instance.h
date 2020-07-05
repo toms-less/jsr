@@ -358,9 +358,9 @@ namespace instance
 
         protos::RuntimeRequest *request();
         protos::RuntimeResponse *response();
-        grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer()
+        grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer();
 
-            void set_status(const ExecuteStatus &status);
+        void set_status(const ExecuteStatus &status);
         ExecuteStatus &status();
 
     private:

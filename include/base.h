@@ -18,6 +18,10 @@
 #include "spdlog/sinks/rotating_file_sink.h"
 #include "v8.h"
 #include "libplatform/libplatform.h"
+#include "grpcpp/grpcpp.h"
+#include "grpc/support/log.h"
+#include "build/protos/runtime.pb.h"
+#include "build/protos/runtime.grpc.pb.h"
 
 namespace base
 {

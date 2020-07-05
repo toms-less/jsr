@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
   }
 
   instance::IntanceManager instanceManager(configManager.GetInstanceConfig(), sysfuncManager);
-  if (!instanceManager.Initialize())
+  if (!instanceManager.initialize())
   {
     serverLog->error("Instance manager initialized failure.");
     return 1;

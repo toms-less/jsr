@@ -169,27 +169,21 @@ namespace instance
 
     /**
      * HTTP request parameter in the user main function. User API of 'request' as follow.
-     * 1. request.get_system_info();
-     * 2. request.get_content_type();
-     * 3. request.get_method();
-     * 4. request.get_header('foo');
-     * 5. request.get_headers();
-     * 6. request.get_cookie('foo');
-     * 7. request.get_cookies();
-     * 8. request.get_parameter('foo');
-     * 9. request.get_parameters();
-     * 10. request.get_data();
+     * 1. request.system_info();
+     * 2. request.content_type();
+     * 3. request.method();
+     * 4. request.header('foo');
+     * 5. request.headers();
+     * 6. request.cookie('foo');
+     * 7. request.cookies();
+     * 8. request.parameter('foo');
+     * 9. request.parameters();
+     * 10. request.data();
      *  
      */
     class HttpRequest
     {
     public:
-        HttpRequest(std::string &requestId, std::string &functionName, std::string &functionVersion,
-                    std::string &cell, std::string &unit, int &timeout, std::string &contentType, std::string &method,
-                    std::map<std::string, std::string> &headers, std::map<std::string, std::string> &parameters,
-                    std::string &data);
-        ~HttpRequest();
-
         /**
          * User function callback. Get system info in the user function, return an object with follow properties:
          *  1. requestId;
@@ -200,7 +194,7 @@ namespace instance
          * 6. timeout;
          * 
          */
-        static void GetSystemInfo(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void system_info(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * User function callback. Get content type of this request.
@@ -209,7 +203,7 @@ namespace instance
          * ...
          * 
          */
-        static void GetContentType(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void content_type(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * User function callback. Get method of this request.
@@ -218,85 +212,49 @@ namespace instance
          * ...
          *  
          */
-        static void GetMethod(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void method(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * User function callback. Get a header of this request.
          *
          */
-        static void GetHeader(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void header(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * User function callback. Get all headers of this request.
          * 
          */
-        static void GetHeaders(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void headers(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * User function callback. Get a cookie of this request.
          * 
          */
-        static void GetCookie(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void cookie(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * User function callback. Get all cookies of this request.
          *  
          */
-        static void GetCookies(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void cookies(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * User function callback. Get a parameter of this request.
          *  
          */
-        static void GetParameter(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void parameter(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * User function callback. Get all parameters of this request.
          *
          */
-        static void GetParameters(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void parameters(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * User function callback. Get the data of this request.
          *
          */
-        static void GetData(const v8::FunctionCallbackInfo<v8::Value> &args);
-
-        std::string &GetInnerRequestId();
-
-        std::string &GetInnerFunctionName();
-
-        std::string &GetInnerFunctionVersion();
-
-        std::string &GetInnerCell();
-
-        std::string &GetInnerUnit();
-
-        int &GetInnerTimeout();
-
-        std::string &GetInnerContentType();
-
-        std::string &GetInnerMethod();
-
-        std::map<std::string, std::string> &GetInnerHeaders();
-
-        std::map<std::string, std::string> &GetInnerParameters();
-
-        std::string &GetInnerData();
-
-    private:
-        std::string &requestId;
-        std::string &functionName;
-        std::string &functionVersion;
-        std::string &cell;
-        std::string &unit;
-        int &timeout;
-
-        std::string &contentType;
-        std::string &method;
-        std::map<std::string, std::string> &headers;
-        std::map<std::string, std::string> &parameters;
-        std::string &data;
+        static void data(const v8::FunctionCallbackInfo<v8::Value> &args);
     };
 
     /**
@@ -318,43 +276,43 @@ namespace instance
          * User function callback. Set a header for this request.
          * 
          */
-        static void SetHeader(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void set_header(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * User function callback. Set many headers for this request.
          *  
          */
-        static void SetHeaders(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void set_headers(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * User function callback. Set a cookie for this request. 
          * 
          */
-        static void SetCookie(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void set_cookie(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * User function callback. Set many cookies for this request.
          * 
          */
-        static void SetCookies(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void set_cookies(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * User function callback. Set HTTP status code for this request.
          * 
          */
-        static void SetStatus(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void set_status(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * User function callback. Set HTTP content type for this request.
          * 
          */
-        static void SetContentType(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void set_content_type(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * User function callback. Set HTTP data and response to HTTP trigger.
          * 
          */
-        static void Send(const v8::FunctionCallbackInfo<v8::Value> &args);
+        static void send(const v8::FunctionCallbackInfo<v8::Value> &args);
     };
 
     enum ExecuteStatus
@@ -387,28 +345,30 @@ namespace instance
     class ExecuteContext
     {
     public:
-        ExecuteContext(HttpRequest &request);
+        ExecuteContext(protos::RuntimeRequest *request, protos::RuntimeResponse *response, grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer);
         ~ExecuteContext();
 
-        std::time_t &GetStartTime();
+        std::time_t &start_time();
 
-        void SetEndTime(std::time_t &time);
-        std::time_t &GetEndTime();
+        void set_end_time(std::time_t &time);
+        std::time_t &end_time();
 
-        void SetError(std::string &error);
-        std::string &GetError();
+        void set_error(std::string &error);
+        std::string &error();
 
-        HttpRequest &GetRequest();
+        protos::RuntimeRequest *request();
 
-        void SetStatus(const ExecuteStatus &status);
-        ExecuteStatus &GetStatus();
+        void set_status(const ExecuteStatus &status);
+        ExecuteStatus &status();
 
     private:
-        std::time_t startTime;
-        std::time_t endtTime;
-        std::string error;
-        HttpRequest &request;
-        ExecuteStatus status;
+        std::time_t start_time_;
+        std::time_t end_time_;
+        std::string error_;
+        protos::RuntimeRequest *request_;
+        protos::RuntimeResponse *response_
+            grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer_;
+        ExecuteStatus status_;
     };
 
     /**
@@ -466,19 +426,19 @@ namespace instance
          * initialize many v8 instances with configurations.
          * 
          */
-        virtual bool Initialize();
+        virtual bool initialize();
 
         /**
          * compile functions in all instances.
          *
          */
-        void Compile(CompileContext &context);
+        void compile(CompileContext &context);
 
         /**
          * proccess function execution with an instance.
          * 
          */
-        void Execute(ExecuteContext &context);
+        void execute(ExecuteContext &context);
 
     private:
         bool inited = false;

@@ -1,29 +1,29 @@
 #include <include/instance.h>
 
-void instance::HttpResponse::SetHeader(const v8::FunctionCallbackInfo<v8::Value> &args)
+void instance::HttpResponse::set_header(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
 }
 
-void instance::HttpResponse::SetHeaders(const v8::FunctionCallbackInfo<v8::Value> &args)
+void instance::HttpResponse::set_headers(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
 }
 
-void instance::HttpResponse::SetCookie(const v8::FunctionCallbackInfo<v8::Value> &args)
+void instance::HttpResponse::set_cookie(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
 }
 
-void instance::HttpResponse::SetCookies(const v8::FunctionCallbackInfo<v8::Value> &args)
+void instance::HttpResponse::set_cookies(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
 }
 
-void instance::HttpResponse::SetStatus(const v8::FunctionCallbackInfo<v8::Value> &args)
+void instance::HttpResponse::set_status(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
 }
 
-void instance::HttpResponse::SetContentType(const v8::FunctionCallbackInfo<v8::Value> &args)
+void instance::HttpResponse::set_content_type(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
 }
 
-void instance::HttpResponse::Send(const v8::FunctionCallbackInfo<v8::Value> &args)
+void instance::HttpResponse::send(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
 }

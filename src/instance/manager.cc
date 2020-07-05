@@ -23,7 +23,7 @@ instance::IntanceManager::~IntanceManager()
     }
 }
 
-bool instance::IntanceManager::Initialize()
+bool instance::IntanceManager::initialize()
 {
     auto instanceLog = base::Log::GetInstanceLogger();
     if (!config.IsInited())
@@ -81,7 +81,7 @@ bool instance::IntanceManager::Initialize()
     return inited;
 }
 
-void instance::IntanceManager::Compile(CompileContext &context)
+void instance::IntanceManager::compile(CompileContext &context)
 {
     if (!config.IsInited())
     {
@@ -102,18 +102,18 @@ void instance::IntanceManager::Compile(CompileContext &context)
     }
 }
 
-void instance::IntanceManager::Execute(ExecuteContext &context)
+void instance::IntanceManager::execute(ExecuteContext &context)
 {
-    if (context.GetStatus() != ExecuteStatus::INIT)
+    if (context.status() != ExecuteStatus::INIT)
     {
         std::string error("Invalid execute status.");
-        context.SetError(error);
+        context.set_error(error);
         return;
     }
     instance::Instance *instance = idle.pop();
     if (instance == nullptr)
     {
-        context.SetStatus(ExecuteStatus::BUSY);
+        context.set_status(ExecuteStatus::BUSY);
         return;
     }
     instance->Execute(context);

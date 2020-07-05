@@ -79,52 +79,53 @@ std::vector<sysfunc::PureFunction> &instance::BindContext::GetPureFunctionList()
     return this->pureFunctionList;
 }
 
-instance::ExecuteContext::ExecuteContext(HttpRequest &_request) : request(_request)
+instance::ExecuteContext::ExecuteContext(protos::RuntimeRequest *request, protos::RuntimeResponse *response, grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer)
+    : request_(request), response_(response), writer_(writer)
 {
-    startTime = base::Utils::GetTimeStamp();
-    status = ExecuteStatus::INIT;
+    start_time_ = base::Utils::GetTimeStamp();
+    status_ = ExecuteStatus::INIT;
 }
 instance::ExecuteContext::~ExecuteContext()
 {
 }
 
-long &instance::ExecuteContext::GetStartTime()
+long &instance::ExecuteContext::start_time()
 {
-    return this->startTime;
+    return this->start_time_;
 }
 
-void instance::ExecuteContext::SetEndTime(std::time_t &time)
+void instance::ExecuteContext::set_end_time(std::time_t &time)
 {
-    this->endtTime = time;
+    this->end_time_ = time;
 }
 
-long &instance::ExecuteContext::GetEndTime()
+long &instance::ExecuteContext::end_time()
 {
-    return this->endtTime;
+    return this->end_time_;
 }
 
-void instance::ExecuteContext::SetError(std::string &error)
+void instance::ExecuteContext::set_error(std::string &error)
 {
-    this->error = error;
+    this->error_ = error;
 }
 
-std::string &instance::ExecuteContext::GetError()
+std::string &instance::ExecuteContext::error()
 {
-    this->status = ExecuteStatus::ERROR;
-    return this->error;
+    this->status_ = ExecuteStatus::ERROR;
+    return this->error_;
 }
 
-instance::HttpRequest &instance::ExecuteContext::GetRequest()
+instance::HttpRequest &instance::ExecuteContext::request()
 {
-    return this->request;
+    return this->request_;
 }
 
-void instance::ExecuteContext::SetStatus(const ExecuteStatus &status)
+void instance::ExecuteContext::set_status(const ExecuteStatus &status)
 {
-    this->status = status;
+    this->status_ = status;
 }
 
-instance::ExecuteStatus &instance::ExecuteContext::GetStatus()
+instance::ExecuteStatus &instance::ExecuteContext::status()
 {
-    return this->status;
+    return this->status_;
 }

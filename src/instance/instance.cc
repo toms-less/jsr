@@ -314,45 +314,45 @@ void instance::Instance::Execute(ExecuteContext &context)
     // build request object.
     v8::Local<v8::ObjectTemplate> requestTemplate = v8::ObjectTemplate::New(isolate);
 
-    // "request.getSystemInfo()"
-    v8::Local<v8::FunctionTemplate> getSystemInfoTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::GetSystemInfo, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Utils::ToV8String(isolate, "getSystemInfo"), getSystemInfoTemplate);
+    // "request.system_info()"
+    v8::Local<v8::FunctionTemplate> getSystemInfoTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::system_info, v8::External::New(isolate, &context));
+    requestTemplate->Set(base::Utils::ToV8String(isolate, "system_info"), getSystemInfoTemplate);
 
-    // "request.getContentType()"
-    v8::Local<v8::FunctionTemplate> getContentTypeTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::GetContentType, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Utils::ToV8String(isolate, "getContentType"), getContentTypeTemplate);
+    // "request.content_type()"
+    v8::Local<v8::FunctionTemplate> getContentTypeTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::content_type, v8::External::New(isolate, &context));
+    requestTemplate->Set(base::Utils::ToV8String(isolate, "content_type"), getContentTypeTemplate);
 
-    // "request.getMethod()"
-    v8::Local<v8::FunctionTemplate> getMethodTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::GetMethod, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Utils::ToV8String(isolate, "getMethod"), getMethodTemplate);
+    // "request.method()"
+    v8::Local<v8::FunctionTemplate> getMethodTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::method, v8::External::New(isolate, &context));
+    requestTemplate->Set(base::Utils::ToV8String(isolate, "method"), getMethodTemplate);
 
-    // "request.getHeader('foo')"
-    v8::Local<v8::FunctionTemplate> getHeaderTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::GetHeader, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Utils::ToV8String(isolate, "getHeader"), getHeaderTemplate);
+    // "request.header('foo')"
+    v8::Local<v8::FunctionTemplate> getHeaderTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::header, v8::External::New(isolate, &context));
+    requestTemplate->Set(base::Utils::ToV8String(isolate, "header"), getHeaderTemplate);
 
-    // "request.getHeaders()"
-    v8::Local<v8::FunctionTemplate> getHeadersTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::GetHeaders, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Utils::ToV8String(isolate, "getHeaders"), getHeadersTemplate);
+    // "request.headers()"
+    v8::Local<v8::FunctionTemplate> getHeadersTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::headers, v8::External::New(isolate, &context));
+    requestTemplate->Set(base::Utils::ToV8String(isolate, "headers"), getHeadersTemplate);
 
-    // "request.getCookie('foo')"
-    v8::Local<v8::FunctionTemplate> getCookieTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::GetCookie, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Utils::ToV8String(isolate, "getCookie"), getCookieTemplate);
+    // "request.cookie('foo')"
+    v8::Local<v8::FunctionTemplate> getCookieTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::cookie, v8::External::New(isolate, &context));
+    requestTemplate->Set(base::Utils::ToV8String(isolate, "cookie"), getCookieTemplate);
 
-    // "request.getCookies()"
-    v8::Local<v8::FunctionTemplate> getCookiesTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::GetCookies, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Utils::ToV8String(isolate, "getCookies"), getCookiesTemplate);
+    // "request.cookies()"
+    v8::Local<v8::FunctionTemplate> getCookiesTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::cookies, v8::External::New(isolate, &context));
+    requestTemplate->Set(base::Utils::ToV8String(isolate, "cookies"), getCookiesTemplate);
 
-    // "request.getParameter('foo')"
-    v8::Local<v8::FunctionTemplate> getParameterTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::GetParameter, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Utils::ToV8String(isolate, "getParameter"), getParameterTemplate);
+    // "request.parameter('foo')"
+    v8::Local<v8::FunctionTemplate> getParameterTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::parameter, v8::External::New(isolate, &context));
+    requestTemplate->Set(base::Utils::ToV8String(isolate, "parameter"), getParameterTemplate);
 
-    // "request.getParameters()"
-    v8::Local<v8::FunctionTemplate> getParametersTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::GetParameters, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Utils::ToV8String(isolate, "getParameters"), getParametersTemplate);
+    // "request.parameters()"
+    v8::Local<v8::FunctionTemplate> getParametersTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::parameters, v8::External::New(isolate, &context));
+    requestTemplate->Set(base::Utils::ToV8String(isolate, "parameters"), getParametersTemplate);
 
-    // "request.getData()"
-    v8::Local<v8::FunctionTemplate> getDataTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::GetData, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Utils::ToV8String(isolate, "getData"), getDataTemplate);
+    // "request.data()"
+    v8::Local<v8::FunctionTemplate> getDataTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::data, v8::External::New(isolate, &context));
+    requestTemplate->Set(base::Utils::ToV8String(isolate, "data"), getDataTemplate);
 
     v8::Local<v8::Object> request;
     if (!requestTemplate->NewInstance(handleContext).ToLocal(&request))
@@ -362,13 +362,13 @@ void instance::Instance::Execute(ExecuteContext &context)
         {
             v8::String::Utf8Value errorStack(isolate, stack);
             std::string error(*errorStack);
-            context.SetError(error);
+            context.set_error(error);
         }
         else
         {
             v8::String::Utf8Value errorStack(isolate, tryCatch.Exception());
             std::string error(*errorStack);
-            context.SetError(error);
+            context.set_error(error);
         }
         return;
     }
@@ -376,32 +376,32 @@ void instance::Instance::Execute(ExecuteContext &context)
     // build response object.
     v8::Local<v8::ObjectTemplate> responseTemplate = v8::ObjectTemplate::New(isolate);
 
-    // "response.setHeader('k','v')"
-    v8::Local<v8::FunctionTemplate> setHeaderTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::SetHeader, v8::External::New(isolate, &context));
-    responseTemplate->Set(base::Utils::ToV8String(isolate, "setHeader"), setHeaderTemplate);
+    // "response.set_header('k','v')"
+    v8::Local<v8::FunctionTemplate> setHeaderTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::set_header, v8::External::New(isolate, &context));
+    responseTemplate->Set(base::Utils::ToV8String(isolate, "set_header"), setHeaderTemplate);
 
-    // "response.setHeaders({'k1':'v','k2':'v2'})"
-    v8::Local<v8::FunctionTemplate> setHeadersTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::SetHeaders, v8::External::New(isolate, &context));
-    responseTemplate->Set(base::Utils::ToV8String(isolate, "setHeaders"), setHeadersTemplate);
+    // "response.set_headers({'k1':'v','k2':'v2'})"
+    v8::Local<v8::FunctionTemplate> setHeadersTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::set_headers, v8::External::New(isolate, &context));
+    responseTemplate->Set(base::Utils::ToV8String(isolate, "set_headers"), setHeadersTemplate);
 
-    // "response.setCookie({'name':'k1','value':'v1','maxAge':60})"
-    v8::Local<v8::FunctionTemplate> setCookieTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::SetCookie, v8::External::New(isolate, &context));
-    responseTemplate->Set(base::Utils::ToV8String(isolate, "setCookie"), setCookieTemplate);
+    // "response.set_cookie({'name':'k1','value':'v1','maxAge':60})"
+    v8::Local<v8::FunctionTemplate> setCookieTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::set_cookie, v8::External::New(isolate, &context));
+    responseTemplate->Set(base::Utils::ToV8String(isolate, "set_cookie"), setCookieTemplate);
 
-    // "response.setCookies([{'name':'k1','value':'v1','maxAge':60},{'name':'k2','value':'v2','maxAge':60}])"
-    v8::Local<v8::FunctionTemplate> setCookiesTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::SetCookies, v8::External::New(isolate, &context));
-    responseTemplate->Set(base::Utils::ToV8String(isolate, "setCookies"), setCookiesTemplate);
+    // "response.set_cookies([{'name':'k1','value':'v1','maxAge':60},{'name':'k2','value':'v2','maxAge':60}])"
+    v8::Local<v8::FunctionTemplate> setCookiesTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::set_cookies, v8::External::New(isolate, &context));
+    responseTemplate->Set(base::Utils::ToV8String(isolate, "set_cookies"), setCookiesTemplate);
 
-    // "response.setContentType('application/json')"
-    v8::Local<v8::FunctionTemplate> setContentTypeTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::SetContentType, v8::External::New(isolate, &context));
-    responseTemplate->Set(base::Utils::ToV8String(isolate, "setContentType"), setContentTypeTemplate);
+    // "response.set_content_type('application/json')"
+    v8::Local<v8::FunctionTemplate> setContentTypeTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::set_content_type, v8::External::New(isolate, &context));
+    responseTemplate->Set(base::Utils::ToV8String(isolate, "set_content_type"), setContentTypeTemplate);
 
-    // "response.setStatus(200)"
-    v8::Local<v8::FunctionTemplate> setStatusTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::SetStatus, v8::External::New(isolate, &context));
-    responseTemplate->Set(base::Utils::ToV8String(isolate, "setStatus"), setStatusTemplate);
+    // "response.set_status(200)"
+    v8::Local<v8::FunctionTemplate> setStatusTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::set_status, v8::External::New(isolate, &context));
+    responseTemplate->Set(base::Utils::ToV8String(isolate, "set_status"), setStatusTemplate);
 
     // "response.send({'k1':'v','k2':'v2'})"
-    v8::Local<v8::FunctionTemplate> sendTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::Send, v8::External::New(isolate, &context));
+    v8::Local<v8::FunctionTemplate> sendTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::send, v8::External::New(isolate, &context));
     responseTemplate->Set(base::Utils::ToV8String(isolate, "send"), sendTemplate);
 
     v8::Local<v8::Object> response;
@@ -412,32 +412,32 @@ void instance::Instance::Execute(ExecuteContext &context)
         {
             v8::String::Utf8Value errorStack(isolate, stack);
             std::string error(*errorStack);
-            context.SetError(error);
+            context.set_error(error);
         }
         else
         {
             v8::String::Utf8Value errorStack(isolate, tryCatch.Exception());
             std::string error(*errorStack);
-            context.SetError(error);
+            context.set_error(error);
         }
         return;
     }
 
     v8::Local<v8::Value> functionValue;
-    if (!handleContext->Global()->Get(handleContext, base::Utils::ToV8String(isolate, context.GetRequest().GetInnerFunctionName().c_str())).ToLocal(&functionValue))
+    if (!handleContext->Global()->Get(handleContext, base::Utils::ToV8String(isolate, context.request().call().function().c_str())).ToLocal(&functionValue))
     {
         v8::Local<v8::Value> stack;
         if (tryCatch.StackTrace(handleContext).ToLocal(&stack))
         {
             v8::String::Utf8Value errorStack(isolate, stack);
             std::string error(*errorStack);
-            context.SetError(error);
+            context.set_error(error);
         }
         else
         {
             v8::String::Utf8Value errorStack(isolate, tryCatch.Exception());
             std::string error(*errorStack);
-            context.SetError(error);
+            context.set_error(error);
         }
         return;
     }
@@ -456,13 +456,13 @@ void instance::Instance::Execute(ExecuteContext &context)
         {
             v8::String::Utf8Value errorStack(isolate, stack);
             std::string error(*errorStack);
-            context.SetError(error);
+            context.set_error(error);
         }
         else
         {
             v8::String::Utf8Value errorStack(isolate, tryCatch.Exception());
             std::string error(*errorStack);
-            context.SetError(error);
+            context.set_error(error);
         }
         return;
     }
@@ -474,15 +474,15 @@ void instance::Instance::Execute(ExecuteContext &context)
         {
             v8::String::Utf8Value errorStack(isolate, stack);
             std::string error(*errorStack);
-            context.SetError(error);
+            context.set_error(error);
         }
         else
         {
             v8::String::Utf8Value errorStack(isolate, tryCatch.Exception());
             std::string error(*errorStack);
-            context.SetError(error);
+            context.set_error(error);
         }
         return;
     }
-    context.SetStatus(ExecuteStatus::FINISH);
+    context.set_status(ExecuteStatus::FINISH);
 }

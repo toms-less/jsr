@@ -4,10 +4,6 @@
 #include <iostream>
 #include <include/base.h>
 #include <include/instance.h>
-#include "grpcpp/grpcpp.h"
-#include "grpc/support/log.h"
-#include "build/protos/runtime.pb.h"
-#include "build/protos/runtime.grpc.pb.h"
 
 namespace server
 {
@@ -115,7 +111,7 @@ namespace server
         protos::RuntimeRequest request_;
         protos::RuntimeResponse response_;
         grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> writer_;
-        instance::IntanceManager *instanceManager;
+        instance::IntanceManager *instances_;
 
         enum Status
         {

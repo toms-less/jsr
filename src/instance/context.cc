@@ -115,7 +115,7 @@ std::string &instance::ExecuteContext::error()
     return this->error_;
 }
 
-instance::HttpRequest *instance::ExecuteContext::request()
+protos::RuntimeRequest *instance::ExecuteContext::request()
 {
     return this->request_;
 }

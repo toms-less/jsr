@@ -42,7 +42,7 @@ namespace server
     class Runtime
     {
     public:
-        Runtime(server::ServerConfig &config, instance::IntanceManager *instanceManager);
+        Runtime(server::ServerConfig &config, instance::IntanceManager *instances);
         ~Runtime();
 
         void start();
@@ -51,7 +51,7 @@ namespace server
         std::unique_ptr<grpc::ServerCompletionQueue> cq_;
         protos::RuntimeService::AsyncService service_;
         std::unique_ptr<grpc::Server> server_;
-        instance::IntanceManager *instanceManager;
+        instance::IntanceManager *instances_;
 
         /**
          * Handle Runtime requesting.

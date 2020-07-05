@@ -26,14 +26,14 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  instance::IntanceManager instanceManager(configManager.GetInstanceConfig(), sysfuncManager);
-  if (!instanceManager.initialize())
+  instance::IntanceManager instances(configManager.GetInstanceConfig(), sysfuncManager);
+  if (!instances.initialize())
   {
     serverLog->error("Instance manager initialized failure.");
     return 1;
   }
 
-  server::Runtime runtime(configManager.GetServerConfig(), &instanceManager);
+  server::Runtime runtime(configManager.GetServerConfig(), &instances);
   runtime.start();
   return 0;
 }

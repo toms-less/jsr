@@ -1,9 +1,9 @@
 #include <include/server.h>
 
-server::Runtime::Runtime(server::ServerConfig &_config, instance::IntanceManager *instanceManager)
+server::Runtime::Runtime(server::ServerConfig &_config, instance::IntanceManager *instances)
 {
     this->config = _config;
-    this->instanceManager = instanceManager;
+    this->instances_ = instances;
 }
 
 server::Runtime::~Runtime()
@@ -49,7 +49,7 @@ void server::Runtime::handler()
 
 void server::Runtime::handler_inner(Runtime *runtime)
 {
-    new server::Context(&runtime->service_, runtime->cq_.get(), runtime->instanceManager);
+    new server::Context(&runtime->service_, runtime->cq_.get(), runtime->instances_);
     void *tag;
     bool ok;
     while (true)

@@ -34,6 +34,6 @@ int main(int argc, char *argv[])
   }
 
   server::Runtime runtime(configManager.GetServerConfig(), &instanceManager);
-  runtime.Start();
+  runtime.start();
   return 0;
 }

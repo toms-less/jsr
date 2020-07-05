@@ -1,79 +1,238 @@
 syntax = "proto3";
-import "google/protobuf/any.proto";
+
+option java_multiple_files = true;
+option java_package = "com.toms.less.server";
+option java_outer_classname = "RuntimeProto";
+option go_package = "build/protos/runtime";
+package protos;
+
+service RuntimeService {
+    rpc Route (RuntimeRequest) returns (RuntimeResponse);
+}
 
 message RuntimeRequest {
-    string id = 1;
+    /**
+     * Request type.
+     */
+    Common.Type type = 1;
 
-    string function = 2;
+    /**
+     * Request ID.
+     */
+    string id = 2;
 
-    string version = 3;
+    /**
+     * Data of function calling.
+     */
+    CallRequest call = 3;
 
-    string group = 4;
+    /**
+     * Data of function script updating.
+     */
+    repeated ScriptRequest script = 4;
+}
 
-    string unit = 5;
+message CallRequest {
+    /**
+     * Function name.
+     */
+    string function = 1;
 
-    int64 timeout = 6;
+    /**
+     * Function version.
+     */
+    string version = 2;
 
-    enum trigger {
-        UNKNOWN = 0;
-        HTTP = 1;
-        BASE = 2; 
-    }
+    /**
+     * Function group.
+     */
+    string group = 3;
 
-    enum content_type {
-        TEXT = 0;
-        JSON =1;
-        HTML= 2;
-    }
+    /**
+     * Function unit.
+     */
+    string unit = 4;
 
-    RequestData data = 7;
+    /**
+     * Timeout value of client specified to tell runtime the function calling timeout.
+     */
+    int64 timeout = 5;
+
+    /**
+     * HTTP requesting method.
+     */
+    string method = 6;
+
+    /**
+     * HTTP requesting headers.
+     */
+    map<string,string> headers = 7;
+
+    /**
+     * HTTP requesting parameters.
+     */
+    map<string,string> parameters = 8;
+
+    /**
+     * HTTP requesting data.
+     */
+    string data = 9;
+}
+
+message ScriptRequest {
+    /**
+     * Function name.
+     */
+    string function = 1;
+
+    /**
+     * Function version.
+     */
+    string version = 2;
+
+    /**
+     * Function group.
+     */
+    string group = 3;
+
+    /**
+     * Function unit.
+     */
+    string unit = 4;
+
+    /**
+     * Function script for updating.
+     */
+    string script = 5;
 }
 
 message RuntimeResponse {
-    string id = 1;
+    /**
+     * Response type.
+     */
+    Common.Type type = 1;
 
-    string function = 2;
+    /**
+     * Response status.
+     */
+    Common.Status status = 2;
 
-    string version = 3;
+    /**
+     * Response ID.
+     * Responsing ID is same as requesting ID.
+     */
+    string id = 3;
 
-    string group = 4;
+    /**
+     * Data of function responsing.
+     */
+    CallResponse call = 4;
+    
+    /**
+     * Data of script responsing.
+     */
+    ScriptResponse script = 5;
+}
 
-    string unit = 5;
+message CallResponse {
+    /**
+     * Function name.
+     */
+    string function = 1;
 
-    string runtime = 6;
+    /**
+     * Function version.
+     */
+    string version = 2;
 
-    enum status {
+    /**
+     * Function group.
+     */
+    string group = 3;
+
+    /**
+     * Function unit.
+     */
+    string unit = 4;
+
+    /**
+     * Runtime type of current runtime.
+     */
+    string runtime = 5;
+
+    /**
+     * Detail description of 'Common.Type'.
+     */
+    string message = 6;
+
+    /**
+     * HTTP responsing headers.
+     */
+    map<string,string> headers = 7;
+
+    /**
+     * HTTP responsing data.
+     */
+    string data = 8;
+}
+
+message ScriptResponse {
+    /**
+     * Function name.
+     */
+    string function = 1;
+
+    /**
+     * Function version.
+     */
+    string version = 2;
+ 
+    /**
+     * Function group.
+     */ 
+    string group = 3;
+ 
+    /**
+     * Function unit.
+     */
+    string unit = 4;
+ 
+    /**
+     * Runtime type of current runtime.
+     */
+    string runtime = 5;
+
+    /**
+     * Detail description of 'Common.Type'.
+     */
+    string message = 6;
+}
+
+message Common {
+    /**
+     * Request or response type, default is 'UNKNOWN' if not be specified.
+     * 1. 'CALL' means function calling.
+     * 2. 'SCRIPT' means function script updating.
+     */
+    enum Type {
         UNKNOWN = 0;
-        SUCCESS = 1;
-        TIMEOUT = 2;
-        EXECUTE_ERROR = 3;
+        CALL = 1;
+        SCRIPT =2;
     }
 
-    string status_msg = 7;
-
-    ResponseData data = 8;
-}
-
-message RequestData {
-    enum method {
-        BASE = 0;
-        POST = 1;
-        GET = 2;
+    /**
+     * Request or response status, default is 'OK' if not be specified. 
+     * 1. 'OK' means function calling or script updating is OK.
+     * 2. 'TIMEOUT' means function calling or script updating is timeout.
+     * 3. 'INVALID_TYPE' means requesting type from client is invalid.
+     * 4. 'SYSTEM_ERROR' means function calling or script updating has happened some system errors.
+     * 5. 'USER_ERROR' means function calling or script updating has happened some user errors.
+     */
+    enum Status {
+        OK = 0;
+        TIMEOUT = 1;
+        INVALID_TYPE = 2;
+        SYSTEM_ERROR = 3;
+        USER_ERROR = 4;
     }
-
-    map<string,string> headers = 1;
-
-    map<string,string> parameters = 2;
-
-    google.protobuf.Any body = 3;
-}
-
-message ResponseData {
-    map<string,string> headers = 1;
-
-    google.protobuf.Any body = 2;
-}
-
-service RuntimeService {
-    rpc Call (RuntimeRequest) returns (RuntimeResponse);
 }

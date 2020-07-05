@@ -86,7 +86,7 @@ namespace server
         grpc::ServerContext ctx_;
         RuntimeRequest request_;
         RuntimeResponse response_;
-        grpc::ServerAsyncResponseWriter<RuntimeResponse> responder_;
+        grpc::ServerAsyncResponseWriter<RuntimeResponse> writer_;
         instance::IntanceManager *instanceManager;
 
         enum Status

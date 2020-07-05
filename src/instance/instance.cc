@@ -424,7 +424,7 @@ void instance::Instance::Execute(ExecuteContext &context)
     }
 
     v8::Local<v8::Value> functionValue;
-    if (!handleContext->Global()->Get(handleContext, base::Utils::ToV8String(isolate, context.request().call().function().c_str())).ToLocal(&functionValue))
+    if (!handleContext->Global()->Get(handleContext, base::Utils::ToV8String(isolate, context.request()->call().function().c_str())).ToLocal(&functionValue))
     {
         v8::Local<v8::Value> stack;
         if (tryCatch.StackTrace(handleContext).ToLocal(&stack))

@@ -366,7 +366,7 @@ namespace instance
         std::time_t end_time_;
         std::string error_;
         protos::RuntimeRequest *request_;
-        protos::RuntimeResponse *response_
+        protos::RuntimeResponse *response_;
             grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer_;
         ExecuteStatus status_;
     };

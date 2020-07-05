@@ -19,7 +19,7 @@ void server::Context::dispatch()
     }
     case PROCESS:
     {
-        new server::Context(service_, cq_, instances);
+        new server::Context(service_, cq_, instances_);
         switch (request_.type())
         {
         case protos::Common_Type::Common_Type_CALL:
@@ -60,17 +60,17 @@ void server::Context::dispatch()
 void server::Context::call_handler()
 {
     // build execution context of instance.
-    instance::ExecuteContext context(&request_);
+    instance::ExecuteContext context(&request_,&response_,&writer_);
     instances->execute(context);
     switch (context.status())
     {
-    case ExecuteStatus::FINISH:
+    case instance::ExecuteStatus::FINISH:
     {
         response_.set_status(protos::Common_Status::Common_Status_OK);
         break;
     }
-    case ExecuteStatus::INIT:
-    case ExecuteStatus::BUSY:
+    case instance::ExecuteStatus::INIT:
+    case instance::ExecuteStatus::BUSY:
     {
         response_.set_status(protos::Common_Status::Common_Status_SYSTEM_ERROR);
         response_.set_message(context.error());
@@ -78,7 +78,7 @@ void server::Context::call_handler()
         writer_.Finish(response_, grpc::Status::OK, this);
         break;
     }
-    case ExecuteStatus::ERROR:
+    case instance::ExecuteStatus::ERROR:
     default:
     {
         response_.set_status(protos::Common_Status::Common_Status_USER_ERROR);

@@ -115,9 +115,19 @@ std::string &instance::ExecuteContext::error()
     return this->error_;
 }
 
-instance::HttpRequest &instance::ExecuteContext::request()
+instance::HttpRequest *instance::ExecuteContext::request()
 {
     return this->request_;
+}
+
+protos::RuntimeResponse *instance::ExecuteContext::response()
+{
+    return this->response_;
+}
+
+grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *instance::ExecuteContext::writer()
+{
+    return this->writer_;
 }
 
 void instance::ExecuteContext::set_status(const ExecuteStatus &status)

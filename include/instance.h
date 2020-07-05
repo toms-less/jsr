@@ -357,8 +357,10 @@ namespace instance
         std::string &error();
 
         protos::RuntimeRequest *request();
+        protos::RuntimeResponse *response();
+        grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer()
 
-        void set_status(const ExecuteStatus &status);
+            void set_status(const ExecuteStatus &status);
         ExecuteStatus &status();
 
     private:
@@ -367,7 +369,7 @@ namespace instance
         std::string error_;
         protos::RuntimeRequest *request_;
         protos::RuntimeResponse *response_;
-            grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer_;
+        grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer_;
         ExecuteStatus status_;
     };
 

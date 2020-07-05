@@ -10,7 +10,7 @@ server::Runtime::~Runtime()
 {
 }
 
-void server::Runtime::Start()
+void server::Runtime::start()
 {
     auto serverLog = base::Log::GetServerLogger();
     if (!config.IsInited())
@@ -30,18 +30,32 @@ void server::Runtime::Start()
     server_ = builder.BuildAndStart();
     serverLog->info("runtime server started and listening on '{}' port.", config.GetPort());
 
-    ServerHandle();
+    handler();
 }
 
-void server::Runtime::ServerHandle()
+void server::Runtime::handler()
 {
-    new server::Context(&service_, cq_.get(), instanceManager);
+    unsigned cores = std::thread::hardware_concurrency();
+    std::thread workers[cores];
+    for (unsigned i = 0; i < cores; i++)
+    {
+        workers[i] = std::thread(handler_inner, this);
+    }
+    for (std::thread &worker : workers)
+    {
+        worker.join();
+    }
+}
+
+void server::Runtime::handler_inner(Runtime *runtime)
+{
+    new server::Context(&runtime->service_, runtime->cq_.get(), runtime->instanceManager);
     void *tag;
     bool ok;
     while (true)
     {
         GPR_ASSERT(cq_->Next(&tag, &ok));
         GPR_ASSERT(ok);
-        static_cast<server::Context *>(tag)->Proceed();
+        static_cast<server::Context *>(tag)->dispatch();
     }
 }

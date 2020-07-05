@@ -49,9 +49,8 @@ namespace server
         Runtime(server::ServerConfig &config, instance::IntanceManager *instanceManager);
         ~Runtime();
 
-        void Start();
+        void start();
 
-    private:
         server::ServerConfig config;
         std::unique_ptr<grpc::ServerCompletionQueue> cq_;
         protos::RuntimeService::AsyncService service_;
@@ -59,14 +58,32 @@ namespace server
         instance::IntanceManager *instanceManager;
 
         /**
-         * handle function calling.
+         * Handle Runtime requesting.
+         * In this method, runtime start an asynchronous service
+         * with multi-thread. Thread count is equals with CPU cores.
          *
          */
-        void ServerHandle();
+        void handler();
+
+    private:
+        /**
+         * Handle runtime requesting in the selected thread.
+         * 
+        */
+        static void handler_inner(Runtime *runtime);
     };
 
     /**
-     *  server context.
+     * Server context.
+     * 
+     * Runtime deals with some type requesting with asynchronous model,
+     * such as function calling, script updating,
+     * configuration updating and some more in the future.
+     * 
+     * This context represents one of above requesting at a time.
+     * In the context, it deals with requesting with 'dispatch' method,
+     * and executes the requesting with specified method like 'call_handler',
+     * 'script_handler'.
      *
      */
     class Context
@@ -75,12 +92,23 @@ namespace server
         Context(protos::RuntimeService::AsyncService *service, grpc::ServerCompletionQueue *cq, instance::IntanceManager *instanceManager);
 
         /**
-         * deal with the RPC request.
+         * dispatch requesting by requesting type.
          * 
          */
-        void Proceed();
+        void dispatch();
 
     private:
+        /**
+         * deal with requesting of function calling.
+         * 
+        */
+        void call_handler();
+
+        /**
+         * deal with requesting of function script updateing.
+         * 
+        */
+        void script_handler();
         protos::RuntimeService::AsyncService *service_;
         grpc::ServerCompletionQueue *cq_;
         grpc::ServerContext ctx_;

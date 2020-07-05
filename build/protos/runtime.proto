@@ -118,20 +118,25 @@ message RuntimeResponse {
     Common.Status status = 2;
 
     /**
+     * Detail description of 'Common.Status'.
+     */
+     string message = 3;
+
+    /**
      * Response ID.
      * Responsing ID is same as requesting ID.
      */
-    string id = 3;
+    string id = 4;
 
     /**
      * Data of function responsing.
      */
-    CallResponse call = 4;
+    CallResponse call = 5;
     
     /**
      * Data of script responsing.
      */
-    ScriptResponse script = 5;
+    ScriptResponse script = 6;
 }
 
 message CallResponse {
@@ -161,19 +166,14 @@ message CallResponse {
     string runtime = 5;
 
     /**
-     * Detail description of 'Common.Type'.
-     */
-    string message = 6;
-
-    /**
      * HTTP responsing headers.
      */
-    map<string,string> headers = 7;
+    map<string,string> headers = 6;
 
     /**
      * HTTP responsing data.
      */
-    string data = 8;
+    string data = 7;
 }
 
 message ScriptResponse {
@@ -201,11 +201,6 @@ message ScriptResponse {
      * Runtime type of current runtime.
      */
     string runtime = 5;
-
-    /**
-     * Detail description of 'Common.Type'.
-     */
-    string message = 6;
 }
 
 message Common {
@@ -231,8 +226,7 @@ message Common {
     enum Status {
         OK = 0;
         TIMEOUT = 1;
-        INVALID_TYPE = 2;
-        SYSTEM_ERROR = 3;
-        USER_ERROR = 4;
+        SYSTEM_ERROR = 2;
+        USER_ERROR = 3;
     }
 }

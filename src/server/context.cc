@@ -1,6 +1,6 @@
 #include <include/server.h>
 
-server::Context::Context(RuntimeService::AsyncService *service, grpc::ServerCompletionQueue *cq, instance::IntanceManager *instanceManager)
+server::Context::Context(protos::RuntimeService::AsyncService *service, grpc::ServerCompletionQueue *cq, instance::IntanceManager *instanceManager)
     : service_(service), cq_(cq), writer_(&ctx_), status_(CREATE)
 {
     this->instanceManager = instanceManager;

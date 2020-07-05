@@ -54,7 +54,7 @@ void server::Runtime::handler_inner(Runtime *runtime)
     bool ok;
     while (true)
     {
-        GPR_ASSERT(cq_->Next(&tag, &ok));
+        GPR_ASSERT(runtime->cq_->Next(&tag, &ok));
         GPR_ASSERT(ok);
         static_cast<server::Context *>(tag)->dispatch();
     }

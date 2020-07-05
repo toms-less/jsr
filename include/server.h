@@ -54,7 +54,7 @@ namespace server
     private:
         server::ServerConfig config;
         std::unique_ptr<grpc::ServerCompletionQueue> cq_;
-        RuntimeService::AsyncService service_;
+        protos::RuntimeService::AsyncService service_;
         std::unique_ptr<grpc::Server> server_;
         instance::IntanceManager *instanceManager;
 
@@ -81,7 +81,7 @@ namespace server
         void Proceed();
 
     private:
-        RuntimeService::AsyncService *service_;
+        protos::RuntimeService::AsyncService *service_;
         grpc::ServerCompletionQueue *cq_;
         grpc::ServerContext ctx_;
         protos::RuntimeRequest request_;

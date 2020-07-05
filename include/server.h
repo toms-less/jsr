@@ -72,7 +72,7 @@ namespace server
     class Context
     {
     public:
-        Context(RuntimeService::AsyncService *service, grpc::ServerCompletionQueue *cq, instance::IntanceManager *instanceManager);
+        Context(protos::RuntimeService::AsyncService *service, grpc::ServerCompletionQueue *cq, instance::IntanceManager *instanceManager);
 
         /**
          * deal with the RPC request.
@@ -84,9 +84,9 @@ namespace server
         RuntimeService::AsyncService *service_;
         grpc::ServerCompletionQueue *cq_;
         grpc::ServerContext ctx_;
-        RuntimeRequest request_;
-        RuntimeResponse response_;
-        grpc::ServerAsyncResponseWriter<RuntimeResponse> writer_;
+        protos::RuntimeRequest request_;
+        protos::RuntimeResponse response_;
+        grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> writer_;
         instance::IntanceManager *instanceManager;
 
         enum Status

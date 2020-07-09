@@ -217,7 +217,7 @@ message Common {
 
     /**
      * Request or response status, default is 'OK' if not be specified. 
-     * 1. 'UNKNOWN' means the unknown status.
+     * 1. 'INIT' means the requesting or responsing has been initialized.
      * 2. 'OK' means function calling or script updating is OK.
      * 3. 'TIMEOUT' means function calling or script updating is timeout.
      * 4. 'INVALID_TYPE' means requesting type from client is invalid.
@@ -225,7 +225,7 @@ message Common {
      * 6. 'USER_ERROR' means function calling or script updating has happened some user errors.
      */
     enum Status {
-        UNKNOWN = 0;
+        INIT = 0;
         OK = 1;
         TIMEOUT = 2;
         SYSTEM_ERROR = 3;

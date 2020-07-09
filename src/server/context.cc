@@ -71,7 +71,7 @@ void server::Context::call_handler()
          * are invoked, so it should be check in this place.
          * 
         */
-        if (response_.status() != protos::Common_Status::Common_Status_OK)
+        if (response_.status() == protos::Common_Status::Common_Status_INIT)
         {
             response_.set_status(protos::Common_Status::Common_Status_USER_ERROR);
             response_.set_message("User should user 'response.send(foo)' in the functions.");

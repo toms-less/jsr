@@ -217,16 +217,18 @@ message Common {
 
     /**
      * Request or response status, default is 'OK' if not be specified. 
-     * 1. 'OK' means function calling or script updating is OK.
-     * 2. 'TIMEOUT' means function calling or script updating is timeout.
-     * 3. 'INVALID_TYPE' means requesting type from client is invalid.
-     * 4. 'SYSTEM_ERROR' means function calling or script updating has happened some system errors.
-     * 5. 'USER_ERROR' means function calling or script updating has happened some user errors.
+     * 1. 'UNKNOWN' means the unknown status.
+     * 2. 'OK' means function calling or script updating is OK.
+     * 3. 'TIMEOUT' means function calling or script updating is timeout.
+     * 4. 'INVALID_TYPE' means requesting type from client is invalid.
+     * 5. 'SYSTEM_ERROR' means function calling or script updating has happened some system errors.
+     * 6. 'USER_ERROR' means function calling or script updating has happened some user errors.
      */
     enum Status {
-        OK = 0;
-        TIMEOUT = 1;
-        SYSTEM_ERROR = 2;
-        USER_ERROR = 3;
+        UNKNOWN = 0;
+        OK = 1;
+        TIMEOUT = 2;
+        SYSTEM_ERROR = 3;
+        USER_ERROR = 4;
     }
 }

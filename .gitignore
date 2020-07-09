@@ -7,3 +7,7 @@ deps/libs/
 deps/bin/
 deps/grpc/
 src/grpc/
+build/protos/runtime.grpc.pb.cc
+build/protos/runtime.grpc.pb.h
+build/protos/runtime.pb.cc
+build/protos/runtime.pb.h

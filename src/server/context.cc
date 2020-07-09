@@ -65,7 +65,18 @@ void server::Context::call_handler()
     {
     case instance::ExecuteStatus::FINISH:
     {
-        response_.set_status(protos::Common_Status::Common_Status_OK);
+        /**
+         * This condition often happend when user did not call 'resonse.send(xxx)'.
+         * As the response status are only setted when the 'HttpResponse::send' callback
+         * are invoked, so it should be check in this place.
+         * 
+        */
+        if (response_.status() != protos::Common_Status::Common_Status_OK)
+        {
+            response_.set_status(protos::Common_Status::Common_Status_USER_ERROR);
+            response_.set_message("User should user 'response.send(foo)' in the functions.");
+        }
+        writer_.Finish(response_, grpc::Status::OK, this);
         break;
     }
     case instance::ExecuteStatus::INIT:

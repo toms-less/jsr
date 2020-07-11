@@ -353,17 +353,5 @@ namespace base
          * 
          */
         static std::time_t timestamp();
-
-        /**
-         * Convert 'c string' to 'v8::String'
-         * 
-         */
-        static v8::Local<v8::String> v8_str(v8::Isolate *isolate, const char *str);
-
-        /**
-         * Build v8 error object.
-         * 
-        */
-        static v8::Local<v8::Object> error(v8::Isolate *isolate, const char *name, const char *message, const char *stack);
     };
 } // namespace base

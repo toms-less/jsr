@@ -111,7 +111,7 @@ void instance::Instance::Compile(CompileContext &context)
     v8::Context::Scope contextScope(handleContext);
 
     // compile function script.
-    v8::Local<v8::String> source = base::Util::v8_str(isolate, script.c_str());
+    v8::Local<v8::String> source = instance::Util::v8_str(isolate, script.c_str());
     v8::Local<v8::Script> compiledScript;
     if (!v8::Script::Compile(handleContext, source).ToLocal(&compiledScript))
     {
@@ -210,7 +210,7 @@ void instance::Instance::Bind(BindContext &context)
             context.SetError(error);
             return;
         }
-        if (!handleContext->Global()->Set(handleContext, base::Util::v8_str(isolate, functionName.c_str()), func).FromJust())
+        if (!handleContext->Global()->Set(handleContext, instance::Util::v8_str(isolate, functionName.c_str()), func).FromJust())
         {
             std::string error("Set global function error, function name '");
             error.append(functionName).append("'.");
@@ -232,7 +232,7 @@ void instance::Instance::Bind(BindContext &context)
         }
         v8::Local<v8::FunctionTemplate> funcTemp = v8::FunctionTemplate::New(isolate, objectFunc.GetFuncPointer());
 
-        v8::Local<v8::String> v8ObjectName = base::Util::v8_str(isolate, objectName.c_str());
+        v8::Local<v8::String> v8ObjectName = instance::Util::v8_str(isolate, objectName.c_str());
         if (handleContext->Global()->Has(handleContext, v8ObjectName).FromJust())
         {
             // current object has been added, add current function to this object.
@@ -254,7 +254,7 @@ void instance::Instance::Bind(BindContext &context)
                 return;
             }
             v8::Local<v8::Object> objectInstance = value.As<v8::Object>();
-            objectInstance->Set(handleContext, base::Util::v8_str(isolate, functionName.c_str()), func);
+            objectInstance->Set(handleContext, instance::Util::v8_str(isolate, functionName.c_str()), func);
             if (!handleContext->Global()->Set(handleContext, v8ObjectName, objectInstance).FromJust())
             {
                 std::string error("Set global object function error, object name '");
@@ -267,7 +267,7 @@ void instance::Instance::Bind(BindContext &context)
         {
             // first time to add object.
             v8::Local<v8::ObjectTemplate> objectTemp = v8::ObjectTemplate::New(isolate);
-            objectTemp->Set(base::Util::v8_str(isolate, functionName.c_str()), funcTemp);
+            objectTemp->Set(instance::Util::v8_str(isolate, functionName.c_str()), funcTemp);
 
             v8::Local<v8::Object> objectInstance;
             if (!objectTemp->NewInstance(handleContext).ToLocal(&objectInstance))
@@ -316,43 +316,43 @@ void instance::Instance::Execute(ExecuteContext &context)
 
     // "request.system_info()"
     v8::Local<v8::FunctionTemplate> getSystemInfoTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::system_info, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Util::v8_str(isolate, "system_info"), getSystemInfoTemplate);
+    requestTemplate->Set(instance::Util::v8_str(isolate, "system_info"), getSystemInfoTemplate);
 
     // "request.content_type()"
     v8::Local<v8::FunctionTemplate> getContentTypeTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::content_type, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Util::v8_str(isolate, "content_type"), getContentTypeTemplate);
+    requestTemplate->Set(instance::Util::v8_str(isolate, "content_type"), getContentTypeTemplate);
 
     // "request.method()"
     v8::Local<v8::FunctionTemplate> getMethodTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::method, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Util::v8_str(isolate, "method"), getMethodTemplate);
+    requestTemplate->Set(instance::Util::v8_str(isolate, "method"), getMethodTemplate);
 
     // "request.header('foo')"
     v8::Local<v8::FunctionTemplate> getHeaderTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::header, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Util::v8_str(isolate, "header"), getHeaderTemplate);
+    requestTemplate->Set(instance::Util::v8_str(isolate, "header"), getHeaderTemplate);
 
     // "request.headers()"
     v8::Local<v8::FunctionTemplate> getHeadersTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::headers, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Util::v8_str(isolate, "headers"), getHeadersTemplate);
+    requestTemplate->Set(instance::Util::v8_str(isolate, "headers"), getHeadersTemplate);
 
     // "request.cookie('foo')"
     v8::Local<v8::FunctionTemplate> getCookieTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::cookie, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Util::v8_str(isolate, "cookie"), getCookieTemplate);
+    requestTemplate->Set(instance::Util::v8_str(isolate, "cookie"), getCookieTemplate);
 
     // "request.cookies()"
     v8::Local<v8::FunctionTemplate> getCookiesTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::cookies, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Util::v8_str(isolate, "cookies"), getCookiesTemplate);
+    requestTemplate->Set(instance::Util::v8_str(isolate, "cookies"), getCookiesTemplate);
 
     // "request.parameter('foo')"
     v8::Local<v8::FunctionTemplate> getParameterTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::parameter, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Util::v8_str(isolate, "parameter"), getParameterTemplate);
+    requestTemplate->Set(instance::Util::v8_str(isolate, "parameter"), getParameterTemplate);
 
     // "request.parameters()"
     v8::Local<v8::FunctionTemplate> getParametersTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::parameters, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Util::v8_str(isolate, "parameters"), getParametersTemplate);
+    requestTemplate->Set(instance::Util::v8_str(isolate, "parameters"), getParametersTemplate);
 
     // "request.data()"
     v8::Local<v8::FunctionTemplate> getDataTemplate = v8::FunctionTemplate::New(isolate, HttpRequest::data, v8::External::New(isolate, &context));
-    requestTemplate->Set(base::Util::v8_str(isolate, "data"), getDataTemplate);
+    requestTemplate->Set(instance::Util::v8_str(isolate, "data"), getDataTemplate);
 
     v8::Local<v8::Object> request;
     if (!requestTemplate->NewInstance(handleContext).ToLocal(&request))
@@ -378,31 +378,31 @@ void instance::Instance::Execute(ExecuteContext &context)
 
     // "response.set_header('k','v')"
     v8::Local<v8::FunctionTemplate> setHeaderTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::set_header, v8::External::New(isolate, &context));
-    responseTemplate->Set(base::Util::v8_str(isolate, "set_header"), setHeaderTemplate);
+    responseTemplate->Set(instance::Util::v8_str(isolate, "set_header"), setHeaderTemplate);
 
     // "response.set_headers({'k1':'v','k2':'v2'})"
     v8::Local<v8::FunctionTemplate> setHeadersTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::set_headers, v8::External::New(isolate, &context));
-    responseTemplate->Set(base::Util::v8_str(isolate, "set_headers"), setHeadersTemplate);
+    responseTemplate->Set(instance::Util::v8_str(isolate, "set_headers"), setHeadersTemplate);
 
     // "response.set_cookie({'name':'k1','value':'v1','maxAge':60})"
     v8::Local<v8::FunctionTemplate> setCookieTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::set_cookie, v8::External::New(isolate, &context));
-    responseTemplate->Set(base::Util::v8_str(isolate, "set_cookie"), setCookieTemplate);
+    responseTemplate->Set(instance::Util::v8_str(isolate, "set_cookie"), setCookieTemplate);
 
     // "response.set_cookies([{'name':'k1','value':'v1','maxAge':60},{'name':'k2','value':'v2','maxAge':60}])"
     v8::Local<v8::FunctionTemplate> setCookiesTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::set_cookies, v8::External::New(isolate, &context));
-    responseTemplate->Set(base::Util::v8_str(isolate, "set_cookies"), setCookiesTemplate);
+    responseTemplate->Set(instance::Util::v8_str(isolate, "set_cookies"), setCookiesTemplate);
 
     // "response.set_content_type('application/json')"
     v8::Local<v8::FunctionTemplate> setContentTypeTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::set_content_type, v8::External::New(isolate, &context));
-    responseTemplate->Set(base::Util::v8_str(isolate, "set_content_type"), setContentTypeTemplate);
+    responseTemplate->Set(instance::Util::v8_str(isolate, "set_content_type"), setContentTypeTemplate);
 
     // "response.set_status(200)"
     v8::Local<v8::FunctionTemplate> setStatusTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::set_status, v8::External::New(isolate, &context));
-    responseTemplate->Set(base::Util::v8_str(isolate, "set_status"), setStatusTemplate);
+    responseTemplate->Set(instance::Util::v8_str(isolate, "set_status"), setStatusTemplate);
 
     // "response.send({'k1':'v','k2':'v2'})"
     v8::Local<v8::FunctionTemplate> sendTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::send, v8::External::New(isolate, &context));
-    responseTemplate->Set(base::Util::v8_str(isolate, "send"), sendTemplate);
+    responseTemplate->Set(instance::Util::v8_str(isolate, "send"), sendTemplate);
 
     v8::Local<v8::Object> response;
     if (!responseTemplate->NewInstance(handleContext).ToLocal(&response))
@@ -424,7 +424,7 @@ void instance::Instance::Execute(ExecuteContext &context)
     }
 
     v8::Local<v8::Value> functionValue;
-    if (!handleContext->Global()->Get(handleContext, base::Util::v8_str(isolate, context.request()->call().function().c_str())).ToLocal(&functionValue))
+    if (!handleContext->Global()->Get(handleContext, instance::Util::v8_str(isolate, context.request()->call().function().c_str())).ToLocal(&functionValue))
     {
         v8::Local<v8::Value> stack;
         if (tryCatch.StackTrace(handleContext).ToLocal(&stack))

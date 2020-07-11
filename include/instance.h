@@ -468,11 +468,12 @@ namespace instance
     };
 
     /**
-     * instalce utils.
+     * instance utils.
      * 
     */
-    class Utils
+    class Util
     {
+    public:
         /**
          * Convert 'c string' to 'v8::String'.
          * 

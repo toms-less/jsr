@@ -85,7 +85,7 @@ filegroup(
         "src/base/module.cc",
         "src/base/log.cc",
         "src/base/thread_pool.cc",
-        "src/base/utils.cc",
+        "src/base/util.cc",
     ],
 )
 
@@ -109,6 +109,7 @@ filegroup(
         "src/instance/response.cc",
         "src/instance/instance.cc",
         "src/instance/manager.cc",
+        "src/instance/util.cc",
     ],
 )
 

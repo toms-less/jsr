@@ -248,7 +248,7 @@ namespace base
          * if 'maxCapacity' less than 0, the capacity of this blocking queue is no limited.
          * 
         */
-        explicit BlockingQueue(const int maxCapacity = -1) : maxCapacity(maxCapacity)
+        explicit BlockingQueue(const size_t maxCapacity = -1) : maxCapacity(maxCapacity)
         {
         }
 
@@ -328,7 +328,7 @@ namespace base
         typedef std::deque<T> TList;
         TList list;
 
-        const int maxCapacity;
+        const size_t maxCapacity;
         typedef std::unique_lock<std::mutex> TLocker;
         std::mutex mutex;
         std::condition_variable notEmpty;
@@ -339,25 +339,31 @@ namespace base
      * project utils.
      * 
      */
-    class Utils
+    class Util
     {
     public:
         /**
-         * get current work directory.
+         * Get current work directory.
          * 
          */
-        static std::string GetCurrentWorkDir();
+        static std::string cwd();
 
         /**
-         * get current timeStamp
+         * Get current timeStamp
          * 
          */
-        static std::time_t GetTimeStamp();
+        static std::time_t timestamp();
 
         /**
-         * convert 'c string' to 'v8::String'
+         * Convert 'c string' to 'v8::String'
          * 
          */
-        static v8::Local<v8::String> ToV8String(v8::Isolate *isolate, const char *str);
+        static v8::Local<v8::String> v8_str(v8::Isolate *isolate, const char *str);
+
+        /**
+         * Build v8 error object.
+         * 
+        */
+        static v8::Local<v8::Object> error(v8::Isolate *isolate, const char *name, const char *message, const char *stack);
     };
 } // namespace base

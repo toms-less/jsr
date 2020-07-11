@@ -79,14 +79,11 @@ std::vector<sysfunc::PureFunction> &instance::BindContext::GetPureFunctionList()
     return this->pureFunctionList;
 }
 
-instance::ExecuteContext::ExecuteContext(protos::RuntimeRequest *request, protos::RuntimeResponse *response, grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer)
-    : request_(request), response_(response), writer_(writer)
+instance::ExecuteContext::ExecuteContext(protos::RuntimeRequest *request, protos::RuntimeResponse *response, grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer, intptr_t ctx_ptr)
+    : request_(request), response_(response), writer_(writer), ctx_ptr_(ctx_ptr)
 {
-    start_time_ = base::Utils::GetTimeStamp();
+    start_time_ = base::Util::timestamp();
     status_ = ExecuteStatus::INIT;
-}
-instance::ExecuteContext::~ExecuteContext()
-{
 }
 
 long &instance::ExecuteContext::start_time()
@@ -128,6 +125,11 @@ protos::RuntimeResponse *instance::ExecuteContext::response()
 grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *instance::ExecuteContext::writer()
 {
     return this->writer_;
+}
+
+const intptr_t &instance::ExecuteContext::ctx_ptr()
+{
+    return this->ctx_ptr_;
 }
 
 void instance::ExecuteContext::set_status(const ExecuteStatus &status)

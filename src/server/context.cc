@@ -59,7 +59,7 @@ void server::Context::dispatch()
 void server::Context::call_handler()
 {
     // build execution context of instance.
-    instance::ExecuteContext context(&request_, &response_, &writer_);
+    instance::ExecuteContext context(&request_, &response_, &writer_, (intptr_t)this);
     instances_->execute(context);
     switch (context.status())
     {
@@ -75,8 +75,8 @@ void server::Context::call_handler()
         {
             response_.set_status(protos::Common_Status::Common_Status_USER_ERROR);
             response_.set_message("User should user 'response.send(foo)' in the functions.");
+            writer_.Finish(response_, grpc::Status::OK, this);
         }
-        writer_.Finish(response_, grpc::Status::OK, this);
         break;
     }
     case instance::ExecuteStatus::INIT:

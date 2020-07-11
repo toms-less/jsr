@@ -8,7 +8,6 @@
 */
 namespace instance
 {
-
     class InstanceConfig : public base::BaseConfig
     {
     public:
@@ -345,8 +344,8 @@ namespace instance
     class ExecuteContext
     {
     public:
-        ExecuteContext(protos::RuntimeRequest *request, protos::RuntimeResponse *response, grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer);
-        ~ExecuteContext();
+        ExecuteContext(protos::RuntimeRequest *request, protos::RuntimeResponse *response,
+                       grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer, intptr_t ctx_ptr);
 
         std::time_t &start_time();
 
@@ -359,6 +358,12 @@ namespace instance
         protos::RuntimeRequest *request();
         protos::RuntimeResponse *response();
         grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer();
+        /**
+         * 'server::Context' class pointer value
+         * for using in 'HttpResponse:send'.
+         * 
+        */
+        const intptr_t &ctx_ptr();
 
         void set_status(const ExecuteStatus &status);
         ExecuteStatus &status();
@@ -370,6 +375,7 @@ namespace instance
         protos::RuntimeRequest *request_;
         protos::RuntimeResponse *response_;
         grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer_;
+        const intptr_t ctx_ptr_;
         ExecuteStatus status_;
     };
 
@@ -459,6 +465,25 @@ namespace instance
          * 
         */
         base::BlockingQueue<instance::Instance *> idle;
+    };
+
+    /**
+     * instalce utils.
+     * 
+    */
+    class Utils
+    {
+        /**
+         * Convert 'c string' to 'v8::String'.
+         * 
+         */
+        static v8::Local<v8::String> v8_str(v8::Isolate *isolate, const char *str);
+
+        /**
+         * Build v8 error object.
+         * 
+        */
+        static v8::Local<v8::Object> error(v8::Isolate *isolate, const char *name, const char *message, const char *stack);
     };
 
 } // namespace instance

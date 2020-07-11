@@ -12,7 +12,6 @@ namespace instance
     {
     public:
         InstanceConfig();
-        ~InstanceConfig();
 
         void SetStartupData(const std::string &startupData);
         std::string &GetStartupData();
@@ -416,6 +415,7 @@ namespace instance
     private:
         InstanceConfig config;
         v8::Isolate *isolate;
+        v8::ArrayBuffer::Allocator *allocator_;
         v8::Persistent<v8::Context> context_;
         bool inited = false;
     };

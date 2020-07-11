@@ -1,10 +1,13 @@
 #include <include/base.h>
 
-base::LogConfig *base::Log::logConfig = nullptr;
+base::LogConfig *base::Log::config_ = nullptr;
+spdlog::logger *base::Log::debug_logger_ = nullptr;
+spdlog::logger *base::Log::server_logger_ = nullptr;
+spdlog::logger *base::Log::instance_logger_ = nullptr;
 
-base::Log::Log(base::LogConfig *_logConfig)
+base::Log::Log(base::LogConfig *config)
 {
-    base::Log::logConfig = _logConfig;
+    base::Log::config_ = config;
 }
 
 base::Log::~Log()
@@ -13,21 +16,24 @@ base::Log::~Log()
 
 bool base::Log::initialize()
 {
+    base::Log::debug_logger_ = spdlog::rotating_logger_mt("debug", base::Log::config_->GetDebugLog(), 1048576 * base::Log::config_->GetMaxSize(), base::Log::config_->GetRotate()).get();
+    base::Log::server_logger_ = spdlog::rotating_logger_mt("server", base::Log::config_->GetServerLog(), 1048576 * base::Log::config_->GetMaxSize(), base::Log::config_->GetRotate()).get();
+    base::Log::instance_logger_ = spdlog::rotating_logger_mt("instance", base::Log::config_->GetInstanceLog(), 1048576 * base::Log::config_->GetMaxSize(), base::Log::config_->GetRotate()).get();
     this->inited = true;
     return this->inited;
 }
 
-std::shared_ptr<spdlog::logger> base::Log::GetDebugLogger()
+spdlog::logger *base::Log::debug_logger()
 {
-    return spdlog::rotating_logger_mt("debug", base::Log::logConfig->GetDebugLog(), 1048576 * base::Log::logConfig->GetMaxSize(), base::Log::logConfig->GetRotate());
+    return base::Log::debug_logger_;
 }
 
-std::shared_ptr<spdlog::logger> base::Log::GetServerLogger()
+spdlog::logger *base::Log::server_logger()
 {
-    return spdlog::rotating_logger_mt("server", base::Log::logConfig->GetServerLog(), 1048576 * base::Log::logConfig->GetMaxSize(), base::Log::logConfig->GetRotate());
+    return base::Log::server_logger_;
 }
 
-std::shared_ptr<spdlog::logger> base::Log::GetInstanceLogger()
+spdlog::logger *base::Log::instance_logger()
 {
-    return spdlog::rotating_logger_mt("instance", base::Log::logConfig->GetInstanceLog(), 1048576 * base::Log::logConfig->GetMaxSize(), base::Log::logConfig->GetRotate());
+    return base::Log::instance_logger_;
 }

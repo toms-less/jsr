@@ -4,10 +4,6 @@ instance::InstanceConfig::InstanceConfig()
 {
 }
 
-instance::InstanceConfig::~InstanceConfig()
-{
-}
-
 void instance::InstanceConfig::SetStartupData(const std::string &_startupData)
 {
     this->startupData = _startupData;

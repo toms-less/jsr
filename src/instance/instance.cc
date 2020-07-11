@@ -6,12 +6,16 @@ instance::Instance::Instance(InstanceConfig &_config)
 }
 instance::Instance::~Instance()
 {
+    isolate->Dispose();
+    delete allocator_;
 }
 
 bool instance::Instance::Initialize()
 {
     // v8 isolate parameters.
     v8::Isolate::CreateParams params;
+    params.array_buffer_allocator = v8::ArrayBuffer::Allocator::NewDefaultAllocator();
+    allocator_ = params.array_buffer_allocator;
 
     uint32_t stackLimit = config.GetStackLimit();
     // bytes.

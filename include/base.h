@@ -161,21 +161,25 @@ namespace base
          * get debug logger for logging.
          * 
          */
-        static std::shared_ptr<spdlog::logger> GetDebugLogger();
+        static spdlog::logger *debug_logger();
 
         /**
          * get server logger for logging.
          * 
          */
-        static std::shared_ptr<spdlog::logger> GetServerLogger();
+        static spdlog::logger *server_logger();
 
         /**
          * get instance logger for logging.
          *
          */
-        static std::shared_ptr<spdlog::logger> GetInstanceLogger();
+        static spdlog::logger *instance_logger();
 
-        static base::LogConfig *logConfig;
+    private:
+        static base::LogConfig *config_;
+        static spdlog::logger *debug_logger_;
+        static spdlog::logger *server_logger_;
+        static spdlog::logger *instance_logger_;
     };
 
     /**

@@ -25,10 +25,10 @@ instance::IntanceManager::~IntanceManager()
 
 bool instance::IntanceManager::initialize()
 {
-    auto instanceLog = base::Log::GetInstanceLogger();
+    auto instanceLog = base::Log::instance_logger();
     if (!config.IsInited())
     {
-        instanceLog->error("Instance configuration has not been initialized.");
+        instanceLog->error("Instance configuration has not been initialized.\n");
         return false;
     }
 
@@ -41,7 +41,7 @@ bool instance::IntanceManager::initialize()
     int instanceCount = config.GetInstanceCount();
     if (instanceCount == 0)
     {
-        instanceLog->error("Instance count in the configuration is invalid, current count is 0.");
+        instanceLog->error("Instance count in the configuration is invalid, current count is 0.\n");
         return false;
     }
 
@@ -52,7 +52,7 @@ bool instance::IntanceManager::initialize()
         if (!current->Initialize())
         {
             delete current;
-            instanceLog->error("Instance initialize failure.");
+            instanceLog->error("Instance initialize failure.\n");
             continue;
         }
 
@@ -62,7 +62,7 @@ bool instance::IntanceManager::initialize()
         if (!context.IsSuccess())
         {
             delete current;
-            instanceLog->error("Instance binding system functions failure, detail: {}.", context.GetError());
+            instanceLog->error("Instance binding system functions failure, detail: {}.\n", context.GetError());
             continue;
         }
         instances.push_back(current);
@@ -70,13 +70,12 @@ bool instance::IntanceManager::initialize()
     }
     if (instances.empty())
     {
-        instanceLog->error("Instance initialize failure, current instance list is empty.");
+        instanceLog->error("Instance initialize failure, current instance list is empty.\n");
         return false;
     }
 
     // TODO: compile all function scripts.
-
-    instanceLog->error("Instances initialized sucessfully, current instance list size is {}.", instances.size());
+    instanceLog->info("Instances initialized sucessfully, current instance list size is {}.\n", instances.size());
     inited = true;
     return inited;
 }

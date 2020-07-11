@@ -14,80 +14,34 @@ bool config::ConfigManager::initialize()
     // read configuration from 'config/config.yaml' file.
     YAML::Node config = YAML::LoadFile("config/config.yaml");
     YAML::Node server = config["server"];
-    YAML::Node log = config["log"];
-    YAML::Node instance = config["instance"];
-    YAML::Node sysfunc = config["sysfunc"];
-    if (!server.IsDefined() || !log.IsDefined() || !instance.IsDefined() || !sysfunc.IsDefined())
-    {
-        return false;
-    }
-
-    // check server configuration.
-    YAML::Node serverPort = server["port"];
-    if (!serverPort.IsDefined())
-    {
-        return false;
-    }
-
-    // check log configuration.
-    YAML::Node logDebug = log["debug"];
-    YAML::Node logServer = log["server"];
-    YAML::Node logInstance = log["instance"];
-    YAML::Node logMaxSize = log["maxSize"];
-    YAML::Node logRotate = log["rotate"];
-    if (!logDebug.IsDefined() || !logServer.IsDefined() || !logInstance.IsDefined() || !logMaxSize.IsDefined() || !logRotate.IsDefined())
-    {
-        return false;
-    }
-
-    // check instance configuration.
-    YAML::Node instanceStartupData = instance["startupData"];
-    YAML::Node instanceStackLimit = instance["stackLimit"];
-    YAML::Node instancePhysicalMemory = instance["physicalMemory"];
-    YAML::Node instanceVirtualMemoryLimit = instance["virtualMemoryLimit"];
-    YAML::Node instanceMaxOldeGenerationSize = instance["maxOldeGenerationSize"];
-    YAML::Node instanceInitialOldGenerationSize = instance["initialOldGenerationSize"];
-    YAML::Node instanceMaxYounGenerationSize = instance["maxYounGenerationSize"];
-    YAML::Node instanceInitialYoungGenerationSize = instance["initialYoungGenerationSize"];
-    YAML::Node instanceCodeRangeSize = instance["codeRangeSize"];
-    YAML::Node instanceMaxZonePoolSize = instance["maxZonePoolSize"];
-    YAML::Node instanceCount = instance["instanceCount"];
-    if (!instanceStartupData.IsDefined() || !instanceStackLimit.IsDefined() || !instancePhysicalMemory.IsDefined() || !instanceVirtualMemoryLimit.IsDefined() || !instanceMaxOldeGenerationSize.IsDefined() || !instanceInitialOldGenerationSize.IsDefined() || !instanceMaxYounGenerationSize.IsDefined() || !instanceInitialYoungGenerationSize.IsDefined() || !instanceCodeRangeSize.IsDefined() || !instanceMaxZonePoolSize.IsDefined() || !instanceCount.IsDefined())
-    {
-        return false;
-    }
-
-    // check system function configuration.
-    YAML::Node sysfuncRemote = sysfunc["requireRemote"];
-    YAML::Node sysfuncRemoteServer = sysfunc["requireRemoteServer"];
-    if (!sysfuncRemote.IsDefined() || !sysfuncRemoteServer.IsDefined())
-    {
-        return false;
-    }
 
     // set configuration to internal class.
-    serverConfig.SetPort(serverPort.as<int>());
+    serverConfig.SetPort(config["server"]["port"].as<int>());
+    serverConfig.SetInited(true);
 
-    logConfig.SetDebugLog(logDebug.as<std::string>());
-    logConfig.SetServerLog(logServer.as<std::string>());
-    logConfig.SetInstanceLog(logInstance.as<std::string>());
-    logConfig.SetMaxSize(logMaxSize.as<int>());
-    logConfig.SetRotate(logRotate.as<int>());
+    logConfig.SetDebugLog(config["log"]["debug"].as<std::string>());
+    logConfig.SetServerLog(config["log"]["server"].as<std::string>());
+    logConfig.SetInstanceLog(config["log"]["instance"].as<std::string>());
+    logConfig.SetMaxSize(config["log"]["maxSize"].as<int>());
+    logConfig.SetRotate(config["log"]["rotate"].as<int>());
+    logConfig.SetInited(true);
 
-    instanceConfig.SetStartupData(instanceStartupData.as<std::string>());
-    instanceConfig.SetStackLimit(instanceStackLimit.as<uint32_t>());
-    instanceConfig.SetPhysicalMemory(instancePhysicalMemory.as<uint64_t>());
-    instanceConfig.SetVirtualMemoryLimit(instanceVirtualMemoryLimit.as<uint64_t>());
-    instanceConfig.SetMaxOldeGenerationSize(instanceMaxOldeGenerationSize.as<uint64_t>());
-    instanceConfig.SetInitialOldGenerationSize(instanceInitialOldGenerationSize.as<uint64_t>());
-    instanceConfig.SetMaxYounGenerationSize(instanceMaxYounGenerationSize.as<uint64_t>());
-    instanceConfig.SetInitialYoungGenerationSize(instanceInitialYoungGenerationSize.as<uint64_t>());
-    instanceConfig.SetCodeRangeSize(instanceCodeRangeSize.as<uint64_t>());
-    instanceConfig.SetMaxZonePoolSize(instanceMaxZonePoolSize.as<uint64_t>());
-    instanceConfig.SetInstanceCount(instanceCount.as<uint32_t>());
+    instanceConfig.SetStartupData(config["instance"]["startupData"].as<std::string>());
+    instanceConfig.SetStackLimit(config["instance"]["stackLimit"].as<uint32_t>());
+    instanceConfig.SetPhysicalMemory(config["instance"]["physicalMemory"].as<uint64_t>());
+    instanceConfig.SetVirtualMemoryLimit(config["instance"]["virtualMemoryLimit"].as<uint64_t>());
+    instanceConfig.SetMaxOldeGenerationSize(config["instance"]["maxOldeGenerationSize"].as<uint64_t>());
+    instanceConfig.SetInitialOldGenerationSize(config["instance"]["initialOldGenerationSize"].as<uint64_t>());
+    instanceConfig.SetMaxYounGenerationSize(config["instance"]["maxYounGenerationSize"].as<uint64_t>());
+    instanceConfig.SetInitialYoungGenerationSize(config["instance"]["initialYoungGenerationSize"].as<uint64_t>());
+    instanceConfig.SetCodeRangeSize(config["instance"]["codeRangeSize"].as<uint64_t>());
+    instanceConfig.SetMaxZonePoolSize(config["instance"]["maxZonePoolSize"].as<uint64_t>());
+    instanceConfig.SetInstanceCount(config["instance"]["instanceCount"].as<uint32_t>());
+    instanceConfig.SetInited(true);
 
-    sysfunctionConfig.SetRequireRemote(sysfuncRemote.as<bool>());
-    sysfunctionConfig.SetRequireRemoteServer(sysfuncRemoteServer.as<std::string>());
+    sysfunctionConfig.SetRequireRemote(config["sysfunc"]["requireRemote"].as<bool>());
+    sysfunctionConfig.SetRequireRemoteServer(config["sysfunc"]["requireRemoteServer"].as<std::string>());
+    sysfunctionConfig.SetInited(true);
     return true;
 }
 

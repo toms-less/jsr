@@ -13,23 +13,23 @@ int main(int argc, char *argv[])
   }
 
   base::Log logger(&configManager.GetLogConfig());
-  if (logger.initialize())
+  if (!logger.initialize())
   {
     return 1;
   }
-  auto serverLog = base::Log::GetServerLogger();
+  auto serverLog = base::Log::server_logger();
 
   sysfunc::SystemFuncManager sysfuncManager(configManager.GetSysFunctionConfig());
   if (!sysfuncManager.initialize())
   {
-    serverLog->error("System function manager initialized failure.");
+    serverLog->error("System function manager initialized failure.\n");
     return 1;
   }
 
   instance::IntanceManager instances(configManager.GetInstanceConfig(), sysfuncManager);
   if (!instances.initialize())
   {
-    serverLog->error("Instance manager initialized failure.");
+    serverLog->error("Instance manager initialized failure.\n");
     return 1;
   }
 

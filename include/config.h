@@ -42,7 +42,7 @@ public:
      *   initialYoungGenerationSize: 200
      *   codeRangeSize: 500
      *   maxZonePoolSize: 500
-     *   instanceCount: 50
+     *   instanceCount: 10
      * 
      * sysfunc:
      *   requireRemote: false

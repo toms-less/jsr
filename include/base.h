@@ -148,8 +148,7 @@ namespace base
     class Log : public base::Module
     {
     public:
-        Log(base::LogConfig *logConfig);
-        ~Log();
+        Log(base::LogConfig *config);
 
         /**
          * initialize logger.

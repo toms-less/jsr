@@ -7,10 +7,6 @@ base::Log::Log(base::LogConfig *config)
     base::Log::config_ = config;
 }
 
-base::Log::~Log()
-{
-}
-
 bool base::Log::initialize()
 {
     std::shared_ptr<spdlog::logger> debug_logger = spdlog::rotating_logger_mt("debug.log", base::Log::config_->GetDebugLog(), 1048576 * base::Log::config_->GetMaxSize(), base::Log::config_->GetRotate());

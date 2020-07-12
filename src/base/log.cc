@@ -1,9 +1,6 @@
 #include <include/base.h>
 
 base::LogConfig *base::Log::config_ = nullptr;
-spdlog::logger *base::Log::debug_logger_ = nullptr;
-spdlog::logger *base::Log::server_logger_ = nullptr;
-spdlog::logger *base::Log::instance_logger_ = nullptr;
 
 base::Log::Log(base::LogConfig *config)
 {
@@ -16,24 +13,37 @@ base::Log::~Log()
 
 bool base::Log::initialize()
 {
-    base::Log::debug_logger_ = spdlog::rotating_logger_mt("debug", base::Log::config_->GetDebugLog(), 1048576 * base::Log::config_->GetMaxSize(), base::Log::config_->GetRotate()).get();
-    base::Log::server_logger_ = spdlog::rotating_logger_mt("server", base::Log::config_->GetServerLog(), 1048576 * base::Log::config_->GetMaxSize(), base::Log::config_->GetRotate()).get();
-    base::Log::instance_logger_ = spdlog::rotating_logger_mt("instance", base::Log::config_->GetInstanceLog(), 1048576 * base::Log::config_->GetMaxSize(), base::Log::config_->GetRotate()).get();
+    std::shared_ptr<spdlog::logger> debug_logger = spdlog::rotating_logger_mt("debug.log", base::Log::config_->GetDebugLog(), 1048576 * base::Log::config_->GetMaxSize(), base::Log::config_->GetRotate());
+    std::shared_ptr<spdlog::logger> server_logger = spdlog::rotating_logger_mt("server.log", base::Log::config_->GetServerLog(), 1048576 * base::Log::config_->GetMaxSize(), base::Log::config_->GetRotate());
+    std::shared_ptr<spdlog::logger> instance_logger = spdlog::rotating_logger_mt("instance.log", base::Log::config_->GetInstanceLog(), 1048576 * base::Log::config_->GetMaxSize(), base::Log::config_->GetRotate());
+
+    debug_logger->set_level(spdlog::level::debug);
+    server_logger->set_level(spdlog::level::info);
+    instance_logger->set_level(spdlog::level::info);
+
+    debug_logger->set_pattern("%Y-%m-%d %H:%M:%S %z - %n - %l - %v");
+    server_logger->set_pattern("%Y-%m-%d %H:%M:%S %z - %n - %l - %v");
+    instance_logger->set_pattern("%Y-%m-%d %H:%M:%S %z - %n - %l - %v");
+
+    debug_logger->flush_on(spdlog::level::debug);
+    server_logger->flush_on(spdlog::level::info);
+    instance_logger->flush_on(spdlog::level::info);
+
     this->inited = true;
-    return this->inited;
+    return true;
 }
 
-spdlog::logger *base::Log::debug_logger()
+std::shared_ptr<spdlog::logger> base::Log::debug_logger()
 {
-    return base::Log::debug_logger_;
+    return spdlog::get("debug.log");
 }
 
-spdlog::logger *base::Log::server_logger()
+std::shared_ptr<spdlog::logger> base::Log::server_logger()
 {
-    return base::Log::server_logger_;
+    return spdlog::get("server.log");
 }
 
-spdlog::logger *base::Log::instance_logger()
+std::shared_ptr<spdlog::logger> base::Log::instance_logger()
 {
-    return base::Log::instance_logger_;
+    return spdlog::get("instance.log");
 }

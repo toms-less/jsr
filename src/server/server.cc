@@ -15,7 +15,7 @@ void server::Runtime::start()
     auto serverLog = base::Log::server_logger();
     if (!config.IsInited())
     {
-        serverLog->error("current runtime server configuration has not been initialized.\n");
+        serverLog->error("current runtime server configuration has not been initialized.");
         return;
     }
 
@@ -28,7 +28,7 @@ void server::Runtime::start()
 
     cq_ = builder.AddCompletionQueue();
     server_ = builder.BuildAndStart();
-    serverLog->info("runtime server started and listening on '{}' port.\n", config.GetPort());
+    serverLog->info("runtime server started and listening on '{}' port.", config.GetPort());
 
     handler();
 }

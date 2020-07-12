@@ -28,7 +28,7 @@ bool instance::IntanceManager::initialize()
     auto instanceLog = base::Log::instance_logger();
     if (!config.IsInited())
     {
-        instanceLog->error("Instance configuration has not been initialized.\n");
+        instanceLog->error("Instance configuration has not been initialized.");
         return false;
     }
 
@@ -41,7 +41,7 @@ bool instance::IntanceManager::initialize()
     int instanceCount = config.GetInstanceCount();
     if (instanceCount == 0)
     {
-        instanceLog->error("Instance count in the configuration is invalid, current count is 0.\n");
+        instanceLog->error("Instance count in the configuration is invalid, current count is 0.");
         return false;
     }
 
@@ -62,7 +62,7 @@ bool instance::IntanceManager::initialize()
         if (!context.IsSuccess())
         {
             delete current;
-            instanceLog->error("Instance binding system functions failure, detail: {}.\n", context.GetError());
+            instanceLog->error("Instance binding system functions failure, detail: {}.", context.GetError());
             continue;
         }
         instances.push_back(current);
@@ -70,12 +70,12 @@ bool instance::IntanceManager::initialize()
     }
     if (instances.empty())
     {
-        instanceLog->error("Instance initialize failure, current instance list is empty.\n");
+        instanceLog->error("Instance initialize failure, current instance list is empty.");
         return false;
     }
 
     // TODO: compile all function scripts.
-    instanceLog->info("Instances initialized sucessfully, current instance list size is {}.\n", instances.size());
+    instanceLog->info("Instances initialized sucessfully, current instance list size is {}.", instances.size());
     inited = true;
     return inited;
 }

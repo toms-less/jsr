@@ -56,7 +56,7 @@ message CallRequest {
     /**
      * Timeout value of client specified to tell runtime the function calling timeout.
      */
-    int64 timeout = 5;
+    int32 timeout = 5;
 
     /**
      * HTTP requesting method.

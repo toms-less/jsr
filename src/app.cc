@@ -6,34 +6,34 @@
 
 int main(int argc, char *argv[])
 {
-  config::ConfigManager configManager;
-  if (!configManager.initialize())
+  config::ConfigManager config_manager;
+  if (!config_manager.initialize())
   {
     return 1;
   }
 
-  base::Log logger(&configManager.GetLogConfig());
+  base::Log logger(&config_manager.GetLogConfig());
   if (!logger.initialize())
   {
     return 1;
   }
-  auto serverLog = base::Log::server_logger();
+  auto server_log = base::Log::server_logger();
 
-  sysfunc::SystemFuncManager sysfuncManager(configManager.GetSysFunctionConfig());
-  if (!sysfuncManager.initialize())
+  sysfunc::SystemFuncManager sysfunc_manager(config_manager.GetSysFunctionConfig());
+  if (!sysfunc_manager.initialize())
   {
-    serverLog->error("System function manager initialized failure.\n");
+    server_log->error("System function manager initialized failure.");
     return 1;
   }
 
-  instance::IntanceManager instances(configManager.GetInstanceConfig(), sysfuncManager);
-  if (!instances.initialize())
+  instance::IntanceManager instance_manager(config_manager.GetInstanceConfig(), sysfunc_manager);
+  if (!instance_manager.initialize())
   {
-    serverLog->error("Instance manager initialized failure.\n");
+    server_log->error("Instance manager initialized failure.");
     return 1;
   }
 
-  server::Runtime runtime(configManager.GetServerConfig(), &instances);
+  server::Runtime runtime(config_manager.GetServerConfig(), &instance_manager);
   runtime.start();
   return 0;
 }

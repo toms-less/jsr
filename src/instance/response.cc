@@ -93,6 +93,18 @@ void instance::HttpResponse::send(const v8::FunctionCallbackInfo<v8::Value> &arg
             call->set_data("");
             break;
         }
+        if (parameter->IsString())
+        {
+            v8::String::Utf8Value utf8_str(isolate, parameter);
+            call->set_data(*utf8_str);
+            break;
+        }
+        if (parameter->IsStringObject())
+        {
+            v8::String::Utf8Value utf8_str(isolate, parameter.As<v8::StringObject>()->ValueOf());
+            call->set_data(*utf8_str);
+            break;
+        }
 
         v8::Local<v8::String> v8_str;
         if (!v8::JSON::Stringify(isolate->GetCurrentContext(), parameter).ToLocal(&v8_str))

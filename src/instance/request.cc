@@ -32,14 +32,95 @@ void instance::HttpRequest::system_info(const v8::FunctionCallbackInfo<v8::Value
 
 void instance::HttpRequest::content_type(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+    // prepare v8 context.
+    v8::Isolate *isolate = args.GetIsolate();
+    v8::HandleScope handle_scope(isolate);
+    v8::Context::Scope context_scope(isolate->GetCurrentContext());
+    v8::TryCatch try_catch(isolate);
+
+    // Get execution context.
+    v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
+    instance::ExecuteContext *ctx = static_cast<instance::ExecuteContext *>(ctx_data->Value());
+
+    // Get gRPC objects.
+    protos::RuntimeRequest *request = ctx->request();
+    args.GetReturnValue().Set(instance::Util::v8_str(isolate, request->call().contenttype().c_str()));
 }
 
 void instance::HttpRequest::method(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+    // prepare v8 context.
+    v8::Isolate *isolate = args.GetIsolate();
+    v8::HandleScope handle_scope(isolate);
+    v8::Context::Scope context_scope(isolate->GetCurrentContext());
+    v8::TryCatch try_catch(isolate);
+
+    // Get execution context.
+    v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
+    instance::ExecuteContext *ctx = static_cast<instance::ExecuteContext *>(ctx_data->Value());
+
+    // Get gRPC objects.
+    protos::RuntimeRequest *request = ctx->request();
+    args.GetReturnValue().Set(instance::Util::v8_str(isolate, request->call().method().c_str()));
 }
 
 void instance::HttpRequest::header(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+    // prepare v8 context.
+    v8::Isolate *isolate = args.GetIsolate();
+    v8::HandleScope handle_scope(isolate);
+    v8::Context::Scope context_scope(isolate->GetCurrentContext());
+    v8::TryCatch try_catch(isolate);
+
+    // Get execution context.
+    v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
+    instance::ExecuteContext *ctx = static_cast<instance::ExecuteContext *>(ctx_data->Value());
+
+    // Get gRPC objects.
+    protos::RuntimeRequest *request = ctx->request();
+
+    const int args_length = args.Length();
+    if (args_length != 1)
+    {
+        const char *msg = "Parameters count of 'header' function should be only 1.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+
+    v8::Local<v8::Value> parameter = args[0];
+    if (!parameter->IsString() || !parameter->IsStringObject())
+    {
+        const char *msg = "Parameters of 'header' function should be a string.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+    const google::protobuf::Map<std::string, std::string> &headers = request->call().headers();
+    if (parameter->IsString())
+    {
+        v8::String::Utf8Value utf8_str(isolate, parameter);
+        std::string name(*utf8_str);
+        if (!headers.contains(name))
+        {
+            args.GetReturnValue().SetNull();
+            return;
+        }
+        args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, headers.at(name).c_str()).ToLocalChecked());
+        return;
+    }
+    if (parameter->IsStringObject())
+    {
+        v8::String::Utf8Value utf8_str(isolate, parameter.As<v8::StringObject>()->ValueOf());
+        std::string name(*utf8_str);
+        if (!headers.contains(name))
+        {
+            args.GetReturnValue().SetNull();
+            return;
+        }
+        args.GetReturnValue().Set(v8::String::NewFromUtf8(isolate, headers.at(name).c_str()).ToLocalChecked());
+        return;
+    }
 }
 
 void instance::HttpRequest::headers(const v8::FunctionCallbackInfo<v8::Value> &args)

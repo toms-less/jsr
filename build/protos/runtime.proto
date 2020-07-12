@@ -64,19 +64,24 @@ message CallRequest {
     string method = 6;
 
     /**
+     * HTTP content type.
+     */
+    string contentType = 7;
+
+    /**
      * HTTP requesting headers.
      */
-    map<string,string> headers = 7;
+    map<string,string> headers = 8;
 
     /**
      * HTTP requesting parameters.
      */
-    map<string,string> parameters = 8;
+    map<string,string> parameters = 9;
 
     /**
      * HTTP requesting data.
      */
-    string data = 9;
+    string data = 10;
 }
 
 message ScriptRequest {

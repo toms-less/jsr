@@ -8,6 +8,15 @@ void instance::HttpRequest::system_info(const v8::FunctionCallbackInfo<v8::Value
     v8::Context::Scope context_scope(isolate->GetCurrentContext());
     v8::TryCatch try_catch(isolate);
 
+    const int args_length = args.Length();
+    if (args_length != 0)
+    {
+        const char *msg = "'system_info' function should have no parameter.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+
     // Get execution context.
     v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
     instance::ExecuteContext *ctx = static_cast<instance::ExecuteContext *>(ctx_data->Value());
@@ -38,6 +47,15 @@ void instance::HttpRequest::content_type(const v8::FunctionCallbackInfo<v8::Valu
     v8::Context::Scope context_scope(isolate->GetCurrentContext());
     v8::TryCatch try_catch(isolate);
 
+    const int args_length = args.Length();
+    if (args_length != 0)
+    {
+        const char *msg = "'content_type' function should have no parameter.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+
     // Get execution context.
     v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
     instance::ExecuteContext *ctx = static_cast<instance::ExecuteContext *>(ctx_data->Value());
@@ -54,6 +72,15 @@ void instance::HttpRequest::method(const v8::FunctionCallbackInfo<v8::Value> &ar
     v8::HandleScope handle_scope(isolate);
     v8::Context::Scope context_scope(isolate->GetCurrentContext());
     v8::TryCatch try_catch(isolate);
+
+    const int args_length = args.Length();
+    if (args_length != 0)
+    {
+        const char *msg = "'method' function should have no parameter.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
 
     // Get execution context.
     v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
@@ -125,6 +152,35 @@ void instance::HttpRequest::header(const v8::FunctionCallbackInfo<v8::Value> &ar
 
 void instance::HttpRequest::headers(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+    // prepare v8 context.
+    v8::Isolate *isolate = args.GetIsolate();
+    v8::HandleScope handle_scope(isolate);
+    v8::Context::Scope context_scope(isolate->GetCurrentContext());
+    v8::TryCatch try_catch(isolate);
+
+    const int args_length = args.Length();
+    if (args_length != 0)
+    {
+        const char *msg = "'headers' function should have no parameter.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+
+    // Get execution context.
+    v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
+    instance::ExecuteContext *ctx = static_cast<instance::ExecuteContext *>(ctx_data->Value());
+
+    // Get gRPC objects.
+    protos::RuntimeRequest *request = ctx->request();
+    const google::protobuf::Map<std::string, std::string> &headers = request->call().headers();
+    v8::Local<v8::Object> v8_headers = v8::Object::New(isolate);
+    for (auto &pair : headers)
+    {
+        v8_headers->Set(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, pair.first.c_str()),
+                        instance::Util::v8_str(isolate, pair.second.c_str()));
+    }
+    args.GetReturnValue().Set(v8_headers);
 }
 
 void instance::HttpRequest::cookie(const v8::FunctionCallbackInfo<v8::Value> &args)

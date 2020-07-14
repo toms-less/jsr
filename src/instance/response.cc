@@ -2,6 +2,65 @@
 
 void instance::HttpResponse::set_header(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+    // prepare v8 context.
+    v8::Isolate *isolate = args.GetIsolate();
+    v8::HandleScope handle_scope(isolate);
+    v8::Context::Scope context_scope(isolate->GetCurrentContext());
+
+    // Get execution context.
+    v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
+    instance::ExecuteContext *ctx = static_cast<instance::ExecuteContext *>(ctx_data->Value());
+
+    // Get gRPC objects.
+    protos::RuntimeResponse *response = ctx->response();
+
+    const int args_length = args.Length();
+    if (args_length != 2)
+    {
+        const char *msg = "Parameters count of 'set_header' function should be only 2.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+
+    v8::Local<v8::Value> name = args[0];
+    v8::Local<v8::Value> value = args[1];
+    if (!name->IsString() || !name->IsStringObject() || !value->IsString() || !value->IsStringObject())
+    {
+        const char *msg = "Parameters of 'set_header' function should be 2 string, 'name' and 'value'.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+
+    // convert name.
+    std::string cname;
+    if (name->IsString())
+    {
+        v8::String::Utf8Value utf8_str(isolate, name);
+        cname.append(*utf8_str);
+    }
+    if (name->IsStringObject())
+    {
+        v8::String::Utf8Value utf8_str(isolate, name.As<v8::StringObject>()->ValueOf());
+        cname.append(*utf8_str);
+    }
+
+    // convert value.
+    std::string cvalue;
+    if (value->IsString())
+    {
+        v8::String::Utf8Value utf8_str(isolate, value);
+        cvalue.append(*utf8_str);
+    }
+    if (value->IsStringObject())
+    {
+        v8::String::Utf8Value utf8_str(isolate, value.As<v8::StringObject>()->ValueOf());
+        cvalue.append(*utf8_str);
+    }
+
+    google::protobuf::Map<std::string, std::string> *headers = response->mutable_call()->mutable_headers();
+    (*headers)[cname] = cvalue;
 }
 
 void instance::HttpResponse::set_headers(const v8::FunctionCallbackInfo<v8::Value> &args)

@@ -215,22 +215,22 @@ message Cookie {
     /**
      * cookie expires.
      */
-     int32 expires = 5;
+    int32 expires = 5;
 
     /**
      * cookie max age.
      */
-     int32 maxAge = 6;
+    int32 maxAge = 6;
 
     /**
      * cookie secure.
      */
-     bool secure = 7;
+    bool secure = 7;
 
     /**
      * cookie http only.
      */
-     bool httpOnly = 8;
+    bool httpOnly = 8;
 }
 
 message ScriptResponse {

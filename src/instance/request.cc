@@ -6,7 +6,6 @@ void instance::HttpRequest::system_info(const v8::FunctionCallbackInfo<v8::Value
     v8::Isolate *isolate = args.GetIsolate();
     v8::HandleScope handle_scope(isolate);
     v8::Context::Scope context_scope(isolate->GetCurrentContext());
-    v8::TryCatch try_catch(isolate);
 
     const int args_length = args.Length();
     if (args_length != 0)
@@ -45,7 +44,6 @@ void instance::HttpRequest::content_type(const v8::FunctionCallbackInfo<v8::Valu
     v8::Isolate *isolate = args.GetIsolate();
     v8::HandleScope handle_scope(isolate);
     v8::Context::Scope context_scope(isolate->GetCurrentContext());
-    v8::TryCatch try_catch(isolate);
 
     const int args_length = args.Length();
     if (args_length != 0)
@@ -71,7 +69,6 @@ void instance::HttpRequest::method(const v8::FunctionCallbackInfo<v8::Value> &ar
     v8::Isolate *isolate = args.GetIsolate();
     v8::HandleScope handle_scope(isolate);
     v8::Context::Scope context_scope(isolate->GetCurrentContext());
-    v8::TryCatch try_catch(isolate);
 
     const int args_length = args.Length();
     if (args_length != 0)
@@ -97,7 +94,6 @@ void instance::HttpRequest::header(const v8::FunctionCallbackInfo<v8::Value> &ar
     v8::Isolate *isolate = args.GetIsolate();
     v8::HandleScope handle_scope(isolate);
     v8::Context::Scope context_scope(isolate->GetCurrentContext());
-    v8::TryCatch try_catch(isolate);
 
     // Get execution context.
     v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
@@ -156,7 +152,6 @@ void instance::HttpRequest::headers(const v8::FunctionCallbackInfo<v8::Value> &a
     v8::Isolate *isolate = args.GetIsolate();
     v8::HandleScope handle_scope(isolate);
     v8::Context::Scope context_scope(isolate->GetCurrentContext());
-    v8::TryCatch try_catch(isolate);
 
     const int args_length = args.Length();
     if (args_length != 0)
@@ -189,7 +184,6 @@ void instance::HttpRequest::cookie(const v8::FunctionCallbackInfo<v8::Value> &ar
     v8::Isolate *isolate = args.GetIsolate();
     v8::HandleScope handle_scope(isolate);
     v8::Context::Scope context_scope(isolate->GetCurrentContext());
-    v8::TryCatch try_catch(isolate);
 
     // Get execution context.
     v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
@@ -265,7 +259,6 @@ void instance::HttpRequest::cookies(const v8::FunctionCallbackInfo<v8::Value> &a
     v8::Isolate *isolate = args.GetIsolate();
     v8::HandleScope handle_scope(isolate);
     v8::Context::Scope context_scope(isolate->GetCurrentContext());
-    v8::TryCatch try_catch(isolate);
 
     const int args_length = args.Length();
     if (args_length != 0)
@@ -317,7 +310,6 @@ void instance::HttpRequest::parameter(const v8::FunctionCallbackInfo<v8::Value> 
     v8::Isolate *isolate = args.GetIsolate();
     v8::HandleScope handle_scope(isolate);
     v8::Context::Scope context_scope(isolate->GetCurrentContext());
-    v8::TryCatch try_catch(isolate);
 
     // Get execution context.
     v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
@@ -376,7 +368,6 @@ void instance::HttpRequest::parameters(const v8::FunctionCallbackInfo<v8::Value>
     v8::Isolate *isolate = args.GetIsolate();
     v8::HandleScope handle_scope(isolate);
     v8::Context::Scope context_scope(isolate->GetCurrentContext());
-    v8::TryCatch try_catch(isolate);
 
     const int args_length = args.Length();
     if (args_length != 0)
@@ -409,7 +400,6 @@ void instance::HttpRequest::data(const v8::FunctionCallbackInfo<v8::Value> &args
     v8::Isolate *isolate = args.GetIsolate();
     v8::HandleScope handle_scope(isolate);
     v8::Context::Scope context_scope(isolate->GetCurrentContext());
-    v8::TryCatch try_catch(isolate);
 
     const int args_length = args.Length();
     if (args_length != 0)

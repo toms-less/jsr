@@ -185,6 +185,78 @@ void instance::HttpRequest::headers(const v8::FunctionCallbackInfo<v8::Value> &a
 
 void instance::HttpRequest::cookie(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+    // prepare v8 context.
+    v8::Isolate *isolate = args.GetIsolate();
+    v8::HandleScope handle_scope(isolate);
+    v8::Context::Scope context_scope(isolate->GetCurrentContext());
+    v8::TryCatch try_catch(isolate);
+
+    // Get execution context.
+    v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
+    instance::ExecuteContext *ctx = static_cast<instance::ExecuteContext *>(ctx_data->Value());
+
+    // Get gRPC objects.
+    protos::RuntimeRequest *request = ctx->request();
+
+    const int args_length = args.Length();
+    if (args_length != 1)
+    {
+        const char *msg = "Parameters count of 'cookie' function should be only 1.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+
+    v8::Local<v8::Value> parameter = args[0];
+    if (!parameter->IsString() || !parameter->IsStringObject())
+    {
+        const char *msg = "Parameters of 'cookie' function should be a string.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+
+    std::string name;
+    if (parameter->IsString())
+    {
+        v8::String::Utf8Value utf8_str(isolate, parameter);
+        name.append(*utf8_str);
+    }
+    if (parameter->IsStringObject())
+    {
+        v8::String::Utf8Value utf8_str(isolate, parameter.As<v8::StringObject>()->ValueOf());
+        name.append(*utf8_str);
+    }
+
+    const google::protobuf::RepeatedPtrField<protos::Cookie> &cookies = request->call().cookies();
+    for (int i = 0; i < cookies.size(); i++)
+    {
+        const protos::Cookie &cookie = cookies[i];
+        if (name == cookie.name())
+        {
+            // Build cookie object.
+            v8::Local<v8::Object> v8_cookie = v8::Object::New(isolate);
+            v8_cookie->Set(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "name"),
+                           instance::Util::v8_str(isolate, cookie.name().c_str()));
+            v8_cookie->Set(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "value"),
+                           instance::Util::v8_str(isolate, cookie.value().c_str()));
+            v8_cookie->Set(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "domain"),
+                           instance::Util::v8_str(isolate, cookie.domain().c_str()));
+            v8_cookie->Set(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "path"),
+                           instance::Util::v8_str(isolate, cookie.path().c_str()));
+            v8_cookie->Set(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "expires"),
+                           v8::Integer::New(isolate, cookie.expires()));
+            v8_cookie->Set(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "maxAge"),
+                           v8::Integer::New(isolate, cookie.maxage()));
+            v8_cookie->Set(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "secure"),
+                           v8::Boolean::New(isolate, cookie.secure()));
+            v8_cookie->Set(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "httpOnly"),
+                           v8::Boolean::New(isolate, cookie.httponly()));
+            args.GetReturnValue().Set(v8_cookie);
+            return;
+        }
+    }
+    args.GetReturnValue().SetNull();
 }
 
 void instance::HttpRequest::cookies(const v8::FunctionCallbackInfo<v8::Value> &args)

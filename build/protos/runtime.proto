@@ -79,9 +79,14 @@ message CallRequest {
     map<string,string> parameters = 9;
 
     /**
+     * HTTP requesting cookies.
+     */
+    repeated Cookie cookies = 10;
+
+    /**
      * HTTP requesting data.
      */
-    string data = 10;
+    string data = 11;
 }
 
 message ScriptRequest {
@@ -176,9 +181,56 @@ message CallResponse {
     map<string,string> headers = 6;
 
     /**
+     * HTTP requesting cookies.
+     */
+    repeated Cookie cookies = 7;
+
+    /**
      * HTTP responsing data.
      */
-    string data = 7;
+    string data = 8;
+}
+
+message Cookie {
+    /**
+     * cookie name.
+     */
+    string name = 1;
+
+    /**
+     * cookie value.
+     */
+    string value = 2;
+
+    /**
+     * cookie domain.
+     */
+    string domain = 3;
+
+    /**
+     * cookie path.
+     */
+    string path = 4;
+
+    /**
+     * cookie expires.
+     */
+    string expires = 5;
+
+    /**
+     * cookie max age.
+     */
+    string maxAge = 6;
+
+    /**
+     * cookie secure.
+     */
+    string secure = 7;
+
+    /**
+     * cookie http only.
+     */
+    string httpOnly = 8;
 }
 
 message ScriptResponse {

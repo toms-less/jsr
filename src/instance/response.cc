@@ -114,7 +114,7 @@ void instance::HttpResponse::set_headers(const v8::FunctionCallbackInfo<v8::Valu
 
     google::protobuf::Map<std::string, std::string> *headers = response->mutable_call()->mutable_headers();
     v8::Local<v8::Array> propertyNames = maybe.ToLocalChecked();
-    for (int i = 0; i < propertyNames->Length(); i++)
+    for (uint32_t i = 0; i < propertyNames->Length(); i++)
     {
         v8::Local<v8::Value> name = propertyNames->Get(isolate->GetCurrentContext(), i).ToLocalChecked();
         v8::Local<v8::Value> value = v8_param->Get(isolate->GetCurrentContext(), name).ToLocalChecked();

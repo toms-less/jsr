@@ -65,6 +65,98 @@ void instance::HttpResponse::set_header(const v8::FunctionCallbackInfo<v8::Value
 
 void instance::HttpResponse::set_headers(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+    // prepare v8 context.
+    v8::Isolate *isolate = args.GetIsolate();
+    v8::HandleScope handle_scope(isolate);
+    v8::Context::Scope context_scope(isolate->GetCurrentContext());
+
+    // Get execution context.
+    v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
+    instance::ExecuteContext *ctx = static_cast<instance::ExecuteContext *>(ctx_data->Value());
+
+    // Get gRPC objects.
+    protos::RuntimeResponse *response = ctx->response();
+
+    const int args_length = args.Length();
+    if (args_length != 1)
+    {
+        const char *msg = "Parameters count of 'set_headers' function should be only 1.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+
+    v8::Local<v8::Value> parameter = args[0];
+    if (parameter->IsNull())
+    {
+        return;
+    }
+    if (parameter->IsUndefined())
+    {
+        const char *msg = "Parameters of 'set_headers' function is undefined.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+    if (!parameter->IsObject())
+    {
+        const char *msg = "Parameters of 'set_headers' function is not an object type.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+    v8::Local<v8::Object> v8_param = parameter.As<v8::Object>();
+    v8::MaybeLocal<v8::Array> maybe = v8_param->GetOwnPropertyNames(isolate->GetCurrentContext());
+    if (maybe.IsEmpty())
+    {
+        return;
+    }
+
+    google::protobuf::Map<std::string, std::string> *headers = response->mutable_call()->mutable_headers();
+    v8::Local<v8::Array> propertyNames = maybe.ToLocalChecked();
+    for (int i = 0; i < propertyNames->Length(); i++)
+    {
+        v8::Local<v8::Value> name = propertyNames->Get(isolate->GetCurrentContext(), i).ToLocalChecked();
+        v8::Local<v8::Value> value = v8_param->Get(isolate->GetCurrentContext(), name).ToLocalChecked();
+        if (!name->IsString() || !name->IsStringObject() || !value->IsString() || !value->IsStringObject())
+        {
+            /**
+             * Clear all the headers that have been put into the map
+             * before throw an exception to the user function script.
+             * 
+            */
+            headers->clear();
+            const char *msg = "Invalid parameters of 'set_headers' function, header's name or value should be a string.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            return;
+        }
+
+        std::string cname;
+        if (name->IsString())
+        {
+            v8::String::Utf8Value utf8_str(isolate, name);
+            cname.append(*utf8_str);
+        }
+        if (name->IsStringObject())
+        {
+            v8::String::Utf8Value utf8_str(isolate, name.As<v8::StringObject>()->ValueOf());
+            cname.append(*utf8_str);
+        }
+
+        std::string cvalue;
+        if (value->IsString())
+        {
+            v8::String::Utf8Value utf8_str(isolate, value);
+            cvalue.append(*utf8_str);
+        }
+        if (value->IsStringObject())
+        {
+            v8::String::Utf8Value utf8_str(isolate, value.As<v8::StringObject>()->ValueOf());
+            cvalue.append(*utf8_str);
+        }
+        (*headers)[cname] = cvalue;
+    }
 }
 
 void instance::HttpResponse::set_cookie(const v8::FunctionCallbackInfo<v8::Value> &args)
@@ -117,7 +209,7 @@ void instance::HttpResponse::send(const v8::FunctionCallbackInfo<v8::Value> &arg
          * In this condition, user use this function
          * like 'response.send()' in their scripts.
          * So it will return an empty data to the client.
-         * 
+         *
         */
         // empty data.
         call->set_data("");

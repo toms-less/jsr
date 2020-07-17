@@ -10,6 +10,8 @@ It is mainly developed by C++ and use the bazel tool to build it. In this runtim
 to exchange message between services. For the JavaScript performance, we choose the v8 engine
 for JavaScript runtime.
 
+For more detail, go to [docs](https://github.com/toms-less/docs).
+
 ## Build
 
 #### Prepare environment.

@@ -48,7 +48,7 @@ bazel build //:v8
 bazel build //... --define use_local_v8_library=true
 ```
 
-Bazel is a popular tool, if you want to learn more about it, go to [Bazel Home](https://www.mdeditor.com/).
+Bazel is a popular tool, if you want to learn more about it, go to [Bazel Home](https://bazel.build/).
 
 ## Community
 Now toms is developing and has not be released, there are a lot of things to do. If you are interested in toms,

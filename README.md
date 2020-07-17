@@ -11,6 +11,8 @@ to exchange message between services. For the JavaScript performance, we choose 
 for JavaScript runtime.
 
 ## Build
+
+#### Prepare environment.
 As jsr is developed for linux platform, we recommend you use ubuntu to dev and compile. 
 Before building jsr, there are some steps to prepare the developing environment. The follow step
 is for ubuntu. The prepare steps only should do once for a developing machine.
@@ -25,6 +27,7 @@ sh build/tools/basic.sh
 ./build/tools/v8-deps.sh
 ```
 
+#### Build it.
 As the bazel support multiple languages, all the subjects of toms are organized by bazel.
 If you are first time to build jsr, you can build it with the below command.
 ```shell

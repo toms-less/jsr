@@ -160,3 +160,21 @@ exports_files(
     ],
     visibility = ["//visibility:public"],
 )
+
+# for testing.
+cc_library(
+    name = "client",
+    srcs = [
+        "include/test.h",
+        "test/client/client.cc",
+    ],
+    copts = [
+        "-std=c++11",
+        "-I.",
+    ],
+    deps = [
+        ":runtime_grpc",
+        "@com_github_grpc_grpc//:grpc++",
+        "@com_github_grpc_grpc//:grpc++_reflection",
+    ],
+)

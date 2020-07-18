@@ -176,19 +176,30 @@ message CallResponse {
     string runtime = 5;
 
     /**
+     * HTTP responsing status. 
+     * '200', '500', '404'...
+     */
+    int32 status = 6;
+
+    /**
+     * HTTP responsing type.
+     */
+    string contentType = 7;
+
+    /**
      * HTTP responsing headers.
      */
-    map<string,string> headers = 6;
+    map<string,string> headers = 8;
 
     /**
      * HTTP requesting cookies.
      */
-    repeated Cookie cookies = 7;
+    repeated Cookie cookies = 9;
 
     /**
      * HTTP responsing data.
      */
-    string data = 8;
+    string data = 10;
 }
 
 message Cookie {

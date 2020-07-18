@@ -35,7 +35,6 @@ void instance::HttpResponse::set_header(const v8::FunctionCallbackInfo<v8::Value
         v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
         isolate->ThrowException(error);
         return;
-        return;
     }
 
     if (!name->IsString() && !name->IsStringObject())
@@ -605,10 +604,111 @@ void instance::HttpResponse::set_cookie(const v8::FunctionCallbackInfo<v8::Value
 
 void instance::HttpResponse::set_status(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+    // prepare v8 context.
+    v8::Isolate *isolate = args.GetIsolate();
+    v8::HandleScope handle_scope(isolate);
+    v8::Context::Scope context_scope(isolate->GetCurrentContext());
+
+    // Get execution context.
+    v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
+    instance::ExecuteContext *ctx = static_cast<instance::ExecuteContext *>(ctx_data->Value());
+
+    // Get gRPC objects.
+    protos::RuntimeResponse *response = ctx->response();
+
+    const int args_length = args.Length();
+    if (args_length != 1)
+    {
+        const char *msg = "Parameters count of 'set_status' function should be only one.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+
+    v8::Local<v8::Value> status = args[0];
+    if (status->IsNull())
+    {
+        const char *msg = "Parameters of 'set_status' are invalid, http status value is null.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+    if (status->IsUndefined())
+    {
+        const char *msg = "Parameters of 'set_status' are invalid, http status value is undefined.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+    if (!status->IsInt32())
+    {
+        const char *msg = "Parameters of 'set_status' are invalid, http status value is not an int type.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+
+    // todo: check valid status code.
+    response->mutable_call()->set_status(status.As<v8::Int32>()->Value());
 }
 
 void instance::HttpResponse::set_content_type(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
+    // prepare v8 context.
+    v8::Isolate *isolate = args.GetIsolate();
+    v8::HandleScope handle_scope(isolate);
+    v8::Context::Scope context_scope(isolate->GetCurrentContext());
+
+    // Get execution context.
+    v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
+    instance::ExecuteContext *ctx = static_cast<instance::ExecuteContext *>(ctx_data->Value());
+
+    // Get gRPC objects.
+    protos::RuntimeResponse *response = ctx->response();
+
+    const int args_length = args.Length();
+    if (args_length != 1)
+    {
+        const char *msg = "Parameters count of 'set_content_type' function should be only one.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+
+    v8::Local<v8::Value> content_type = args[0];
+    if (content_type->IsNull())
+    {
+        const char *msg = "Parameters of 'set_content_type' are invalid, content type value is null.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+    if (content_type->IsUndefined())
+    {
+        const char *msg = "Parameters of 'set_content_type' are invalid, content type value is undefined.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+    if (!content_type->IsString() && !content_type->IsStringObject())
+    {
+        const char *msg = "Parameters of 'set_content_type' are invalid, content type value is not a string.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+
+    // todo: check valid content type.
+    if (content_type->IsString())
+    {
+        v8::String::Utf8Value utf8_str(isolate, content_type);
+        response->mutable_call()->set_contenttype(*utf8_str);
+    }
+    if (content_type->IsStringObject())
+    {
+        v8::String::Utf8Value utf8_str(isolate, content_type.As<v8::StringObject>()->ValueOf());
+        response->mutable_call()->set_contenttype(*utf8_str);
+    }
 }
 
 void instance::HttpResponse::send(const v8::FunctionCallbackInfo<v8::Value> &args)

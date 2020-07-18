@@ -25,9 +25,29 @@ void instance::HttpResponse::set_header(const v8::FunctionCallbackInfo<v8::Value
 
     v8::Local<v8::Value> name = args[0];
     v8::Local<v8::Value> value = args[1];
-    if (!name->IsString() || !name->IsStringObject() || !value->IsString() || !value->IsStringObject())
+    if (name->IsNull() || value->IsNull())
     {
-        const char *msg = "Parameters of 'set_header' function should be 2 string, 'name' and 'value'.";
+        return;
+    }
+    if (name->IsUndefined() || value->IsUndefined())
+    {
+        const char *msg = "Parameters of 'set_header' are invalid, header name or value is undefined.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+        return;
+    }
+
+    if (!name->IsString() && !name->IsStringObject())
+    {
+        const char *msg = "Parameters of 'set_header' are invalid, header name should be a string value.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+    if (!value->IsString() && !value->IsStringObject())
+    {
+        const char *msg = "Parameters of 'set_header' are invalid, header value should be a string value.";
         v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
         isolate->ThrowException(error);
         return;
@@ -80,7 +100,7 @@ void instance::HttpResponse::set_headers(const v8::FunctionCallbackInfo<v8::Valu
     const int args_length = args.Length();
     if (args_length != 1)
     {
-        const char *msg = "Parameters count of 'set_headers' function should be only 1.";
+        const char *msg = "Parameters of 'set_headers' are invalid, only one parameter is permitted.";
         v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
         isolate->ThrowException(error);
         return;
@@ -93,14 +113,14 @@ void instance::HttpResponse::set_headers(const v8::FunctionCallbackInfo<v8::Valu
     }
     if (parameter->IsUndefined())
     {
-        const char *msg = "Parameters of 'set_headers' function is undefined.";
+        const char *msg = "Parameters of 'set_headers' are invalid, parameter value is undefined.";
         v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
         isolate->ThrowException(error);
         return;
     }
     if (!parameter->IsObject())
     {
-        const char *msg = "Parameters of 'set_headers' function is not an object type.";
+        const char *msg = "Parameters of 'set_headers' are invalid, parameter value is not an object type.";
         v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
         isolate->ThrowException(error);
         return;
@@ -118,7 +138,11 @@ void instance::HttpResponse::set_headers(const v8::FunctionCallbackInfo<v8::Valu
     {
         v8::Local<v8::Value> name = propertyNames->Get(isolate->GetCurrentContext(), i).ToLocalChecked();
         v8::Local<v8::Value> value = v8_param->Get(isolate->GetCurrentContext(), name).ToLocalChecked();
-        if (!name->IsString() || !name->IsStringObject() || !value->IsString() || !value->IsStringObject())
+        if (name->IsNull() || value->IsNull())
+        {
+            continue;
+        }
+        if (name->IsUndefined() || value->IsUndefined())
         {
             /**
              * Clear all the headers that have been put into the map
@@ -126,7 +150,33 @@ void instance::HttpResponse::set_headers(const v8::FunctionCallbackInfo<v8::Valu
              * 
             */
             headers->clear();
-            const char *msg = "Invalid parameters of 'set_headers' function, header's name or value should be a string.";
+            const char *msg = "Invalid parameters of 'set_headers' are invalid, header name or value in the parameter is undefined.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            return;
+        }
+        if (!name->IsString() && !name->IsStringObject())
+        {
+            /**
+             * Clear all the headers that have been put into the map
+             * before throw an exception to the user function script.
+             * 
+            */
+            headers->clear();
+            const char *msg = "Invalid parameters of 'set_headers' are invalid, header name should be a string type.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            return;
+        }
+        if (!value->IsString() && !value->IsStringObject())
+        {
+            /**
+             * Clear all the headers that have been put into the map
+             * before throw an exception to the user function script.
+             * 
+            */
+            headers->clear();
+            const char *msg = "Invalid parameters of 'set_headers' are invalid, header value should be a string type.";
             v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
             isolate->ThrowException(error);
             return;
@@ -161,10 +211,396 @@ void instance::HttpResponse::set_headers(const v8::FunctionCallbackInfo<v8::Valu
 
 void instance::HttpResponse::set_cookie(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
-}
+    // prepare v8 context.
+    v8::Isolate *isolate = args.GetIsolate();
+    v8::HandleScope handle_scope(isolate);
+    v8::Context::Scope context_scope(isolate->GetCurrentContext());
 
-void instance::HttpResponse::set_cookies(const v8::FunctionCallbackInfo<v8::Value> &args)
-{
+    // Get execution context.
+    v8::Local<v8::External> ctx_data = v8::Local<v8::External>::Cast(args.Data());
+    instance::ExecuteContext *ctx = static_cast<instance::ExecuteContext *>(ctx_data->Value());
+
+    // Get gRPC objects.
+    protos::RuntimeResponse *response = ctx->response();
+
+    const int args_length = args.Length();
+    if (args_length != 1)
+    {
+        const char *msg = "Parameters count of 'set_cookie' are invalid, only one parameter is permitted.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+
+    v8::Local<v8::Value> parameter = args[0];
+    if (parameter->IsNull())
+    {
+        return;
+    }
+    if (parameter->IsUndefined())
+    {
+        const char *msg = "Parameters of 'set_cookie' function is undefined.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+    if (!parameter->IsObject())
+    {
+        const char *msg = "Parameters of 'set_cookie' function is not an object type.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        return;
+    }
+    v8::Local<v8::Object> v8_param = parameter.As<v8::Object>();
+    google::protobuf::RepeatedPtrField<protos::Cookie> *cookies = response->mutable_call()->mutable_cookies();
+    protos::Cookie *cookie = new protos::Cookie();
+
+    /**
+     * Cookie name.
+     * 
+    */
+    v8::MaybeLocal<v8::Value> maybe_name = v8_param->Get(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "name"));
+    if (!maybe_name.IsEmpty())
+    {
+        v8::Local<v8::Value> name = maybe_name.ToLocalChecked();
+        if (name->IsNull())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie name is null.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (name->IsUndefined())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie name is undefined.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (!name->IsString() && !name->IsStringObject())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie name should be a string type.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (name->IsString())
+        {
+            v8::String::Utf8Value utf8_str(isolate, name);
+            cookie->set_name(*utf8_str);
+        }
+        if (name->IsStringObject())
+        {
+            v8::String::Utf8Value utf8_str(isolate, name.As<v8::StringObject>()->ValueOf());
+            cookie->set_name(*utf8_str);
+        }
+    }
+    else
+    {
+        const char *msg = "Invalid parameters of 'set_cookie' are invalid, there is no cookie name.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        delete cookie;
+        return;
+    }
+
+    /**
+     * Cookie value.
+     * 
+    */
+    v8::MaybeLocal<v8::Value> maybe_value = v8_param->Get(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "value"));
+    if (!maybe_value.IsEmpty())
+    {
+        v8::Local<v8::Value> value = maybe_value.ToLocalChecked();
+        if (value->IsNull())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie value is null.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (value->IsUndefined())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie value is undefined.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (!value->IsString() && !value->IsStringObject())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie value should be a string type.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (value->IsString())
+        {
+            v8::String::Utf8Value utf8_str(isolate, value);
+            cookie->set_value(*utf8_str);
+        }
+        if (value->IsStringObject())
+        {
+            v8::String::Utf8Value utf8_str(isolate, value.As<v8::StringObject>()->ValueOf());
+            cookie->set_value(*utf8_str);
+        }
+    }
+    else
+    {
+        const char *msg = "Invalid parameters of 'set_cookie' are invalid, there is no cookie value.";
+        v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+        isolate->ThrowException(error);
+        delete cookie;
+        return;
+    }
+
+    /**
+     * Cookie domain.
+     * 
+    */
+    v8::MaybeLocal<v8::Value> maybe_domain = v8_param->Get(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "domain"));
+    if (!maybe_domain.IsEmpty())
+    {
+        v8::Local<v8::Value> domain = maybe_domain.ToLocalChecked();
+        if (domain->IsNull())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie domain is null.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (domain->IsUndefined())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie domain is undefined.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (!domain->IsString() && !domain->IsStringObject())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie domain should be a string type.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (domain->IsString())
+        {
+            v8::String::Utf8Value utf8_str(isolate, domain);
+            cookie->set_domain(*utf8_str);
+        }
+        if (domain->IsStringObject())
+        {
+            v8::String::Utf8Value utf8_str(isolate, domain.As<v8::StringObject>()->ValueOf());
+            cookie->set_domain(*utf8_str);
+        }
+    }
+
+    /**
+     * Cookie path.
+     * 
+    */
+    v8::MaybeLocal<v8::Value> maybe_path = v8_param->Get(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "path"));
+    if (!maybe_path.IsEmpty())
+    {
+        v8::Local<v8::Value> path = maybe_path.ToLocalChecked();
+        if (path->IsNull())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie path is null.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (path->IsUndefined())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie path is undefined.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (!path->IsString() && !path->IsStringObject())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie path should be a string type.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (path->IsString())
+        {
+            v8::String::Utf8Value utf8_str(isolate, path);
+            cookie->set_path(*utf8_str);
+        }
+        if (path->IsStringObject())
+        {
+            v8::String::Utf8Value utf8_str(isolate, path.As<v8::StringObject>()->ValueOf());
+            cookie->set_path(*utf8_str);
+        }
+    }
+
+    /**
+     * Cookie expires.
+     * 
+    */
+    v8::MaybeLocal<v8::Value> maybe_expires = v8_param->Get(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "expires"));
+    if (!maybe_expires.IsEmpty())
+    {
+        v8::Local<v8::Value> expires = maybe_expires.ToLocalChecked();
+        if (expires->IsNull())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie expires is null.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (expires->IsUndefined())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie expires is undefined.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (!expires->IsInt32())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie expires should be a int type.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        cookie->set_expires(expires.As<v8::Int32>()->Value());
+    }
+
+    /**
+     * Cookie maxAge.
+     * 
+    */
+    v8::MaybeLocal<v8::Value> maybe_age = v8_param->Get(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "maxAge"));
+    if (!maybe_age.IsEmpty())
+    {
+        v8::Local<v8::Value> age = maybe_age.ToLocalChecked();
+        if (age->IsNull())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie maxAge is null.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (age->IsUndefined())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie maxAge is undefined.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (!age->IsInt32())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie maxAge should be a int type.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        cookie->set_maxage(age.As<v8::Int32>()->Value());
+    }
+
+    /**
+     * Cookie secure.
+     * 
+    */
+    v8::MaybeLocal<v8::Value> maybe_secure = v8_param->Get(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "secure"));
+    if (!maybe_secure.IsEmpty())
+    {
+        v8::Local<v8::Value> secure = maybe_secure.ToLocalChecked();
+        if (secure->IsNull())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie secure is null.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (secure->IsUndefined())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie secure is undefined.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (!secure->IsBoolean() && !secure->IsBooleanObject())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie secure should be a boolean type.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (secure->IsBoolean())
+        {
+            cookie->set_secure(secure.As<v8::Boolean>()->Value());
+        }
+        if (secure->IsBooleanObject())
+        {
+            cookie->set_secure(secure.As<v8::BooleanObject>()->ValueOf());
+        }
+    }
+
+    /**
+     * Cookie httpOnly.
+     * 
+    */
+    v8::MaybeLocal<v8::Value> maybe_http_only = v8_param->Get(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "httpOnly"));
+    if (!maybe_http_only.IsEmpty())
+    {
+        v8::Local<v8::Value> http_only = maybe_http_only.ToLocalChecked();
+        if (http_only->IsNull())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie httpOnly is null.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (http_only->IsUndefined())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie httpOnly is undefined.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (!http_only->IsBoolean() && !http_only->IsBooleanObject())
+        {
+            const char *msg = "Invalid parameters of 'set_cookie' are invalid, cookie httpOnly should be a boolean type.";
+            v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
+            isolate->ThrowException(error);
+            delete cookie;
+            return;
+        }
+        if (http_only->IsBoolean())
+        {
+            cookie->set_httponly(http_only.As<v8::Boolean>()->Value());
+        }
+        if (http_only->IsBooleanObject())
+        {
+            cookie->set_httponly(http_only.As<v8::BooleanObject>()->ValueOf());
+        }
+    }
+    cookies->AddAllocated(cookie);
 }
 
 void instance::HttpResponse::set_status(const v8::FunctionCallbackInfo<v8::Value> &args)

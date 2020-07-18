@@ -289,12 +289,6 @@ namespace instance
         static void set_cookie(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
-         * User function callback. Set many cookies for this request.
-         * 
-         */
-        static void set_cookies(const v8::FunctionCallbackInfo<v8::Value> &args);
-
-        /**
          * User function callback. Set HTTP status code for this request.
          * 
          */

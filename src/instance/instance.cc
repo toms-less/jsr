@@ -392,10 +392,6 @@ void instance::Instance::Execute(ExecuteContext &context)
     v8::Local<v8::FunctionTemplate> setCookieTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::set_cookie, v8::External::New(isolate, &context));
     responseTemplate->Set(instance::Util::v8_str(isolate, "set_cookie"), setCookieTemplate);
 
-    // "response.set_cookies([{'name':'k1','value':'v1','maxAge':60},{'name':'k2','value':'v2','maxAge':60}])"
-    v8::Local<v8::FunctionTemplate> setCookiesTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::set_cookies, v8::External::New(isolate, &context));
-    responseTemplate->Set(instance::Util::v8_str(isolate, "set_cookies"), setCookiesTemplate);
-
     // "response.set_content_type('application/json')"
     v8::Local<v8::FunctionTemplate> setContentTypeTemplate = v8::FunctionTemplate::New(isolate, HttpResponse::set_content_type, v8::External::New(isolate, &context));
     responseTemplate->Set(instance::Util::v8_str(isolate, "set_content_type"), setContentTypeTemplate);

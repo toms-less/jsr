@@ -83,7 +83,9 @@ bool instance::IntanceManager::initialize()
         if (!compile_ctx.ok())
         {
             instance_log->error("Compile script error when initialized instance, error {}.", compile_ctx.error());
+            continue;
         }
+        instance_log->info("Compile script sucessfully when initialized instance, script {}.", compile_ctx.script());
     }
 
     instance_log->info("Instances initialized sucessfully, current instance list size is {}.", instances.size());

@@ -436,28 +436,8 @@ void instance::Instance::Execute(ExecuteContext &context)
     v8::Local<v8::Function> function = v8::Local<v8::Function>::Cast(functionValue);
 
     // call user function.
-    std::unique_ptr<v8::Local<v8::Value>> pargs(new v8::Local<v8::Value>[2]);
-    pargs.get()[0] = request;
-    pargs.get()[1] = response;
-
-    v8::Local<v8::Value> result;
-    if (!function->Call(handleContext, handleContext->Global(), 2, pargs.get()).ToLocal(&result))
-    {
-        v8::Local<v8::Value> stack;
-        if (tryCatch.StackTrace(handleContext).ToLocal(&stack))
-        {
-            v8::String::Utf8Value errorStack(isolate, stack);
-            std::string error(*errorStack);
-            context.set_error(error);
-        }
-        else
-        {
-            v8::String::Utf8Value errorStack(isolate, tryCatch.Exception());
-            std::string error(*errorStack);
-            context.set_error(error);
-        }
-        return;
-    }
+    v8::Local<v8::Value> args[] = {request, response};
+    function->Call(handleContext, handleContext->Global(), 2, args);
 
     if (tryCatch.HasCaught())
     {

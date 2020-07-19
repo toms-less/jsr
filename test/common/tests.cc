@@ -81,4 +81,5 @@ int main(int argc, char *argv[])
         }
     }
     std::cout << "response call data: " << response.call().data() << std::endl;
+    return 0;
 }

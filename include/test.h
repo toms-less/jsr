@@ -11,6 +11,32 @@
 namespace test
 {
     /**
+     * Route context.
+     * 
+    */
+    class RouteContext
+    {
+    public:
+        RouteContext(protos::RuntimeRequest &request, protos::RuntimeResponse &response);
+
+        bool ok();
+        void set_ok();
+
+        const std::string &error();
+        void set_error(const char *error);
+        void set_error(std::string &error);
+
+        protos::RuntimeRequest &request();
+        protos::RuntimeResponse &response();
+
+    private:
+        bool ok_;
+        std::string error_;
+        protos::RuntimeRequest &request_;
+        protos::RuntimeResponse &response_;
+    };
+
+    /**
      * gRPC client for testing.
      * 
     */
@@ -19,17 +45,7 @@ namespace test
     public:
         Client(std::shared_ptr<grpc::Channel> channel);
 
-        /**
-         * Function calling.
-         * 
-        */
-        void call(protos::RuntimeRequest &request, protos::RuntimeResponse &response);
-
-        /**
-         * Updating script.
-         * 
-        */
-        void script_update(protos::RuntimeRequest &request, protos::RuntimeResponse &response);
+        void route(RouteContext &ctx);
 
     private:
         std::unique_ptr<protos::RuntimeService::Stub> stub_;

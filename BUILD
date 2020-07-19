@@ -162,11 +162,28 @@ exports_files(
 )
 
 # for testing.
+cc_binary(
+    name = "tests",
+    srcs = [
+        "test/common/tests.cc",
+    ],
+    linkstatic = True,
+    copts = [
+        "-std=c++11",
+        "-I."
+    ],
+    deps = [
+        ":client",
+        ":main",
+    ],
+)
+
 cc_library(
     name = "client",
+    hdrs = ["include/test.h"],
     srcs = [
-        "include/test.h",
-        "test/client/client.cc",
+        "test/common/client.cc",
+        "test/common/context.cc",
     ],
     copts = [
         "-std=c++11",

@@ -25,10 +25,10 @@ instance::IntanceManager::~IntanceManager()
 
 bool instance::IntanceManager::initialize()
 {
-    auto instanceLog = base::Log::instance_logger();
+    auto instance_log = base::Log::instance_logger();
     if (!config.IsInited())
     {
-        instanceLog->error("Instance configuration has not been initialized.");
+        instance_log->error("Instance configuration has not been initialized.");
         return false;
     }
 
@@ -38,21 +38,21 @@ bool instance::IntanceManager::initialize()
     v8::V8::InitializePlatform(platform.get());
     v8::V8::Initialize();
 
-    int instanceCount = config.GetInstanceCount();
-    if (instanceCount == 0)
+    int instance_count = config.GetInstanceCount();
+    if (instance_count == 0)
     {
-        instanceLog->error("Instance count in the configuration is invalid, current count is 0.");
+        instance_log->error("Instance count in the configuration is invalid, current count is 0.");
         return false;
     }
 
     // initialize v8 instance.
-    for (int i = 0; i < instanceCount; i++)
+    for (int i = 0; i < instance_count; i++)
     {
         instance::Instance *current = new instance::Instance(config);
         if (!current->Initialize())
         {
             delete current;
-            instanceLog->error("Instance initialize failure.\n");
+            instance_log->error("Instance initialize failure.\n");
             continue;
         }
 
@@ -62,7 +62,7 @@ bool instance::IntanceManager::initialize()
         if (!context.IsSuccess())
         {
             delete current;
-            instanceLog->error("Instance binding system functions failure, detail: {}.", context.GetError());
+            instance_log->error("Instance binding system functions failure, detail: {}.", context.GetError());
             continue;
         }
         instances.push_back(current);
@@ -70,12 +70,23 @@ bool instance::IntanceManager::initialize()
     }
     if (instances.empty())
     {
-        instanceLog->error("Instance initialize failure, current instance list is empty.");
+        instance_log->error("Instance initialize failure, current instance list is empty.");
         return false;
     }
 
-    // TODO: compile all function scripts.
-    instanceLog->info("Instances initialized sucessfully, current instance list size is {}.", instances.size());
+    // TODO: compile all function scripts, example for testing below.
+    instance::CompileContext compile_ctx("function home(request, response) {try {let headers = request.headers();response.send(JSON.stringify(headers));} catch (error) {}}");
+    for (int i = 0; i < instance_count; i++)
+    {
+        instance::Instance *instance = instances[i];
+        instance->Compile(compile_ctx);
+        if (!compile_ctx.ok())
+        {
+            instance_log->error("Compile script error when initialized instance, error {}.", compile_ctx.error());
+        }
+    }
+
+    instance_log->info("Instances initialized sucessfully, current instance list size is {}.", instances.size());
     inited = true;
     return inited;
 }
@@ -84,9 +95,7 @@ void instance::IntanceManager::compile(CompileContext &context)
 {
     if (!config.IsInited())
     {
-        std::string error("Instance manager has not been initialized.");
-        context.SetSuccess(false);
-        context.SetError(error);
+        context.set_error("Instance manager has not been initialized.");
         return;
     }
 
@@ -94,7 +103,7 @@ void instance::IntanceManager::compile(CompileContext &context)
     for (instance::Instance *instance : instances)
     {
         instance->Compile(context);
-        if (!context.IsSuccess())
+        if (!context.ok())
         {
             return;
         }

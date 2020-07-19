@@ -122,21 +122,21 @@ namespace instance
     {
     public:
         CompileContext(std::string &script);
-        ~CompileContext();
+        CompileContext(const char *script);
 
-        void SetScript(std::string &script);
-        const std::string &GetScript();
+        const std::string &script();
 
-        void SetSuccess(bool success);
-        bool IsSuccess();
+        void set_ok();
+        bool ok();
 
-        void SetError(std::string &error);
-        const std::string &GetError();
+        void set_error(std::string &error);
+        void set_error(const char *error);
+        const std::string &error();
 
     private:
-        std::string script;
-        bool success = false;
-        std::string error;
+        std::string script_;
+        bool ok_;
+        std::string error_;
     };
 
     /**

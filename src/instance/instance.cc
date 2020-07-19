@@ -85,22 +85,20 @@ void instance::Instance::Compile(CompileContext &context)
 {
     if (!inited)
     {
-        std::string error("Current instance has not been initialized.");
-        context.SetError(error);
+        context.set_error("Current instance has not been initialized.");
         return;
     }
-    const std::string &script = context.GetScript();
+    const std::string &script = context.script();
     if (script.empty())
     {
-        std::string error("Current function script is empty.");
-        context.SetError(error);
+        context.set_error("Current function script is empty.");
         return;
     }
     if (script.length() > v8::String::kMaxLength)
     {
         std::string error("Current function script is too long, max script length is '");
         error.append(std::to_string(v8::String::kMaxLength)).append("'.");
-        context.SetError(error);
+        context.set_error(error);
         return;
     }
 
@@ -122,15 +120,13 @@ void instance::Instance::Compile(CompileContext &context)
         v8::Local<v8::Value> stack;
         if (tryCatch.StackTrace(handleContext).ToLocal(&stack))
         {
-            v8::String::Utf8Value errorStack(isolate, stack);
-            std::string error(*errorStack);
-            context.SetError(error);
+            v8::String::Utf8Value error(isolate, stack);
+            context.set_error(*error);
         }
         else
         {
-            v8::String::Utf8Value errorStack(isolate, tryCatch.Exception());
-            std::string error(*errorStack);
-            context.SetError(error);
+            v8::String::Utf8Value error(isolate, tryCatch.Exception());
+            context.set_error(*error);
         }
         return;
     }
@@ -142,15 +138,13 @@ void instance::Instance::Compile(CompileContext &context)
         v8::Local<v8::Value> stack;
         if (tryCatch.StackTrace(handleContext).ToLocal(&stack))
         {
-            v8::String::Utf8Value errorStack(isolate, stack);
-            std::string error(*errorStack);
-            context.SetError(error);
+            v8::String::Utf8Value error(isolate, stack);
+            context.set_error(*error);
         }
         else
         {
-            v8::String::Utf8Value errorStack(isolate, tryCatch.Exception());
-            std::string error(*errorStack);
-            context.SetError(error);
+            v8::String::Utf8Value error(isolate, tryCatch.Exception());
+            context.set_error(*error);
         }
         return;
     }
@@ -161,19 +155,17 @@ void instance::Instance::Compile(CompileContext &context)
         v8::Local<v8::Value> stack;
         if (tryCatch.StackTrace(handleContext).ToLocal(&stack))
         {
-            v8::String::Utf8Value errorStack(isolate, stack);
-            std::string error(*errorStack);
-            context.SetError(error);
+            v8::String::Utf8Value error(isolate, stack);
+            context.set_error(*error);
         }
         else
         {
-            v8::String::Utf8Value errorStack(isolate, tryCatch.Exception());
-            std::string error(*errorStack);
-            context.SetError(error);
+            v8::String::Utf8Value error(isolate, tryCatch.Exception());
+            context.set_error(*error);
         }
         return;
     }
-    context.SetSuccess(true);
+    context.set_ok();
 }
 
 void instance::Instance::Bind(BindContext &context)

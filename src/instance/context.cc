@@ -1,42 +1,45 @@
 #include <include/instance.h>
 
-instance::CompileContext::CompileContext(std::string &_script)
+instance::CompileContext::CompileContext(std::string &script)
 {
-    this->script = _script;
+    this->script_ = script;
+    this->ok_ = false;
 }
 
-instance::CompileContext::~CompileContext()
+instance::CompileContext::CompileContext(const char *script)
 {
+    this->script_.assign(script);
+    this->ok_ = false;
 }
 
-void instance::CompileContext::SetScript(std::string &_script)
+const std::string &instance::CompileContext::script()
 {
-    this->script = _script;
+    return this->script_;
 }
 
-const std::string &instance::CompileContext::GetScript()
+void instance::CompileContext::set_ok()
 {
-    return this->script;
+    this->ok_ = true;
 }
 
-void instance::CompileContext::SetSuccess(bool _success)
+bool instance::CompileContext::ok()
 {
-    this->success = _success;
+    return this->ok_;
 }
 
-bool instance::CompileContext::IsSuccess()
+void instance::CompileContext::set_error(std::string &error)
 {
-    return this->success;
+    this->error_ = error;
 }
 
-void instance::CompileContext::SetError(std::string &_error)
+void instance::CompileContext::set_error(const char *error)
 {
-    this->error = _error;
+    this->error_.assign(error);
 }
 
-const std::string &instance::CompileContext::GetError()
+const std::string &instance::CompileContext::error()
 {
-    return this->error;
+    return this->error_;
 }
 
 instance::BindContext::BindContext(std::vector<sysfunc::ObjectFunction> &_objectFunctopmList, std::vector<sysfunc::PureFunction> &_pureFunctionList)

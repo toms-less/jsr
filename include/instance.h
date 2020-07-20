@@ -37,12 +37,6 @@ namespace instance
         void SetInitialYoungGenerationSize(uint64_t initialYoungGenerationSize);
         uint64_t GetInitialYoungGenerationSize();
 
-        void SetCodeRangeSize(uint64_t codeRangeSize);
-        uint64_t GetCodeRangeSize();
-
-        void SetMaxZonePoolSize(uint64_t maxZonePoolSize);
-        uint64_t GetMaxZonePoolSize();
-
         void SetInstanceCount(uint32_t instanceCount);
         uint32_t GetInstanceCount();
 

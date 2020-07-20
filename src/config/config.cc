@@ -34,8 +34,6 @@ bool config::ConfigManager::initialize()
     instanceConfig.SetInitialOldGenerationSize(config["instance"]["initialOldGenerationSize"].as<uint64_t>());
     instanceConfig.SetMaxYounGenerationSize(config["instance"]["maxYounGenerationSize"].as<uint64_t>());
     instanceConfig.SetInitialYoungGenerationSize(config["instance"]["initialYoungGenerationSize"].as<uint64_t>());
-    instanceConfig.SetCodeRangeSize(config["instance"]["codeRangeSize"].as<uint64_t>());
-    instanceConfig.SetMaxZonePoolSize(config["instance"]["maxZonePoolSize"].as<uint64_t>());
     instanceConfig.SetInstanceCount(config["instance"]["instanceCount"].as<uint32_t>());
     instanceConfig.SetInited(true);
 

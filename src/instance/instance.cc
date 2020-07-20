@@ -30,10 +30,6 @@ bool instance::Instance::Initialize()
     uint64_t maxYounGenerationSize = config.GetMaxYounGenerationSize() * 1024 * 1024;
     // bytes.
     uint64_t initialYoungGenerationSize = config.GetInitialYoungGenerationSize() * 1024 * 1024;
-    // bytes.
-    uint64_t codeRangeSize = config.GetCodeRangeSize() * 1024 * 1024;
-    // bytes.
-    uint64_t maxZonePoolSize = config.GetMaxZonePoolSize() * 1024 * 1024;
 
     if (physicalMemory > 0 && virtualMemoryLimit >= 0)
     {
@@ -58,14 +54,6 @@ bool instance::Instance::Initialize()
     if (stackLimit > 0)
     {
         params.constraints.set_stack_limit(&stackLimit);
-    }
-    if (codeRangeSize > 0)
-    {
-        params.constraints.set_code_range_size_in_bytes(codeRangeSize);
-    }
-    if (maxZonePoolSize > 0)
-    {
-        params.constraints.set_max_zone_pool_size(maxZonePoolSize);
     }
 
     // create v8 isolate.

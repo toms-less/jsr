@@ -12,6 +12,13 @@ int main(int argc, char *argv[])
     return 1;
   }
 
+  v8::V8::InitializeExternalStartupData(config_manager.GetInstanceConfig()
+                                            .GetStartupData()
+                                            .c_str());
+  std::unique_ptr<v8::Platform> platform(v8::platform::NewDefaultPlatform());
+  v8::V8::InitializePlatform(platform.get());
+  v8::V8::Initialize();
+
   base::Log logger(&config_manager.GetLogConfig());
   if (!logger.initialize())
   {

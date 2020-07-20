@@ -17,8 +17,6 @@ instance:
   initialOldGenerationSize: 200
   maxYounGenerationSize: 500
   initialYoungGenerationSize: 200
-  codeRangeSize: 500
-  maxZonePoolSize: 500
   instanceCount: 10
 
 sysfunc:

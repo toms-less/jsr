@@ -32,12 +32,6 @@ bool instance::IntanceManager::initialize()
         return false;
     }
 
-    // initialize v8 globally.
-    v8::V8::InitializeExternalStartupData(config.GetStartupData().c_str());
-    std::unique_ptr<v8::Platform> platform(v8::platform::NewDefaultPlatform());
-    v8::V8::InitializePlatform(platform.get());
-    v8::V8::Initialize();
-
     int instance_count = config.GetInstanceCount();
     if (instance_count == 0)
     {

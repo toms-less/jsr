@@ -84,26 +84,6 @@ uint64_t instance::InstanceConfig::GetInitialYoungGenerationSize()
     return this->initialYoungGenerationSize;
 }
 
-void instance::InstanceConfig::SetCodeRangeSize(uint64_t _codeRangeSize)
-{
-    this->codeRangeSize = _codeRangeSize;
-}
-
-uint64_t instance::InstanceConfig::GetCodeRangeSize()
-{
-    return this->codeRangeSize;
-}
-
-void instance::InstanceConfig::SetMaxZonePoolSize(uint64_t _maxZonePoolSize)
-{
-    this->maxZonePoolSize = _maxZonePoolSize;
-}
-
-uint64_t instance::InstanceConfig::GetMaxZonePoolSize()
-{
-    return this->maxZonePoolSize;
-}
-
 void instance::InstanceConfig::SetInstanceCount(uint32_t _instanceCount)
 {
     this->instanceCount = _instanceCount;

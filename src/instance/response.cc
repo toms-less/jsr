@@ -821,7 +821,14 @@ void instance::HttpResponse::send(const v8::FunctionCallbackInfo<v8::Value> &arg
     }
     };
 
+    server::Context *server_ctx = reinterpret_cast<server::Context *>(ctx->ctx_ptr());
     response->set_allocated_call(call);
     response->set_status(protos::Common_Status::Common_Status_OK);
-    writer->Finish(*response, grpc::Status::OK, reinterpret_cast<server::Context *>(ctx->ctx_ptr()));
+    writer->Finish(*response, grpc::Status::OK, server_ctx);
+    /**
+     * Set the server context status to be 'FINISH'
+     * for gRPC scheduler.
+     * 
+    */
+    server_ctx->set_status(server::Context::Status::FINISH);
 }

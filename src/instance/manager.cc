@@ -13,13 +13,9 @@ instance::IntanceManager::~IntanceManager()
         delete (*it);
     }
     std::vector<instance::Instance *>().swap(instances);
-    while (!idle.empty())
+    while (!queue_.empty())
     {
-        idle.pop();
-    }
-    while (!working.empty())
-    {
-        idle.pop();
+        queue_.pop();
     }
 }
 
@@ -60,7 +56,7 @@ bool instance::IntanceManager::initialize()
             continue;
         }
         instances.push_back(current);
-        idle.push_back(current);
+        queue_.push_back(current);
     }
     if (instances.empty())
     {
@@ -108,17 +104,36 @@ void instance::IntanceManager::compile(CompileContext &context)
 
 void instance::IntanceManager::execute(ExecuteContext &context)
 {
+    if (context.working_instance() != nullptr)
+    {
+        std::string error("Invalid execute working instance.");
+        context.set_error(error);
+        return;
+    }
     if (context.status() != ExecuteStatus::INIT)
     {
         std::string error("Invalid execute status.");
         context.set_error(error);
         return;
     }
-    instance::Instance *instance = idle.pop();
+    instance::Instance *instance = queue_.pop();
     if (instance == nullptr)
     {
         context.set_status(ExecuteStatus::BUSY);
         return;
     }
+
+    /**
+     * Keep current v8 instance in context
+     * for Recycling it and push back to instance queue
+     * when current requesting is finished.
+     * 
+    */
+    context.set_working_instance(instance);
     instance->Execute(context);
+}
+
+base::BlockingQueue<instance::Instance *> *instance::IntanceManager::queue()
+{
+    return &queue_;
 }

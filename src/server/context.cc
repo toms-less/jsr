@@ -59,7 +59,7 @@ void server::Context::dispatch()
 void server::Context::call_handler()
 {
     // build execution context of instance.
-    instance::ExecuteContext context(&request_, &response_, &writer_, (intptr_t)this);
+    instance::ExecuteContext context(&request_, &response_, &writer_, instances_->queue(), (intptr_t)this);
     instances_->execute(context);
     switch (context.status())
     {
@@ -76,6 +76,7 @@ void server::Context::call_handler()
             response_.set_status(protos::Common_Status::Common_Status_USER_ERROR);
             response_.set_message("User should user 'response.send(foo)' in the functions.");
             writer_.Finish(response_, grpc::Status::OK, this);
+            status_ = FINISH;
         }
         break;
     }
@@ -84,22 +85,33 @@ void server::Context::call_handler()
     {
         response_.set_status(protos::Common_Status::Common_Status_SYSTEM_ERROR);
         response_.set_message(context.error());
-        status_ = FINISH;
         writer_.Finish(response_, grpc::Status::OK, this);
-        break;
+        status_ = FINISH;
     }
     case instance::ExecuteStatus::ERROR:
     default:
     {
         response_.set_status(protos::Common_Status::Common_Status_USER_ERROR);
         response_.set_message(context.error());
-        status_ = FINISH;
         writer_.Finish(response_, grpc::Status::OK, this);
-        break;
+        status_ = FINISH;
     }
     };
+    /**
+     * Recycle current v8 instance and push it into instances queue.
+     * 
+    */
+    if (context.working_instance() != nullptr)
+    {
+        context.queue()->push_back(context.working_instance());
+    }
 }
 
 void server::Context::script_handler()
 {
+}
+
+void server::Context::set_status(const server::Context::Status &status)
+{
+    status_ = status;
 }

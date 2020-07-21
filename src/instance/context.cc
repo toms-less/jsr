@@ -82,11 +82,14 @@ std::vector<sysfunc::PureFunction> &instance::BindContext::GetPureFunctionList()
     return this->pureFunctionList;
 }
 
-instance::ExecuteContext::ExecuteContext(protos::RuntimeRequest *request, protos::RuntimeResponse *response, grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer, intptr_t ctx_ptr)
-    : request_(request), response_(response), writer_(writer), ctx_ptr_(ctx_ptr)
+instance::ExecuteContext::ExecuteContext(protos::RuntimeRequest *request, protos::RuntimeResponse *response,
+                                         grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer,
+                                         base::BlockingQueue<instance::Instance *> *queue, intptr_t ctx_ptr)
+    : request_(request), response_(response), writer_(writer), queue_(queue), ctx_ptr_(ctx_ptr)
 {
     start_time_ = base::Util::timestamp();
     status_ = ExecuteStatus::INIT;
+    this->working_instance_ = nullptr;
 }
 
 long &instance::ExecuteContext::start_time()
@@ -143,4 +146,19 @@ void instance::ExecuteContext::set_status(const ExecuteStatus &status)
 instance::ExecuteStatus &instance::ExecuteContext::status()
 {
     return this->status_;
+}
+
+base::BlockingQueue<instance::Instance *> *instance::ExecuteContext::queue()
+{
+    return this->queue_;
+}
+
+instance::Instance *instance::ExecuteContext::working_instance()
+{
+    return this->working_instance_;
+}
+
+void instance::ExecuteContext::set_working_instance(instance::Instance *instance)
+{
+    this->working_instance_ = instance;
 }

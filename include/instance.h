@@ -8,6 +8,20 @@
 */
 namespace instance
 {
+    /**
+     * Declare classes.
+     * 
+    */
+    class InstanceConfig;
+    class CompileContext;
+    class BindContext;
+    class HttpRequest;
+    class HttpResponse;
+    class ExecuteContext;
+    class Instance;
+    class IntanceManager;
+    class Util;
+
     class InstanceConfig : public base::BaseConfig
     {
     public:
@@ -332,7 +346,8 @@ namespace instance
     {
     public:
         ExecuteContext(protos::RuntimeRequest *request, protos::RuntimeResponse *response,
-                       grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer, intptr_t ctx_ptr);
+                       grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer,
+                       base::BlockingQueue<instance::Instance *> *queue, intptr_t ctx_ptr);
 
         std::time_t &start_time();
 
@@ -355,6 +370,19 @@ namespace instance
         void set_status(const ExecuteStatus &status);
         ExecuteStatus &status();
 
+        /**
+         * V8 instance queue.
+         * 
+        */
+        base::BlockingQueue<instance::Instance *> *queue();
+
+        /**
+         * Current working v8 instance.
+         * 
+        */
+        instance::Instance *working_instance();
+        void set_working_instance(instance::Instance *instance);
+
     private:
         std::time_t start_time_;
         std::time_t end_time_;
@@ -364,6 +392,8 @@ namespace instance
         grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer_;
         const intptr_t ctx_ptr_;
         ExecuteStatus status_;
+        base::BlockingQueue<instance::Instance *> *queue_;
+        instance::Instance *working_instance_;
     };
 
     /**
@@ -436,6 +466,12 @@ namespace instance
          */
         void execute(ExecuteContext &context);
 
+        /**
+         * Get queue of v8 instances.
+         * 
+        */
+        base::BlockingQueue<instance::Instance *> *queue();
+
     private:
         bool inited = false;
         InstanceConfig config;
@@ -443,16 +479,10 @@ namespace instance
         std::vector<instance::Instance *> instances;
 
         /**
-         * queue for working instances.
+         * queue for v8 instances.
          * 
         */
-        base::BlockingQueue<instance::Instance *> working;
-
-        /**
-         * queue for idle instances.
-         * 
-        */
-        base::BlockingQueue<instance::Instance *> idle;
+        base::BlockingQueue<instance::Instance *> queue_;
     };
 
     /**

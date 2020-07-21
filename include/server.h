@@ -88,23 +88,41 @@ namespace server
         Context(protos::RuntimeService::AsyncService *service, grpc::ServerCompletionQueue *cq, instance::IntanceManager *instances);
 
         /**
-         * dispatch requesting by requesting type.
+         * Context status.
+         * 
+        */
+        enum Status
+        {
+            CREATE,
+            PROCESS,
+            FINISH
+        };
+
+        /**
+         * Dispatch requesting by requesting type.
          * 
          */
         void dispatch();
 
+        /**
+         * Set context status.
+         * 
+        */
+        void set_status(const server::Context::Status &status_);
+
     private:
         /**
-         * deal with requesting of function calling.
+         * Deal with requesting of function calling.
          * 
         */
         void call_handler();
 
         /**
-         * deal with requesting of function script updateing.
+         * Deal with requesting of function script updateing.
          * 
         */
         void script_handler();
+
         protos::RuntimeService::AsyncService *service_;
         grpc::ServerCompletionQueue *cq_;
         grpc::ServerContext ctx_;
@@ -112,13 +130,6 @@ namespace server
         protos::RuntimeResponse response_;
         grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> writer_;
         instance::IntanceManager *instances_;
-
-        enum Status
-        {
-            CREATE,
-            PROCESS,
-            FINISH
-        };
         Status status_;
     };
 } // namespace server

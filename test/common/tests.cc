@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
     }
 
     /**
-     * print all responsed message.
+     * print all responsed messages.
      * 
     */
     std::cout << "response id: " << response.id() << std::endl;

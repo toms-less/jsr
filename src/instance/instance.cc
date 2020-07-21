@@ -295,6 +295,34 @@ void instance::Instance::Execute(ExecuteContext &context)
     v8::Local<v8::Context> handleContext = v8::Local<v8::Context>::New(isolate, context_);
     v8::Context::Scope contextScope(handleContext);
 
+    v8::Local<v8::Value> functionValue;
+    if (!handleContext->Global()->Get(handleContext, instance::Util::v8_str(isolate, context.request()->call().function().c_str())).ToLocal(&functionValue))
+    {
+        v8::Local<v8::Value> stack;
+        if (tryCatch.StackTrace(handleContext).ToLocal(&stack))
+        {
+            v8::String::Utf8Value errorStack(isolate, stack);
+            std::string error(*errorStack);
+            context.set_error(error);
+        }
+        else
+        {
+            v8::String::Utf8Value errorStack(isolate, tryCatch.Exception());
+            std::string error(*errorStack);
+            context.set_error(error);
+        }
+        context.set_status(ExecuteStatus::ERROR);
+        return;
+    }
+    if (!functionValue->IsFunction())
+    {
+        std::string error = "Invalid function name, function '" + context.request()->call().function() + "' does not exist.";
+        context.set_error(error);
+        context.set_status(ExecuteStatus::ERROR);
+        return;
+    }
+    v8::Local<v8::Function> function = v8::Local<v8::Function>::Cast(functionValue);
+
     // build request object.
     v8::Local<v8::ObjectTemplate> requestTemplate = v8::ObjectTemplate::New(isolate);
 
@@ -354,6 +382,7 @@ void instance::Instance::Execute(ExecuteContext &context)
             std::string error(*errorStack);
             context.set_error(error);
         }
+        context.set_status(ExecuteStatus::ERROR);
         return;
     }
 
@@ -400,28 +429,9 @@ void instance::Instance::Execute(ExecuteContext &context)
             std::string error(*errorStack);
             context.set_error(error);
         }
+        context.set_status(ExecuteStatus::ERROR);
         return;
     }
-
-    v8::Local<v8::Value> functionValue;
-    if (!handleContext->Global()->Get(handleContext, instance::Util::v8_str(isolate, context.request()->call().function().c_str())).ToLocal(&functionValue))
-    {
-        v8::Local<v8::Value> stack;
-        if (tryCatch.StackTrace(handleContext).ToLocal(&stack))
-        {
-            v8::String::Utf8Value errorStack(isolate, stack);
-            std::string error(*errorStack);
-            context.set_error(error);
-        }
-        else
-        {
-            v8::String::Utf8Value errorStack(isolate, tryCatch.Exception());
-            std::string error(*errorStack);
-            context.set_error(error);
-        }
-        return;
-    }
-    v8::Local<v8::Function> function = v8::Local<v8::Function>::Cast(functionValue);
 
     // call user function.
     v8::Local<v8::Value> args[] = {request, response};
@@ -442,6 +452,7 @@ void instance::Instance::Execute(ExecuteContext &context)
             std::string error(*errorStack);
             context.set_error(error);
         }
+        context.set_status(ExecuteStatus::ERROR);
         return;
     }
     context.set_status(ExecuteStatus::FINISH);

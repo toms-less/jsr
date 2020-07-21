@@ -67,7 +67,7 @@ void server::Context::call_handler()
     {
         /**
          * This condition often happend when user did not call 'resonse.send(xxx)'.
-         * As the response status are only setted when the 'HttpResponse::send' callback
+         * As the response status is only setted when the 'HttpResponse::send' callback
          * are invoked, so it should be check in this place.
          * 
         */

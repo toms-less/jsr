@@ -34,59 +34,64 @@ message RuntimeRequest {
 
 message CallRequest {
     /**
+     * Function calling type.
+     */
+    Common.CallType type = 1;
+
+    /**
      * Function name.
      */
-    string function = 1;
+    string function = 2;
 
     /**
      * Function version.
      */
-    string version = 2;
+    string version = 3;
 
     /**
      * Function group.
      */
-    string group = 3;
+    string group = 4;
 
     /**
      * Function unit.
      */
-    string unit = 4;
+    string unit = 5;
 
     /**
      * Timeout value of client specified to tell runtime the function calling timeout.
      */
-    int32 timeout = 5;
+    int32 timeout = 6;
 
     /**
      * HTTP requesting method.
      */
-    string method = 6;
+    string method = 7;
 
     /**
      * HTTP content type.
      */
-    string contentType = 7;
+    string contentType = 8;
 
     /**
      * HTTP requesting headers.
      */
-    map<string,string> headers = 8;
+    map<string,string> headers = 9;
 
     /**
      * HTTP requesting parameters.
      */
-    map<string,string> parameters = 9;
+    map<string,string> parameters = 10;
 
     /**
      * HTTP requesting cookies.
      */
-    repeated Cookie cookies = 10;
+    repeated Cookie cookies = 11;
 
     /**
      * HTTP requesting data.
      */
-    string data = 11;
+    string data = 12;
 }
 
 message ScriptRequest {
@@ -298,5 +303,15 @@ message Common {
         TIMEOUT = 2;
         SYSTEM_ERROR = 3;
         USER_ERROR = 4;
+    }
+
+    /**
+     * Function calling type, default is 'HTTP' if not be specified.
+     * 1. 'HTTP' means HTTP calling.
+     * 2. 'INNER' means inner calling from one function to another.
+     */
+    enum CallType {
+        HTTP = 0;
+        INNER = 1;
     }
 }

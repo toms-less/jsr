@@ -172,12 +172,12 @@ message ScriptModule {
     /**
      * Module type.
      */
-     DepsType type = 5;
+    DepsType type = 5;
 
     /**
      * Module dependencies.
      */
-    ScriptModule deps = 6;
+    repeated ScriptModule deps = 6;
 }
 
 message RuntimeResponse {

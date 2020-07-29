@@ -96,29 +96,88 @@ message CallRequest {
 
 message ScriptRequest {
     /**
-     * Function name.
+     * Module group.
      */
-    string function = 1;
+    string group = 1;
 
     /**
-     * Function version.
+     * Module unit.
      */
-    string version = 2;
+    string unit = 2;
 
     /**
-     * Function group.
+     * Modules.
      */
-    string group = 3;
+     repeated ScriptModule script = 3;
+}
+
+message ScriptModule {
+    /**
+     * Module name.
+     */
+    string name = 1;
 
     /**
-     * Function unit.
+     * Module version.
      */
-    string unit = 4;
+     string version = 2;
 
     /**
-     * Function script for updating.
+     * 1. 'lib1.js'. In this example as below,
+     * url value is '@mod/test'.
+     * ---lib1.js---
+     * import {foo} from '@mod/test'
+     * 
+     * 2. 'lib2.js'. In this example as below,
+     * url value is 'https://test.com/mod/test'.
+     * ---lib2.js---
+     * import {foo} from 'https://test.com/mod/test'
+     *
+     * 3. 'main.js'. In this example as below,
+     * url value is 'toms://system'.
+     * ---main.js---
+     * import {request,response} from 'toms://system'
+     * 
      */
-    string script = 5;
+    string url = 3;
+
+    /**
+     * Module content.
+     */
+    string script = 4;
+
+    /**
+     * 1. 'lib1.js'. In this example as below,
+     * 'ModuleDepsType' is 'Local'.
+     * ---lib1.js---
+     * import {foo} from '@mod/test'
+     * 
+     * 2. 'lib2.js'. In this example as below,
+     * 'ModuleDepsType' is 'HTTP'.
+     * ---lib2.js---
+     * import {foo} from 'https://test.com/mod/test'
+     *
+     * 3. 'main.js'. In this example as below,
+     * 'ModuleDepsType' is 'SYSTEM'.
+     * ---main.js---
+     * import {request,response} from 'toms://system'
+     * 
+     */
+    enum DepsType {
+        Local = 0;
+        HTTP = 1;
+        SYSTEM = 2;
+    }
+
+    /**
+     * Module type.
+     */
+     DepsType type = 5;
+
+    /**
+     * Module dependencies.
+     */
+    ScriptModule deps = 6;
 }
 
 message RuntimeResponse {

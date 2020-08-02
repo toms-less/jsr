@@ -114,9 +114,19 @@ message ScriptRequest {
     }
 
     /**
+     * Action type.
+     */
+     enum ActionType {
+        UPDATE = 0;
+        DELETE = 1;
+        ADD = 2;
+    }
+    ActionType action = 3;
+
+    /**
      * JavaScript scripts.
      */
-     repeated JavaScript javascript = 3;
+     repeated JavaScript javascript = 4;
 }
 
 message JavaScript {

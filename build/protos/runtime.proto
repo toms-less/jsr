@@ -106,40 +106,34 @@ message ScriptRequest {
     string unit = 2;
 
     /**
-     * Modules.
+     * Script type.
      */
-     repeated ScriptModule script = 3;
+    enum ScriptType {
+        JAVASCRIPT = 0;
+        JAVA = 1;
+    }
+
+    /**
+     * JavaScript scripts.
+     */
+     repeated JavaScript javascript = 3;
 }
 
-message ScriptModule {
+message JavaScript {
     /**
      * Module name.
      */
     string name = 1;
 
     /**
-     * Module version.
+     * Function name.
      */
-     string version = 2;
+    string function = 2;
 
     /**
-     * 1. 'lib1.js'. In this example as below,
-     * url value is '@mod/test'.
-     * ---lib1.js---
-     * import {foo} from '@mod/test'
-     * 
-     * 2. 'lib2.js'. In this example as below,
-     * url value is 'https://test.com/mod/test'.
-     * ---lib2.js---
-     * import {foo} from 'https://test.com/mod/test'
-     *
-     * 3. 'main.js'. In this example as below,
-     * url value is 'toms://system'.
-     * ---main.js---
-     * import {request,response} from 'toms://system'
-     * 
+     * Module version.
      */
-    string url = 3;
+     string version = 3;
 
     /**
      * Module content.
@@ -150,34 +144,67 @@ message ScriptModule {
      * 1. 'lib1.js'. In this example as below,
      * 'ModuleDepsType' is 'Local'.
      * ---lib1.js---
-     * import {foo} from '@mod/test'
+     * import {foo} from '//mod/test'
      * 
      * 2. 'lib2.js'. In this example as below,
      * 'ModuleDepsType' is 'HTTP'.
      * ---lib2.js---
-     * import {foo} from 'https://test.com/mod/test'
+     * import {foo} from 'https://test.com/mod/test.js'
      *
-     * 3. 'main.js'. In this example as below,
-     * 'ModuleDepsType' is 'SYSTEM'.
-     * ---main.js---
-     * import {request,response} from 'toms://system'
+     * 3. 'lib3.js'. In this example as below,
+     * 'ModuleDepsType' is 'FTP'.
+     * ---lib3.js---
+     * import {foo} from 'ftp://test.com/mod/test.js' 
+     *
+     * 4. 'lib4.js'. In this example as below,
+     * 'ModuleDepsType' is 'STD'.
+     * ---lib4.js---
+     * import {foo1,foo2} from '@toms//std/net.js'
      * 
+     * 5. 'lib5.js'. In this example as below,
+     * 'ModuleDepsType' is 'THIRD_PARTY'.
+     * ---lib5.js---
+     * import {foo1,foo2} from '@redux//lib/test.js' 
+     *
      */
     enum DepsType {
         Local = 0;
         HTTP = 1;
-        SYSTEM = 2;
+        FTP = 2;
+        STD = 3;
+        THIRD_PARTY = 4;
     }
 
     /**
-     * Module type.
+     * In this map, key is the url of this dependency.
+     * 1. 'lib1.js'. In this example as below,
+     * url value is '//mod/test'.
+     * ---lib1.js---
+     * import {foo} from '//mod/test'
+     * 
+     * 2. 'lib2.js'. In this example as below,
+     * url value is 'https://test.com/mod/test.js'.
+     * ---lib2.js---
+     * import {foo} from 'https://test.com/mod/test.js'
+     *
+     * 3. 'lib3.js'. In this example as below,
+     * url value is 'ftp://test.com/mod/test.js'.
+     * ---lib2.js---
+     * import {foo} from 'ftp://test.com/mod/test.js' 
+     *
+     * 4. 'lib4.js'. In this example as below,
+     * url value is '@toms//std/net.js'.
+     * ---lib4.js---
+     * import {foo1,foo2} from '@toms//std/net.js'
+     * 
+     * 5. 'lib5.js'. In this example as below,
+     * url value is '@toms//std/net.js'.
+     * ---lib5.js---
+     * import {foo1,foo2} from '@redux//lib/test.js' 
+     *
+     * The valu of this map is dependency object.
      */
-    DepsType type = 5;
-
-    /**
-     * Module dependencies.
-     */
-    repeated ScriptModule deps = 6;
+    map<string,JavaScript> deps = 5;
 }
 
 message RuntimeResponse {

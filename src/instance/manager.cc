@@ -65,18 +65,18 @@ bool instance::IntanceManager::initialize()
     }
 
     // TODO: compile all function scripts, example for testing below.
-    instance::CompileContext compile_ctx("function home(request, response) {try {let headers = request.headers();response.send(JSON.stringify(headers));} catch (error) {}}");
-    for (int i = 0; i < instance_count; i++)
-    {
-        instance::Instance *instance = instances[i];
-        instance->Compile(compile_ctx);
-        if (!compile_ctx.ok())
-        {
-            instance_log->error("Compile script error when initialized instance, error {}.", compile_ctx.error());
-            continue;
-        }
-        instance_log->info("Compile script sucessfully when initialized instance, script {}.", compile_ctx.script());
-    }
+    // instance::CompileContext compile_ctx("function home(request, response) {try {let headers = request.headers();response.send(JSON.stringify(headers));} catch (error) {}}");
+    // for (int i = 0; i < instance_count; i++)
+    // {
+    //     instance::Instance *instance = instances[i];
+    //     instance->Compile(compile_ctx);
+    //     if (!compile_ctx.ok())
+    //     {
+    //         instance_log->error("Compile script error when initialized instance, error {}.", compile_ctx.error());
+    //         continue;
+    //     }
+    //     instance_log->info("Compile script sucessfully when initialized instance, script {}.", compile_ctx.script());
+    // }
 
     instance_log->info("Instances initialized sucessfully, current instance list size is {}.", instances.size());
     inited = true;

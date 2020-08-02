@@ -129,10 +129,10 @@ namespace instance
     class CompileContext
     {
     public:
-        CompileContext(std::string &script);
-        CompileContext(const char *script);
+        CompileContext(google::protobuf::RepeatedPtrField<protos::JavaScript> *scripts);
+        ~CompileContext();
 
-        const std::string &script();
+        google::protobuf::RepeatedPtrField<protos::JavaScript> *scripts();
 
         void set_ok();
         bool ok();
@@ -141,10 +141,19 @@ namespace instance
         void set_error(const char *error);
         const std::string &error();
 
+        void add_compiled_function(const std::string &function);
+        const std::vector<std::string> &compiled_function();
+
     private:
-        std::string script_;
         bool ok_;
         std::string error_;
+        google::protobuf::RepeatedPtrField<protos::JavaScript> *scripts_;
+
+        /**
+         * Compiled functions name.
+         * 
+        */
+        std::vector<std::string> compiled;
     };
 
     /**
@@ -436,6 +445,13 @@ namespace instance
         v8::ArrayBuffer::Allocator *allocator_;
         v8::Persistent<v8::Context> context_;
         bool inited = false;
+
+        /**
+         * Resolve modules.
+         * 
+         */
+        static v8::MaybeLocal<v8::Module> module_resolve_cb(v8::Local<v8::Context> context,
+                                                            v8::Local<v8::String> specifier, v8::Local<v8::Module> referrer);
     };
 
     /**

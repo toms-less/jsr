@@ -1,20 +1,17 @@
 #include <include/instance.h>
 
-instance::CompileContext::CompileContext(std::string &script)
+instance::CompileContext::CompileContext(google::protobuf::RepeatedPtrField<protos::JavaScript> *scripts) : scripts_(scripts)
 {
-    this->script_ = script;
-    this->ok_ = false;
 }
 
-instance::CompileContext::CompileContext(const char *script)
+instance::CompileContext::~CompileContext()
 {
-    this->script_.assign(script);
-    this->ok_ = false;
+    std::vector<std::string>().swap(compiled);
 }
 
-const std::string &instance::CompileContext::script()
+google::protobuf::RepeatedPtrField<protos::JavaScript> *instance::CompileContext::scripts()
 {
-    return this->script_;
+    return this->scripts_;
 }
 
 void instance::CompileContext::set_ok()
@@ -40,6 +37,16 @@ void instance::CompileContext::set_error(const char *error)
 const std::string &instance::CompileContext::error()
 {
     return this->error_;
+}
+
+void instance::CompileContext::add_compiled_function(const std::string &function)
+{
+    this->compiled.push_back(function);
+}
+
+const std::vector<std::string> &instance::CompileContext::compiled_function()
+{
+    return this->compiled;
 }
 
 instance::BindContext::BindContext(std::vector<sysfunc::ObjectFunction> &_objectFunctopmList, std::vector<sysfunc::PureFunction> &_pureFunctionList)

@@ -112,16 +112,34 @@ namespace server
 
     private:
         /**
-         * Deal with requesting of function calling.
+         * Entry of dealing with calling requesting.
          * 
         */
         void call_handler();
 
         /**
-         * Deal with requesting of function script updateing.
+         * Entry of deal with script action requesting.
          * 
         */
         void script_handler();
+
+        /**
+         * Deal with requesting of function script updateing.
+         * 
+        */
+        void update_script(const protos::JavaScript &script);
+
+        /**
+         * Deal with requesting of function script adding.
+         * 
+        */
+        void add_script(const protos::JavaScript &script);
+
+        /**
+         * Deal with requesting of function script deleting.
+         * 
+        */
+        void delete_script(const protos::JavaScript &script);
 
         protos::RuntimeService::AsyncService *service_;
         grpc::ServerCompletionQueue *cq_;

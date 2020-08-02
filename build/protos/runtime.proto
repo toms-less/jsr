@@ -126,7 +126,7 @@ message ScriptRequest {
     /**
      * JavaScript scripts.
      */
-     repeated JavaScript javascript = 4;
+    JavaScript javascript = 4;
 }
 
 message JavaScript {

@@ -1,17 +1,12 @@
 #include <include/instance.h>
 
-instance::CompileContext::CompileContext(google::protobuf::RepeatedPtrField<protos::JavaScript> *scripts) : scripts_(scripts)
+instance::CompileContext::CompileContext(const protos::JavaScript &script) : script_(script)
 {
 }
 
-instance::CompileContext::~CompileContext()
+const protos::JavaScript &instance::CompileContext::script()
 {
-    std::vector<std::string>().swap(compiled);
-}
-
-google::protobuf::RepeatedPtrField<protos::JavaScript> *instance::CompileContext::scripts()
-{
-    return this->scripts_;
+    return this->script_;
 }
 
 void instance::CompileContext::set_ok()
@@ -37,16 +32,6 @@ void instance::CompileContext::set_error(const char *error)
 const std::string &instance::CompileContext::error()
 {
     return this->error_;
-}
-
-void instance::CompileContext::add_compiled_function(const std::string &function)
-{
-    this->compiled.push_back(function);
-}
-
-const std::vector<std::string> &instance::CompileContext::compiled_function()
-{
-    return this->compiled;
 }
 
 instance::BindContext::BindContext(std::vector<sysfunc::ObjectFunction> &_objectFunctopmList, std::vector<sysfunc::PureFunction> &_pureFunctionList)

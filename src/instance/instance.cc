@@ -88,118 +88,113 @@ void instance::Instance::Compile(CompileContext &context)
     v8::Context::Scope contextScope(handle_context);
 
     // compile function script.
-    google::protobuf::RepeatedPtrField<protos::JavaScript> *scripts = context.scripts();
-    for (int i = 0; i < scripts->size(); i++)
+    const protos::JavaScript &script = context.script();
+    v8::ScriptOrigin origin(instance::Util::v8_str(isolate, script.name().c_str()), v8::Local<v8::Integer>(),
+                            v8::Local<v8::Integer>(), v8::Local<v8::Boolean>(), v8::Local<v8::Integer>(),
+                            v8::Local<v8::Value>(), v8::Local<v8::Boolean>(),
+                            v8::Local<v8::Boolean>(), v8::True(isolate));
+    v8::ScriptCompiler::Source source(instance::Util::v8_str(isolate, script.script().c_str()), origin);
+    v8::Local<v8::Module> module;
+    if (!v8::ScriptCompiler::CompileModule(isolate, &source).ToLocal(&module))
     {
-        const protos::JavaScript &script = scripts->Get(i);
-        v8::ScriptOrigin origin(instance::Util::v8_str(isolate, script.name().c_str()), v8::Local<v8::Integer>(),
-                                v8::Local<v8::Integer>(), v8::Local<v8::Boolean>(), v8::Local<v8::Integer>(),
-                                v8::Local<v8::Value>(), v8::Local<v8::Boolean>(),
-                                v8::Local<v8::Boolean>(), v8::True(isolate));
-        v8::ScriptCompiler::Source source(instance::Util::v8_str(isolate, script.script().c_str()), origin);
-        v8::Local<v8::Module> module;
-        if (!v8::ScriptCompiler::CompileModule(isolate, &source).ToLocal(&module))
+        v8::Local<v8::Value> stack;
+        if (try_catch.StackTrace(handle_context).ToLocal(&stack))
         {
-            v8::Local<v8::Value> stack;
-            if (try_catch.StackTrace(handle_context).ToLocal(&stack))
-            {
-                v8::String::Utf8Value error(isolate, stack);
-                context.set_error(*error);
-            }
-            else
-            {
-                v8::String::Utf8Value error(isolate, try_catch.Exception());
-                context.set_error(*error);
-            }
-            return;
+            v8::String::Utf8Value error(isolate, stack);
+            context.set_error(*error);
         }
-        /**
-         * Check module status.
-         * In this condition, module status should be 'kUninstantiated'.
-         * 
-        */
-        if (module->GetStatus() != v8::Module::kUninstantiated)
+        else
         {
-            context.set_error("Compile error, current module status is not 'kUninstantiated'.");
-            return;
+            v8::String::Utf8Value error(isolate, try_catch.Exception());
+            context.set_error(*error);
         }
-        module->InstantiateModule(handle_context, instance::Instance::module_resolve_cb);
-        // check exception.
-        if (try_catch.HasCaught())
-        {
-            v8::Local<v8::Value> stack;
-            if (try_catch.StackTrace(handle_context).ToLocal(&stack))
-            {
-                v8::String::Utf8Value error(isolate, stack);
-                context.set_error(*error);
-            }
-            else
-            {
-                v8::String::Utf8Value error(isolate, try_catch.Exception());
-                context.set_error(*error);
-            }
-            return;
-        }
-
-        /**
-         * Check module status.
-         * In this condition, module status should be 'kUninstantiated'.
-         * 
-        */
-        if (module->GetStatus() != v8::Module::kInstantiated)
-        {
-            context.set_error("Compile error, current module status is not 'kInstantiated'.");
-            return;
-        }
-
-        v8::Local<v8::Value> names = module->GetModuleNamespace();
-        v8::Local<v8::Object> names_object;
-        if (!names->ToObject(handle_context).ToLocal(&names_object))
-        {
-            v8::Local<v8::Value> stack;
-            if (try_catch.StackTrace(handle_context).ToLocal(&stack))
-            {
-                v8::String::Utf8Value error(isolate, stack);
-                context.set_error(*error);
-            }
-            else
-            {
-                v8::String::Utf8Value error(isolate, try_catch.Exception());
-                context.set_error(*error);
-            }
-            return;
-        }
-
-        /**
-         * Get function of specific in the script, example:
-         * ----test.js----
-         * import {foo} from https://example/lib.js
-         * 
-         * export function test(request,response){
-         *   response.send('xxxx');
-         * }
-         * ---------------
-         * In this script, 'test' is the entry function
-         * and export for outside services such as 'HTTPT'.
-         * So the function must have the prefix 'export'.
-         * 
-        */
-        v8::Local<v8::Value> value = names_object->Get(handle_context, instance::Util::v8_str(isolate, script.function().c_str())).ToLocalChecked();
-        if (!value->IsFunction())
-        {
-            std::string error("Target function does not exist in the script, function: '");
-            error.append(script.function()).append("'.");
-            context.set_error(error);
-            return;
-        }
-
-        /**
-         * Set the function as global function for the other requesting.
-         * 
-        */
-        handle_context->Global()->Set(handle_context, instance::Util::v8_str(isolate, script.function().c_str()), value);
-        context.add_compiled_function(script.function());
+        return;
     }
+    /**
+     * Check module status.
+     * In this condition, module status should be 'kUninstantiated'.
+     * 
+    */
+    if (module->GetStatus() != v8::Module::kUninstantiated)
+    {
+        context.set_error("Compile error, current module status is not 'kUninstantiated'.");
+        return;
+    }
+    module->InstantiateModule(handle_context, instance::Instance::module_resolve_cb);
+    // check exception.
+    if (try_catch.HasCaught())
+    {
+        v8::Local<v8::Value> stack;
+        if (try_catch.StackTrace(handle_context).ToLocal(&stack))
+        {
+            v8::String::Utf8Value error(isolate, stack);
+            context.set_error(*error);
+        }
+        else
+        {
+            v8::String::Utf8Value error(isolate, try_catch.Exception());
+            context.set_error(*error);
+        }
+        return;
+    }
+
+    /**
+     * Check module status.
+     * In this condition, module status should be 'kUninstantiated'.
+     * 
+    */
+    if (module->GetStatus() != v8::Module::kInstantiated)
+    {
+        context.set_error("Compile error, current module status is not 'kInstantiated'.");
+        return;
+    }
+
+    v8::Local<v8::Value> names = module->GetModuleNamespace();
+    v8::Local<v8::Object> names_object;
+    if (!names->ToObject(handle_context).ToLocal(&names_object))
+    {
+        v8::Local<v8::Value> stack;
+        if (try_catch.StackTrace(handle_context).ToLocal(&stack))
+        {
+            v8::String::Utf8Value error(isolate, stack);
+            context.set_error(*error);
+        }
+        else
+        {
+            v8::String::Utf8Value error(isolate, try_catch.Exception());
+            context.set_error(*error);
+        }
+        return;
+    }
+
+    /**
+     * Get function of specific in the script, example:
+     * ----test.js----
+     * import {foo} from https://example/lib.js
+     * 
+     * export function test(request,response){
+     *   response.send('xxxx');
+     * }
+     * ---------------
+     * In this script, 'test' is the entry function
+     * and export for outside services such as 'HTTPT'.
+     * So the function must have the prefix 'export'.
+     * 
+    */
+    v8::Local<v8::Value> value = names_object->Get(handle_context, instance::Util::v8_str(isolate, script.function().c_str())).ToLocalChecked();
+    if (!value->IsFunction())
+    {
+        std::string error("Target function does not exist in the script, function: '");
+        error.append(script.function()).append("'.");
+        context.set_error(error);
+        return;
+    }
+
+    /**
+     * Set the function as global function for the other requesting.
+     * 
+    */
+    handle_context->Global()->Set(handle_context, instance::Util::v8_str(isolate, script.function().c_str()), value);
     context.set_ok();
 }
 

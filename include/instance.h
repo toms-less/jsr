@@ -129,10 +129,8 @@ namespace instance
     class CompileContext
     {
     public:
-        CompileContext(google::protobuf::RepeatedPtrField<protos::JavaScript> *scripts);
-        ~CompileContext();
-
-        google::protobuf::RepeatedPtrField<protos::JavaScript> *scripts();
+        CompileContext(const protos::JavaScript &script);
+        const protos::JavaScript &script();
 
         void set_ok();
         bool ok();
@@ -141,19 +139,10 @@ namespace instance
         void set_error(const char *error);
         const std::string &error();
 
-        void add_compiled_function(const std::string &function);
-        const std::vector<std::string> &compiled_function();
-
     private:
         bool ok_;
         std::string error_;
-        google::protobuf::RepeatedPtrField<protos::JavaScript> *scripts_;
-
-        /**
-         * Compiled functions name.
-         * 
-        */
-        std::vector<std::string> compiled;
+        const protos::JavaScript &script_;
     };
 
     /**

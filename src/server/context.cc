@@ -109,6 +109,54 @@ void server::Context::call_handler()
 
 void server::Context::script_handler()
 {
+    const google::protobuf::RepeatedPtrField<protos::ScriptRequest> &script_requests = request_.script();
+    if (script_requests.size() <= 0)
+    {
+        response_.set_status(protos::Common_Status::Common_Status_OK);
+        response_.set_message("No scripts action.");
+        writer_.Finish(response_, grpc::Status::OK, this);
+        status_ = FINISH;
+        return;
+    }
+
+    for (int i = 0; i < script_requests.size(); i++)
+    {
+        const protos::ScriptRequest &script_request = script_requests.Get(i);
+        switch (script_request.action())
+        {
+        case protos::ScriptRequest_ActionType_UPDATE:
+        {
+            update_script(script_request.javascript());
+            continue;
+        }
+        case protos::ScriptRequest_ActionType_ADD:
+        {
+            add_script(script_request.javascript());
+            continue;
+        }
+        case protos::ScriptRequest_ActionType_DELETE:
+        {
+            delete_script(script_request.javascript());
+            continue;
+        }
+        default:
+            continue;
+        }
+    }
+}
+
+void server::Context::update_script(const protos::JavaScript &script)
+{
+    instance::CompileContext context(script);
+    instances_->compile(context);
+}
+
+void server::Context::add_script(const protos::JavaScript &script)
+{
+}
+
+void server::Context::delete_script(const protos::JavaScript &script)
+{
 }
 
 void server::Context::set_status(const server::Context::Status &status)

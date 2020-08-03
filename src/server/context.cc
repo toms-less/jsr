@@ -126,37 +126,69 @@ void server::Context::script_handler()
         {
         case protos::ScriptRequest_ActionType_UPDATE:
         {
-            update_script(script_request.javascript());
+            if (!update_script(script_request.javascript()))
+            {
+                break;
+            }
             continue;
         }
         case protos::ScriptRequest_ActionType_ADD:
         {
-            add_script(script_request.javascript());
+            if (!add_script(script_request.javascript()))
+            {
+                break;
+            }
             continue;
         }
         case protos::ScriptRequest_ActionType_DELETE:
         {
-            delete_script(script_request.javascript());
+            if (!delete_script(script_request.javascript()))
+            {
+                break;
+            }
             continue;
         }
         default:
             continue;
         }
     }
+    writer_.Finish(response_, grpc::Status::OK, this);
+    status_ = FINISH;
 }
 
-void server::Context::update_script(const protos::JavaScript &script)
+bool server::Context::update_script(const protos::JavaScript &script)
 {
     instance::CompileContext context(script);
     instances_->compile(context);
+    if (!context.ok())
+    {
+        response_.set_status(protos::Common_Status::Common_Status_USER_ERROR);
+        response_.set_message(context.error());
+        return false;
+    }
+    response_.set_status(protos::Common_Status::Common_Status_OK);
+    // TODO set compiled script info.
+    return true;
 }
 
-void server::Context::add_script(const protos::JavaScript &script)
+bool server::Context::add_script(const protos::JavaScript &script)
 {
+    instance::CompileContext context(script);
+    instances_->compile(context);
+    if (!context.ok())
+    {
+        response_.set_status(protos::Common_Status::Common_Status_USER_ERROR);
+        response_.set_message(context.error());
+        return false;
+    }
+    response_.set_status(protos::Common_Status::Common_Status_OK);
+    // TODO set compiled script info.
+    return true;
 }
 
-void server::Context::delete_script(const protos::JavaScript &script)
+bool server::Context::delete_script(const protos::JavaScript &script)
 {
+    return true;
 }
 
 void server::Context::set_status(const server::Context::Status &status)

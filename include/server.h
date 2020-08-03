@@ -127,19 +127,19 @@ namespace server
          * Deal with requesting of function script updateing.
          * 
         */
-        void update_script(const protos::JavaScript &script);
+        bool update_script(const protos::JavaScript &script);
 
         /**
          * Deal with requesting of function script adding.
          * 
         */
-        void add_script(const protos::JavaScript &script);
+        bool add_script(const protos::JavaScript &script);
 
         /**
          * Deal with requesting of function script deleting.
          * 
         */
-        void delete_script(const protos::JavaScript &script);
+        bool delete_script(const protos::JavaScript &script);
 
         protos::RuntimeService::AsyncService *service_;
         grpc::ServerCompletionQueue *cq_;

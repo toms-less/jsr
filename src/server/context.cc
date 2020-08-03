@@ -188,6 +188,16 @@ bool server::Context::add_script(const protos::JavaScript &script)
 
 bool server::Context::delete_script(const protos::JavaScript &script)
 {
+    instance::UncompileContext context(script);
+    instances_->uncompile(context);
+    if (!context.ok())
+    {
+        response_.set_status(protos::Common_Status::Common_Status_USER_ERROR);
+        response_.set_message(context.error());
+        return false;
+    }
+    response_.set_status(protos::Common_Status::Common_Status_OK);
+    // TODO set uncompiled script info.
     return true;
 }
 

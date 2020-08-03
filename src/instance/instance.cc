@@ -69,7 +69,7 @@ bool instance::Instance::Initialize()
     return true;
 }
 
-void instance::Instance::Compile(CompileContext &context)
+void instance::Instance::compile(CompileContext &context)
 {
     if (!inited)
     {
@@ -85,7 +85,7 @@ void instance::Instance::Compile(CompileContext &context)
     v8::TryCatch try_catch(isolate);
 
     v8::Local<v8::Context> handle_context = v8::Local<v8::Context>::New(isolate, context_);
-    v8::Context::Scope contextScope(handle_context);
+    v8::Context::Scope context_scope(handle_context);
 
     // compile function script.
     const protos::JavaScript &script = context.script();
@@ -195,6 +195,44 @@ void instance::Instance::Compile(CompileContext &context)
      * 
     */
     handle_context->Global()->Set(handle_context, instance::Util::v8_str(isolate, script.function().c_str()), value);
+    context.set_ok();
+}
+
+void instance::Instance::uncompile(UncompileContext &context)
+{
+    if (!inited)
+    {
+        context.set_error("Current instance has not been initialized.");
+        return;
+    }
+
+    // As v8 limited, this place should set stack limit for multi-thread.
+    v8::Locker locker(isolate);
+    isolate->SetStackLimit(config.GetStackLimit());
+
+    v8::HandleScope isolate_scope(isolate);
+    v8::TryCatch try_catch(isolate);
+
+    v8::Local<v8::Context> handle_context = v8::Local<v8::Context>::New(isolate, context_);
+    v8::Context::Scope context_scope(handle_context);
+
+    const protos::JavaScript &script = context.script();
+    v8::Local<v8::Value> value = handle_context->Global()->Get(handle_context, instance::Util::v8_str(isolate, script.function().c_str())).ToLocalChecked();
+    if (!value->IsFunction())
+    {
+        /**
+         * In this condition, the target function does not exist
+         * in the global object, so it should do nothing and return.
+         * 
+        */
+        context.set_ok();
+        return;
+    }
+    if (!handle_context->Global()->Delete(handle_context, instance::Util::v8_str(isolate, script.function().c_str())).FromJust())
+    {
+        context.set_error("Delete function error.");
+        return;
+    }
     context.set_ok();
 }
 

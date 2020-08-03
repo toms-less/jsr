@@ -34,6 +34,40 @@ const std::string &instance::CompileContext::error()
     return this->error_;
 }
 
+instance::UncompileContext::UncompileContext(const protos::JavaScript &script) : script_(script)
+{
+}
+
+const protos::JavaScript &instance::UncompileContext::script()
+{
+    return this->script_;
+}
+
+void instance::UncompileContext::set_ok()
+{
+    this->ok_ = true;
+}
+
+bool instance::UncompileContext::ok()
+{
+    return this->ok_;
+}
+
+void instance::UncompileContext::set_error(std::string &error)
+{
+    this->error_ = error;
+}
+
+void instance::UncompileContext::set_error(const char *error)
+{
+    this->error_.assign(error);
+}
+
+const std::string &instance::UncompileContext::error()
+{
+    return this->error_;
+}
+
 instance::BindContext::BindContext(std::vector<sysfunc::ObjectFunction> &_objectFunctopmList, std::vector<sysfunc::PureFunction> &_pureFunctionList)
     : objectFunctopmList(_objectFunctopmList), pureFunctionList(_pureFunctionList)
 {

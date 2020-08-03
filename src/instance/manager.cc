@@ -94,7 +94,26 @@ void instance::IntanceManager::compile(CompileContext &context)
     // compile functions for all instances.
     for (instance::Instance *instance : instances)
     {
-        instance->Compile(context);
+        instance->compile(context);
+        if (!context.ok())
+        {
+            return;
+        }
+    }
+}
+
+void instance::IntanceManager::uncompile(UncompileContext &context)
+{
+    if (!config.IsInited())
+    {
+        context.set_error("Instance manager has not been initialized.");
+        return;
+    }
+
+    // Remove the compiled functions for all instances.
+    for (instance::Instance *instance : instances)
+    {
+        instance->uncompile(context);
         if (!context.ok())
         {
             return;

@@ -146,6 +146,29 @@ namespace instance
     };
 
     /**
+     * function uncompile context.
+     * 
+     */
+    class UncompileContext
+    {
+    public:
+        UncompileContext(const protos::JavaScript &script);
+        const protos::JavaScript &script();
+
+        void set_ok();
+        bool ok();
+
+        void set_error(std::string &error);
+        void set_error(const char *error);
+        const std::string &error();
+
+    private:
+        bool ok_;
+        std::string error_;
+        const protos::JavaScript &script_;
+    };
+
+    /**
      * system function bind context.
      * 
      */
@@ -414,7 +437,13 @@ namespace instance
          * compile functions.
          *
          */
-        void Compile(CompileContext &context);
+        void compile(CompileContext &context);
+
+        /**
+         * Remove the compiled functions.
+         *
+         */
+        void uncompile(UncompileContext &context);
 
         /**
          * bind system functions.
@@ -464,6 +493,12 @@ namespace instance
          *
          */
         void compile(CompileContext &context);
+
+        /**
+         * Remove the compiled functions.
+         *
+         */
+        void uncompile(UncompileContext &context);
 
         /**
          * proccess function execution with an instance.

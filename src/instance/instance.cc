@@ -120,7 +120,7 @@ void instance::Instance::compile(CompileContext &context)
         context.set_error("Compile error, current module status is not 'kUninstantiated'.");
         return;
     }
-    module->InstantiateModule(handle_context, instance::Instance::module_resolve_cb);
+    module->InstantiateModule(handle_context, module::ScriptModule::module_resolve);
     // check exception.
     if (try_catch.HasCaught())
     {
@@ -536,10 +536,4 @@ void instance::Instance::Execute(ExecuteContext &context)
         return;
     }
     context.set_status(ExecuteStatus::FINISH);
-}
-
-v8::MaybeLocal<v8::Module> instance::Instance::module_resolve_cb(v8::Local<v8::Context> context,
-                                                                 v8::Local<v8::String> specifier, v8::Local<v8::Module> referrer)
-{
-    return v8::MaybeLocal<v8::Module>();
 }

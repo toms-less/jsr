@@ -75,6 +75,7 @@ filegroup(
         "include/config.h",
         "include/server.h",
         "include/instance.h",
+        "include/module.h",
         "include/sysfunc.h",
     ],
 )
@@ -108,6 +109,7 @@ filegroup(
         "src/instance/request.cc",
         "src/instance/response.cc",
         "src/instance/instance.cc",
+        "src/instance/module.cc",
         "src/instance/manager.cc",
         "src/instance/util.cc",
     ],

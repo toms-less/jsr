@@ -1,6 +1,7 @@
 #pragma once
 #include <include/base.h>
 #include <include/sysfunc.h>
+#include <include/module.h>
 
 /**
  * v8 instance namespace.
@@ -463,13 +464,6 @@ namespace instance
         v8::ArrayBuffer::Allocator *allocator_;
         v8::Persistent<v8::Context> context_;
         bool inited = false;
-
-        /**
-         * Resolve modules.
-         * 
-         */
-        static v8::MaybeLocal<v8::Module> module_resolve_cb(v8::Local<v8::Context> context,
-                                                            v8::Local<v8::String> specifier, v8::Local<v8::Module> referrer);
     };
 
     /**

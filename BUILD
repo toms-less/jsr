@@ -55,6 +55,7 @@ cc_library(
         ":base",
         ":config",
         ":instance",
+        ":module",
         ":sysfunc",
         ":server",
     ],
@@ -109,9 +110,15 @@ filegroup(
         "src/instance/request.cc",
         "src/instance/response.cc",
         "src/instance/instance.cc",
-        "src/instance/module.cc",
         "src/instance/manager.cc",
         "src/instance/util.cc",
+    ],
+)
+
+filegroup(
+    name = "module",
+    srcs = [
+        "src/module/module.cc",
     ],
 )
 

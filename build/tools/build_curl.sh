@@ -9,7 +9,7 @@ cd `echo $CURL_HOME`
 ./buildconf
 
 # configure and compile.
-# TODO: make more options for different platfm
+# TODO: make more options for different platforms or conditions.
 $CURL_HOME/configure --with-ssl
 make
 

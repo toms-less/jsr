@@ -60,6 +60,7 @@ cc_library(
         ":server",
     ],
     deps = [
+        ":curl",
         ":runtime_grpc",
         "@com_github_grpc_grpc//:grpc++",
         "@com_github_grpc_grpc//:grpc++_reflection",
@@ -202,5 +203,42 @@ cc_library(
         ":runtime_grpc",
         "@com_github_grpc_grpc//:grpc++",
         "@com_github_grpc_grpc//:grpc++_reflection",
+    ],
+)
+
+#-------curl dependency-------
+# curl version 'curl-7_70_0'.
+cc_library(
+    name = "curl",
+    hdrs = glob([
+        "deps/curl/include/curl/*h",
+    ]),
+    includes = [
+        "deps/curl/include/curl",
+    ],
+    srcs = [
+        ":build_curl",
+    ],
+    linkstatic = 1,
+)
+
+genrule(
+    name = "build_curl",
+    srcs = glob([
+        "deps/curl/*",
+        "deps/curl/**/**",
+    ]),
+    outs = [
+        "libcurl.a",
+    ],
+    cmd = "$(location :curl_build_sh) $(OUTS)",
+    tools = [":curl_build_sh"],
+    output_to_bindir = 1,
+)
+
+sh_binary(
+    name = "curl_build_sh",
+    srcs = [
+        "build/tools/build_curl.sh",
     ],
 )

@@ -336,6 +336,143 @@ namespace base
     };
 
     /**
+     * HTTP Header.
+     * 
+    */
+    class Header
+    {
+    public:
+        Header(std::string &name, std::string &value);
+
+        const std::string &name();
+        const std::string &value();
+
+    private:
+        std::string name_;
+        std::string value_;
+    };
+
+    /**
+     * HTTP cookie.
+     * 
+    */
+    class Cookie
+    {
+    public:
+        Cookie(std::string &name, std::string &value);
+
+        const std::string &name();
+        const std::string &value();
+
+        void set_domain(std::string &domain);
+        const std::string &domain();
+
+        void set_path(std::string &path);
+        const std::string &path();
+
+        void set_expires(int32_t expires);
+        const int32_t &expires();
+
+        void set_max_age(int32_t max_age);
+        const int32_t &max_age();
+
+        void set_secure(bool secure);
+        const bool &secure();
+
+        void set_http_only(bool http_only);
+        bool &http_only();
+
+    private:
+        std::string name_;
+        std::string value_;
+        std::string domain_;
+        std::string path_;
+        int32_t expires_;
+        int32_t max_age_;
+        bool secure_;
+        bool http_only_;
+    };
+
+    /**
+     * Context of HTTP client.
+     * 
+    */
+    class HttpEntry
+    {
+    public:
+        HttpEntry();
+
+        void set_url(std::string &url);
+        const std::string &url();
+
+        void set_header(std::string &name, std::string &value);
+        const std::vector<Header> &headers();
+
+        void set_cookie(Cookie &cookie);
+        const std::vector<Cookie> &cookies();
+
+        void set_ok();
+        const bool &ok();
+
+        void set_status(int16_t status);
+        const int16_t &status();
+
+        void set_content(const char *content);
+        const std::string &content();
+
+        void set_error(std::string &error);
+        const std::string &error();
+
+    private:
+        /**
+         * Requesting url, such as 'https://example.com?p=xx'.
+         * 
+        */
+        std::string url_;
+        std::vector<Header> headers_;
+        std::vector<Cookie> cookies_;
+        bool ok_;
+
+        /**
+         * HTTP code, such as 404.
+         * 
+        */
+        int16_t status_;
+
+        /**
+         * Responsing content.
+         * 
+        */
+        std::string content_;
+
+        /**
+         * Error message which was occured in requesting.
+         * 
+        */
+        std::string error_;
+    };
+
+    /**
+     * HTTP client which is wrapped by libcurl.
+     * 
+    */
+    class HttpClient
+    {
+    public:
+        /**
+         * Request HTTP server with 'GET' method synchronously.
+         * 
+        */
+        static void sync_get(HttpEntry &entry);
+
+        /**
+         * Request HTTP server with 'POST' method synchronously.
+         * 
+        */
+        static void sync_post(HttpEntry &entry);
+    };
+
+    /**
      * project utils.
      * 
      */

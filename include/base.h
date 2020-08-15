@@ -430,33 +430,39 @@ namespace base
         void set_error(const char *content);
         const std::string &error();
 
+        void set_timeout(uint timeout);
+        const uint &timeout();
+
+        void set_retry(int retry);
+        const int &retry();
+
     private:
         /**
-         * Requesting url, such as 'https://example.com?p=xx'.
+         * Request url, such as 'https://example.com?p=xx'.
          * 
         */
         std::string url_;
 
         /**
-         * Requesting headers.
+         * Request headers.
          * 
         */
         std::vector<Header> request_headers_;
 
         /**
-         * Responsing headers.
+         * Response headers.
          * 
         */
         std::vector<Header> response_headers_;
 
         /**
-         * Requesting cookies.
+         * Request cookies.
          * 
         */
         std::vector<Cookie> request_cookies_;
 
         /**
-         * Responsing cookies.
+         * Response cookies.
          * 
         */
         std::vector<Cookie> response_cookies_;
@@ -475,13 +481,13 @@ namespace base
         int16_t status_;
 
         /**
-         * Requesting content.
+         * Request content.
          * 
         */
         std::string request_content_;
 
         /**
-         * Responsing content.
+         * Response content.
          * 
         */
         std::string response_content_;
@@ -491,6 +497,20 @@ namespace base
          * 
         */
         std::string error_;
+
+        /**
+         * Request timeout value in millisecond.
+         * 
+        */
+        uint timeout_;
+
+        /**
+         * Retry times when request failure.
+         * If this value less than 0, it will
+         * return error right now when error occured.
+         * 
+        */
+        int retry_;
     };
 
     /**
@@ -500,17 +520,47 @@ namespace base
     class HttpClient
     {
     public:
+        HttpClient();
+        ~HttpClient();
         /**
          * Request HTTP server with 'GET' method synchronously.
          * 
         */
-        static void sync_get(HttpEntry &entry);
+        void sync_get(HttpEntry &entry);
 
         /**
          * Request HTTP server with 'POST' method synchronously.
          * 
         */
-        static void sync_post(HttpEntry &entry);
+        void sync_post(HttpEntry &entry);
+
+    private:
+        /**
+         * Minimum timeout value in millisecond.
+         * If user set timeout value less then
+         * this value, it will set the timeout
+         * to be this value for protecting system.
+         * 
+        */
+        uint min_timeout_;
+
+        /**
+         * maximum timeout value in millisecond.
+         * If user set timeout value more then
+         * this value, it will set the timeout
+         * to be this value for protecting system.
+         * 
+        */
+        uint max_timeout_;
+
+        /**
+         * maximum retry times.
+         * If user set retry times more then
+         * this value, it will set the retry times
+         * to be this value for protecting system.
+         * 
+        */
+        int max_retry_;
     };
 
     /**

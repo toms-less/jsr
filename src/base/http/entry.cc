@@ -4,6 +4,18 @@ base::HttpEntry::HttpEntry(const char *url)
 {
     url_.assign(url);
     ok_ = false;
+
+    /**
+     * Default value is 1 minute. 
+     * 
+    */
+    timeout_ = 60000;
+
+    /**
+     * Without retry when request failure.
+     * 
+    */
+    retry_ = -1;
 }
 
 const std::string &base::HttpEntry::url()
@@ -100,4 +112,23 @@ void base::HttpEntry::set_error(const char *content)
 const std::string &base::HttpEntry::error()
 {
     return error_;
+}
+
+void base::HttpEntry::set_timeout(uint timeout)
+{
+    timeout_ = timeout;
+}
+const uint &base::HttpEntry::timeout()
+{
+    return timeout_;
+}
+
+void base::HttpEntry::set_retry(int retry)
+{
+    retry_ = retry;
+}
+
+const int &base::HttpEntry::retry()
+{
+    return retry_;
 }

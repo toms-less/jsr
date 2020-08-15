@@ -85,7 +85,10 @@ filegroup(
 filegroup(
     name = "base",
     srcs = [
-        "src/base/http_client.cc",
+        "src/base/http/client.cc",
+        "src/base/http/cookie.cc",
+        "src/base/http/entry.cc",
+        "src/base/http/header.cc",
         "src/base/module.cc",
         "src/base/log.cc",
         "src/base/thread_pool.cc",

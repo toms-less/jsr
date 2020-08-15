@@ -342,7 +342,7 @@ namespace base
     class Header
     {
     public:
-        Header(std::string &name, std::string &value);
+        Header(const char *name, const char *value);
 
         const std::string &name();
         const std::string &value();
@@ -359,15 +359,15 @@ namespace base
     class Cookie
     {
     public:
-        Cookie(std::string &name, std::string &value);
+        Cookie(const char *name, const char *value);
 
         const std::string &name();
         const std::string &value();
 
-        void set_domain(std::string &domain);
+        void set_domain(const char *domain);
         const std::string &domain();
 
-        void set_path(std::string &path);
+        void set_path(const char *path);
         const std::string &path();
 
         void set_expires(int32_t expires);
@@ -400,16 +400,20 @@ namespace base
     class HttpEntry
     {
     public:
-        HttpEntry();
-
-        void set_url(std::string &url);
+        HttpEntry(const char *url);
         const std::string &url();
 
-        void set_header(std::string &name, std::string &value);
-        const std::vector<Header> &headers();
+        void set_request_header(const char *name, const char *value);
+        const std::vector<Header> &request_headers();
 
-        void set_cookie(Cookie &cookie);
-        const std::vector<Cookie> &cookies();
+        void set_response_header(const char *name, const char *value);
+        const std::vector<Header> &response_headers();
+
+        void set_request_cookie(Cookie &cookie);
+        const std::vector<Cookie> &request_cookies();
+
+        void set_response_cookie(Cookie &cookie);
+        const std::vector<Cookie> &response_cookies();
 
         void set_ok();
         const bool &ok();
@@ -417,10 +421,13 @@ namespace base
         void set_status(int16_t status);
         const int16_t &status();
 
-        void set_content(const char *content);
-        const std::string &content();
+        void set_request_content(const char *content);
+        const std::string &request_content();
 
-        void set_error(std::string &error);
+        void set_response_content(const char *content);
+        const std::string &response_content();
+
+        void set_error(const char *content);
         const std::string &error();
 
     private:
@@ -429,8 +436,36 @@ namespace base
          * 
         */
         std::string url_;
-        std::vector<Header> headers_;
-        std::vector<Cookie> cookies_;
+
+        /**
+         * Requesting headers.
+         * 
+        */
+        std::vector<Header> request_headers_;
+
+        /**
+         * Responsing headers.
+         * 
+        */
+        std::vector<Header> response_headers_;
+
+        /**
+         * Requesting cookies.
+         * 
+        */
+        std::vector<Cookie> request_cookies_;
+
+        /**
+         * Responsing cookies.
+         * 
+        */
+        std::vector<Cookie> response_cookies_;
+
+        /**
+         * Requesting status. If status is 'false',
+         * error message is ofen not empty.
+         * 
+        */
         bool ok_;
 
         /**
@@ -440,10 +475,16 @@ namespace base
         int16_t status_;
 
         /**
+         * Requesting content.
+         * 
+        */
+        std::string request_content_;
+
+        /**
          * Responsing content.
          * 
         */
-        std::string content_;
+        std::string response_content_;
 
         /**
          * Error message which was occured in requesting.

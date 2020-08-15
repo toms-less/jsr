@@ -36,12 +36,12 @@ const std::string &base::Cookie::path()
     return path_;
 }
 
-void base::Cookie::set_expires(int32_t expires)
+void base::Cookie::set_expires(const char *expires)
 {
-    expires_ = expires;
+    expires_.assign(expires);
 }
 
-const int32_t &base::Cookie::expires()
+const std::string &base::Cookie::expires()
 {
     return expires_;
 }

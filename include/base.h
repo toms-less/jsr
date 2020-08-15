@@ -370,8 +370,8 @@ namespace base
         void set_path(const char *path);
         const std::string &path();
 
-        void set_expires(int32_t expires);
-        const int32_t &expires();
+        void set_expires(const char *expires);
+        const std::string &expires();
 
         void set_max_age(int32_t max_age);
         const int32_t &max_age();
@@ -387,7 +387,7 @@ namespace base
         std::string value_;
         std::string domain_;
         std::string path_;
-        int32_t expires_;
+        std::string expires_;
         int32_t max_age_;
         bool secure_;
         bool http_only_;
@@ -400,20 +400,25 @@ namespace base
     class HttpEntry
     {
     public:
-        HttpEntry(const char *url);
-        const std::string &url();
+        HttpEntry(const char *domain, const char *uri, bool https);
+        const std::string &domain();
+        const std::string &uri();
+        const bool &https();
+
+        void set_parameter_str(const char *str);
+        const std::string &parameter_str();
 
         void set_request_header(const char *name, const char *value);
-        const std::vector<Header> &request_headers();
+        std::vector<Header> &request_headers();
 
         void set_response_header(const char *name, const char *value);
-        const std::vector<Header> &response_headers();
+        std::vector<Header> &response_headers();
 
         void set_request_cookie(Cookie &cookie);
-        const std::vector<Cookie> &request_cookies();
+        std::vector<Cookie> &request_cookies();
 
         void set_response_cookie(Cookie &cookie);
-        const std::vector<Cookie> &response_cookies();
+        std::vector<Cookie> &response_cookies();
 
         void set_ok();
         const bool &ok();
@@ -438,10 +443,30 @@ namespace base
 
     private:
         /**
-         * Request url, such as 'https://example.com?p=xx'.
+         * Request domain, such as 'https://example.com/home?p=xx',
+         * domain is 'example.com'.
          * 
         */
-        std::string url_;
+        std::string domain_;
+        /**
+         * Request uri, such as 'https://example.com/home?p=xx',
+         * uri is '/home'.
+         * 
+        */
+        std::string uri_;
+
+        /**
+         * Whether this request is HTTPS.
+         * 
+        */
+        bool https_;
+
+        /**
+         * Parameters string, such as 'https://example.com/home?p=xx&q=xx',
+         * parameter string is 'p=xx&q=xx'.
+         * 
+        */
+        std::string parameter_str_;
 
         /**
          * Request headers.
@@ -521,7 +546,7 @@ namespace base
     {
     public:
         HttpClient();
-        ~HttpClient();
+
         /**
          * Request HTTP server with 'GET' method synchronously.
          * 
@@ -561,6 +586,20 @@ namespace base
          * 
         */
         int max_retry_;
+
+        /**
+         * Get response headers function.
+         * It will be call when responsing data.
+         * 
+        */
+        static size_t write_header(void *buffer, size_t size, size_t nmemb, void *entry);
+
+        /**
+         * Get response data function.
+         * It will be call when responsing data.
+         * 
+        */
+        static size_t write_data(void *buffer, size_t size, size_t nmemb, void *entry);
     };
 
     /**

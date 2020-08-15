@@ -1,8 +1,10 @@
 #include <include/base.h>
 
-base::HttpEntry::HttpEntry(const char *url)
+base::HttpEntry::HttpEntry(const char *domain, const char *uri, bool https)
 {
-    url_.assign(url);
+    domain_.assign(domain);
+    uri_.assign(uri);
+    https_ = https;
     ok_ = false;
 
     /**
@@ -18,9 +20,29 @@ base::HttpEntry::HttpEntry(const char *url)
     retry_ = -1;
 }
 
-const std::string &base::HttpEntry::url()
+const std::string &base::HttpEntry::domain()
 {
-    return url_;
+    return domain_;
+}
+
+const std::string &base::HttpEntry::uri()
+{
+    return uri_;
+}
+
+const bool &base::HttpEntry::https()
+{
+    return https_;
+}
+
+void base::HttpEntry::set_parameter_str(const char *str)
+{
+    parameter_str_.assign(str);
+}
+
+const std::string &base::HttpEntry::parameter_str()
+{
+    return parameter_str_;
 }
 
 void base::HttpEntry::set_request_header(const char *name, const char *value)
@@ -29,7 +51,7 @@ void base::HttpEntry::set_request_header(const char *name, const char *value)
     request_headers_.push_back(header);
 }
 
-const std::vector<base::Header> &base::HttpEntry::request_headers()
+std::vector<base::Header> &base::HttpEntry::request_headers()
 {
     return request_headers_;
 }
@@ -40,7 +62,7 @@ void base::HttpEntry::set_response_header(const char *name, const char *value)
     response_headers_.push_back(header);
 }
 
-const std::vector<base::Header> &base::HttpEntry::response_headers()
+std::vector<base::Header> &base::HttpEntry::response_headers()
 {
     return response_headers_;
 }
@@ -50,7 +72,7 @@ void base::HttpEntry::set_request_cookie(base::Cookie &cookie)
     request_cookies_.push_back(cookie);
 }
 
-const std::vector<base::Cookie> &base::HttpEntry::request_cookies()
+std::vector<base::Cookie> &base::HttpEntry::request_cookies()
 {
     return request_cookies_;
 }
@@ -60,7 +82,7 @@ void base::HttpEntry::set_response_cookie(base::Cookie &cookie)
     response_cookies_.push_back(cookie);
 }
 
-const std::vector<base::Cookie> &base::HttpEntry::response_cookies()
+std::vector<base::Cookie> &base::HttpEntry::response_cookies()
 {
     return response_cookies_;
 }

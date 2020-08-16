@@ -406,7 +406,7 @@ void base::HttpClient::parse(CURL *curl, const std::string &header_string, const
     }
 
     /**
-     * Pase cookies
+     * Parse cookies
      * 
     */
     curl_slist *raw_cookies;

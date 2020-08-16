@@ -1,14 +1,28 @@
 #include <include/base.h>
 
+base::Cookie::Cookie()
+{
+}
+
 base::Cookie::Cookie(const char *name, const char *value)
 {
     name_.assign(name);
     value_.assign(value);
 }
 
+void base::Cookie::set_name(const char *name)
+{
+    name_.assign(name);
+}
+
 const std::string &base::Cookie::name()
 {
     return name_;
+}
+
+void base::Cookie::set_value(const char *value)
+{
+    value_.assign(value);
 }
 
 const std::string &base::Cookie::value()

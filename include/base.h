@@ -4,6 +4,7 @@
 #include <time.h>
 #include <queue>
 #include <deque>
+#include <sstream>
 #include <map>
 #include <memory>
 #include <thread>
@@ -22,6 +23,7 @@
 #include "grpc/support/log.h"
 #include "build/protos/runtime.pb.h"
 #include "build/protos/runtime.grpc.pb.h"
+#include "curl.h"
 
 namespace base
 {
@@ -359,9 +361,13 @@ namespace base
     class Cookie
     {
     public:
+        Cookie();
         Cookie(const char *name, const char *value);
 
+        void set_name(const char *name);
         const std::string &name();
+
+        void set_value(const char *value);
         const std::string &value();
 
         void set_domain(const char *domain);
@@ -426,6 +432,9 @@ namespace base
         void set_status(int16_t status);
         const int16_t &status();
 
+        void set_status_message(const char *message);
+        const std::string &status_message();
+
         void set_request_content(const char *content);
         const std::string &request_content();
 
@@ -438,8 +447,23 @@ namespace base
         void set_timeout(uint timeout);
         const uint &timeout();
 
+        void set_connect_timeout(uint connect_timeout);
+        const uint &connect_timeout();
+
         void set_retry(int retry);
         const int &retry();
+
+        void set_total_time(double total_time);
+        const double &total_time();
+
+        void set_download_bytes_size(curl_off_t &download_bytes_size);
+        const curl_off_t &download_bytes_size();
+
+        void set_upload_bytes_size(curl_off_t &upload_bytes_size);
+        const curl_off_t &upload_bytes_size();
+
+        void set_redirect_count(long &redirect_count);
+        const long &redirect_count();
 
     private:
         /**
@@ -506,6 +530,21 @@ namespace base
         int16_t status_;
 
         /**
+         * In the HTTP protocol, the first responsed line
+         * is the status line. In this line, it show the 
+         * protocol version, status code and the status message.
+         * For example as below:
+         * "HTTP/1.1 200 OK\r\n"
+         * "Server: nginx\r\n"
+         * "Content-Type: application/json\r\n"
+         * "\r\n"};
+         * 
+         * The status message is 'OK'.
+         * 
+        */
+        std::string status_message_;
+
+        /**
          * Request content.
          * 
         */
@@ -530,12 +569,42 @@ namespace base
         uint timeout_;
 
         /**
+         * Connect timeout value in millisecond.
+         * 
+        */
+        uint connect_timeout_;
+
+        /**
          * Retry times when request failure.
          * If this value less than 0, it will
          * return error right now when error occured.
          * 
         */
         int retry_;
+
+        /**
+         * Total time over this request.
+         * 
+        */
+        double total_time_;
+
+        /**
+         * Downloaded data bytes over this request.
+         * 
+        */
+        curl_off_t download_bytes_size_;
+
+        /**
+         * Upload data bytes over this request.
+         * 
+        */
+        curl_off_t upload_bytes_size_;
+
+        /**
+         * Redirect count over this request.
+         * 
+        */
+        long redirect_count_;
     };
 
     /**
@@ -559,7 +628,37 @@ namespace base
         */
         void sync_post(HttpEntry &entry);
 
+        /**
+         * Request HTTP server with 'OPTIONS' method synchronously.
+         * 
+        */
+        void sync_options(HttpEntry &entry);
+
+        /**
+         * Request HTTP server with 'PATCH' method synchronously.
+         * 
+        */
+        void sync_patch(HttpEntry &entry);
+
+        /**
+         * Request HTTP server with 'PUT' method synchronously.
+         * 
+        */
+        void sync_put(HttpEntry &entry);
+
+        /**
+         * Request HTTP server with 'DELETE' method synchronously.
+         * 
+        */
+        void sync_delete(HttpEntry &entry);
+
     private:
+        /**
+         * Internal request synchronously.
+         * 
+        */
+        void sync_request(CURL *curl, HttpEntry &entry);
+
         /**
          * Minimum timeout value in millisecond.
          * If user set timeout value less then
@@ -579,6 +678,24 @@ namespace base
         uint max_timeout_;
 
         /**
+         * Minimum connection timeout value in millisecond.
+         * If user set connection timeout value less then
+         * this value, it will set the connection timeout
+         * to be this value for protecting system.
+         * 
+        */
+        uint min_connect_timeout_;
+
+        /**
+         * maximum connection timeout value in millisecond.
+         * If user set connection timeout value more then
+         * this value, it will set the connection timeout
+         * to be this value for protecting system.
+         * 
+        */
+        uint max_connect_timeout_;
+
+        /**
          * maximum retry times.
          * If user set retry times more then
          * this value, it will set the retry times
@@ -588,18 +705,17 @@ namespace base
         int max_retry_;
 
         /**
-         * Get response headers function.
-         * It will be call when responsing data.
-         * 
-        */
-        static size_t write_header(void *buffer, size_t size, size_t nmemb, void *entry);
-
-        /**
          * Get response data function.
          * It will be call when responsing data.
          * 
         */
-        static size_t write_data(void *buffer, size_t size, size_t nmemb, void *entry);
+        static size_t write_data(void *buffer, size_t size, size_t nmemb, std::string *data);
+
+        /**
+         * Paser the responsed head and body string.
+         * 
+        */
+        void parse(CURL *curl, const std::string &header_string, const std::string &body_string, HttpEntry &entry);
     };
 
     /**

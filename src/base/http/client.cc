@@ -1,8 +1,4 @@
 #include <include/base.h>
-extern "C"
-{
-#include "curl.h"
-}
 
 base::HttpClient::HttpClient()
 {
@@ -17,6 +13,18 @@ base::HttpClient::HttpClient()
      * 
     */
     max_timeout_ = 5 * 60 * 1000;
+
+    /**
+     * Default 5 milliseconds.
+     * 
+    */
+    min_connect_timeout_ = 5;
+
+    /**
+     * Default 2 minutes.
+     * 
+    */
+    max_connect_timeout_ = 2 * 60 * 1000;
 
     /**
      * Default 10 times.
@@ -38,7 +46,151 @@ void base::HttpClient::sync_get(HttpEntry &entry)
     if (!curl)
     {
         entry.set_error("'libcurl' initialized error.");
+        curl_easy_cleanup(curl);
         return;
+    }
+    curl_easy_setopt(curl, CURLOPT_NOBODY, 0L);
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
+    sync_request(curl, entry);
+}
+
+void base::HttpClient::sync_post(HttpEntry &entry)
+{
+    if (entry.domain().empty() || entry.uri().empty())
+    {
+        entry.set_error("Domain or uri is empty.");
+        return;
+    }
+
+    CURL *curl;
+    curl = curl_easy_init();
+    if (!curl)
+    {
+        entry.set_error("'libcurl' initialized error.");
+        curl_easy_cleanup(curl);
+        return;
+    }
+    curl_easy_setopt(curl, CURLOPT_NOBODY, 0L);
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "POST");
+    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, entry.request_content().empty() ? "" : entry.request_content().c_str());
+    sync_request(curl, entry);
+}
+
+void base::HttpClient::sync_options(HttpEntry &entry)
+{
+    if (entry.domain().empty() || entry.uri().empty())
+    {
+        entry.set_error("Domain or uri is empty.");
+        return;
+    }
+
+    CURL *curl;
+    curl = curl_easy_init();
+    if (!curl)
+    {
+        entry.set_error("'libcurl' initialized error.");
+        curl_easy_cleanup(curl);
+        return;
+    }
+    curl_easy_setopt(curl, CURLOPT_NOBODY, 0L);
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "OPTIONS");
+    sync_request(curl, entry);
+}
+
+void base::HttpClient::sync_patch(HttpEntry &entry)
+{
+    if (entry.domain().empty() || entry.uri().empty())
+    {
+        entry.set_error("Domain or uri is empty.");
+        return;
+    }
+
+    CURL *curl;
+    curl = curl_easy_init();
+    if (!curl)
+    {
+        entry.set_error("'libcurl' initialized error.");
+        curl_easy_cleanup(curl);
+        return;
+    }
+    curl_easy_setopt(curl, CURLOPT_NOBODY, 0L);
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PATCH");
+    sync_request(curl, entry);
+}
+
+void base::HttpClient::sync_put(HttpEntry &entry)
+{
+    if (entry.domain().empty() || entry.uri().empty())
+    {
+        entry.set_error("Domain or uri is empty.");
+        return;
+    }
+
+    CURL *curl;
+    curl = curl_easy_init();
+    if (!curl)
+    {
+        entry.set_error("'libcurl' initialized error.");
+        curl_easy_cleanup(curl);
+        return;
+    }
+    curl_easy_setopt(curl, CURLOPT_NOBODY, 0L);
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
+    sync_request(curl, entry);
+}
+
+void base::HttpClient::sync_delete(HttpEntry &entry)
+{
+    if (entry.domain().empty() || entry.uri().empty())
+    {
+        entry.set_error("Domain or uri is empty.");
+        return;
+    }
+
+    CURL *curl;
+    curl = curl_easy_init();
+    if (!curl)
+    {
+        entry.set_error("'libcurl' initialized error.");
+        curl_easy_cleanup(curl);
+        return;
+    }
+    curl_easy_setopt(curl, CURLOPT_HTTPGET, 0L);
+    curl_easy_setopt(curl, CURLOPT_NOBODY, 0L);
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+    sync_request(curl, entry);
+}
+
+void base::HttpClient::sync_request(CURL *curl, HttpEntry &entry)
+{
+    /**
+     * Set timeout and connection timeout values.
+     * 
+    */
+    if (entry.timeout() < min_timeout_)
+    {
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, min_timeout_);
+    }
+    else if (entry.timeout() > max_timeout_)
+    {
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, max_timeout_);
+    }
+    else
+    {
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, entry.timeout());
+    }
+
+    if (entry.connect_timeout() < min_connect_timeout_)
+    {
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, min_connect_timeout_);
+    }
+    else if (entry.connect_timeout() > max_connect_timeout_)
+    {
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, max_connect_timeout_);
+    }
+    else
+    {
+        curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, entry.connect_timeout());
     }
 
     /**
@@ -79,7 +231,7 @@ void base::HttpClient::sync_get(HttpEntry &entry)
             curl_easy_cleanup(curl);
             return;
         }
-        std::string current("set-cookie:");
+        std::string current("Set-Cookie:");
         current.append(cookie.name()).append("=").append(cookie.value()).append(";");
         /**
          * Default value is the domain of this request
@@ -129,20 +281,19 @@ void base::HttpClient::sync_get(HttpEntry &entry)
      * Send request.
      * 
     */
-    curl_easy_setopt(curl, CURLOPT_HEADER, 0L);
-    // Get data with 'write_data' function.
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &entry);
-    // Get headers with 'write_header' function.
-    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, write_header);
-    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &entry);
+    std::string header_string;
+    std::string body_string;
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &body_string);
+    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &header_string);
 
     CURLcode res = curl_easy_perform(curl);
     switch (res)
     {
     case CURLE_OK:
     {
+        parse(curl, header_string, body_string, entry);
         entry.set_ok();
         break;
     }
@@ -189,21 +340,155 @@ void base::HttpClient::sync_get(HttpEntry &entry)
     }
     }
 
+    // TODO: retry when current request is failure.
+
     curl_slist_free_all(header_list);
     curl_slist_free_all(cookie_list);
     curl_easy_cleanup(curl);
 }
 
-void base::HttpClient::sync_post(HttpEntry &entry)
+size_t base::HttpClient::write_data(void *buffer, size_t size, size_t nmemb, std::string *data)
 {
+    data->append(static_cast<char *>(buffer), size * nmemb);
+    return size * nmemb;
 }
 
-size_t base::HttpClient::write_header(void *buffer, size_t size, size_t nmemb, void *entry)
+void base::HttpClient::parse(CURL *curl, const std::string &header_string, const std::string &body_string, base::HttpEntry &entry)
 {
-    return size;
-}
+    std::vector<std::string> lines;
+    std::istringstream stream(header_string);
+    {
+        std::string line;
+        while (std::getline(stream, line, '\n'))
+        {
+            lines.push_back(line);
+        }
+    }
+    for (auto &line : lines)
+    {
+        if (line.length() == 0)
+        {
+            continue;
+        }
+        /**
+         * Parse status message.
+         * 
+        */
+        if (line.substr(0, 5) == "HTTP/")
+        {
+            line.resize(std::min<size_t>(line.size(), line.find_last_not_of("\t\n\r ") + 1));
+            size_t pos1 = line.find_first_of("\t ");
+            size_t pos2 = std::string::npos;
+            if (pos1 != std::string::npos)
+            {
+                pos2 = line.find_first_of("\t ", pos1 + 1);
+            }
+            if (pos2 != std::string::npos)
+            {
+                line.erase(0, pos2 + 1);
+                entry.set_status_message(line.c_str());
+            }
+            continue;
+        }
 
-size_t base::HttpClient::write_data(void *buffer, size_t size, size_t nmemb, void *entry)
-{
-    return size;
+        /**
+         * Parse headers.
+         * 
+        */
+        size_t header_tag = line.find(":");
+        if (header_tag != std::string::npos)
+        {
+            std::string value = line.substr(header_tag + 1);
+            value.erase(0, value.find_first_not_of("\t "));
+            value.resize(std::min<size_t>(value.size(), value.find_last_not_of("\t\n\r ") + 1));
+            entry.set_response_header(line.substr(0, header_tag).c_str(), value.c_str());
+        }
+    }
+
+    /**
+     * Pase cookies
+     * 
+    */
+    curl_slist *raw_cookies;
+    curl_easy_getinfo(curl, CURLINFO_COOKIELIST, &raw_cookies);
+    for (curl_slist *nc = raw_cookies; nc; nc = nc->next)
+    {
+        std::vector<std::string> tokens;
+        std::stringstream stream(nc->data);
+        std::string item;
+        while (std::getline(stream, item, '\t'))
+        {
+            tokens.push_back(item);
+        }
+
+        std::string &value = tokens.back();
+        tokens.pop_back();
+        std::string &key = tokens.back();
+        base::Cookie cookie;
+        if (strcasecmp(key.c_str(), "domain") == 0)
+        {
+            cookie.set_domain(value.c_str());
+        }
+        else if (strcasecmp(key.c_str(), "path") == 0)
+        {
+            cookie.set_path(value.c_str());
+        }
+        else if (strcasecmp(key.c_str(), "expires") == 0)
+        {
+            cookie.set_expires(value.c_str());
+        }
+        else
+        {
+            cookie.set_name(key.c_str());
+            cookie.set_value(value.c_str());
+        }
+        entry.set_request_cookie(cookie);
+        curl_slist_free_all(raw_cookies);
+
+        /**
+         * Parse status.
+         * 
+        */
+        int16_t status_code;
+        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status_code);
+        entry.set_status(status_code);
+
+        /**
+         * Set body.
+         * 
+        */
+        entry.set_response_content(body_string.c_str());
+
+        /**
+         * Parse total time.
+         * 
+        */
+        double total_time;
+        curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &total_time);
+        entry.set_total_time(total_time);
+
+        /**
+         * Parse downloaded bytes size.
+         * 
+        */
+        curl_off_t download_bytes_size;
+        curl_easy_getinfo(curl, CURLINFO_SIZE_DOWNLOAD_T, &download_bytes_size);
+        entry.set_download_bytes_size(download_bytes_size);
+
+        /**
+         * Parse uploaded bytes size.
+         * 
+        */
+        curl_off_t upload_bytes_size;
+        curl_easy_getinfo(curl, CURLINFO_SIZE_UPLOAD_T, &upload_bytes_size);
+        entry.set_upload_bytes_size(upload_bytes_size);
+
+        /**
+         * Parse redirect count.
+         * 
+        */
+        long redirect_count;
+        curl_easy_getinfo(curl, CURLINFO_REDIRECT_COUNT, &redirect_count);
+        entry.set_redirect_count(redirect_count);
+    }
 }

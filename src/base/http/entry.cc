@@ -14,6 +14,12 @@ base::HttpEntry::HttpEntry(const char *domain, const char *uri, bool https)
     timeout_ = 60000;
 
     /**
+     * Default value is 1 minute. 
+     * 
+    */
+    connect_timeout_ = 60000;
+
+    /**
      * Without retry when request failure.
      * 
     */
@@ -106,6 +112,16 @@ const int16_t &base::HttpEntry::status()
     return status_;
 }
 
+void base::HttpEntry::set_status_message(const char *message)
+{
+    status_message_.assign(message);
+}
+
+const std::string &base::HttpEntry::status_message()
+{
+    return status_message_;
+}
+
 void base::HttpEntry::set_request_content(const char *content)
 {
     request_content_.assign(content);
@@ -145,6 +161,15 @@ const uint &base::HttpEntry::timeout()
     return timeout_;
 }
 
+void base::HttpEntry::set_connect_timeout(uint connect_timeout)
+{
+    connect_timeout_ = connect_timeout;
+}
+const uint &base::HttpEntry::connect_timeout()
+{
+    return connect_timeout_;
+}
+
 void base::HttpEntry::set_retry(int retry)
 {
     retry_ = retry;
@@ -153,4 +178,44 @@ void base::HttpEntry::set_retry(int retry)
 const int &base::HttpEntry::retry()
 {
     return retry_;
+}
+
+void base::HttpEntry::set_total_time(double total_time)
+{
+    total_time_ = total_time;
+}
+
+const double &base::HttpEntry::total_time()
+{
+    return total_time_;
+}
+
+void base::HttpEntry::set_download_bytes_size(curl_off_t &download_bytes_size)
+{
+    download_bytes_size_ = download_bytes_size;
+}
+
+const curl_off_t &base::HttpEntry::download_bytes_size()
+{
+    return download_bytes_size_;
+}
+
+void base::HttpEntry::set_upload_bytes_size(curl_off_t &upload_bytes_size)
+{
+    upload_bytes_size_ = upload_bytes_size;
+}
+
+const curl_off_t &base::HttpEntry::upload_bytes_size()
+{
+    return upload_bytes_size_;
+}
+
+void base::HttpEntry::set_redirect_count(long &redirect_count)
+{
+    redirect_count_ = redirect_count;
+}
+
+const long &base::HttpEntry::redirect_count()
+{
+    return redirect_count_;
 }

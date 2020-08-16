@@ -182,15 +182,15 @@ void base::HttpClient::sync_request(CURL *curl, HttpEntry &entry)
 
     if (entry.connect_timeout() < min_connect_timeout_)
     {
-        curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, min_connect_timeout_);
+        curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT_MS, min_connect_timeout_);
     }
     else if (entry.connect_timeout() > max_connect_timeout_)
     {
-        curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, max_connect_timeout_);
+        curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT_MS, max_connect_timeout_);
     }
     else
     {
-        curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, entry.connect_timeout());
+        curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT_MS, entry.connect_timeout());
     }
 
     /**

@@ -1,6 +1,6 @@
 #include <include/base.h>
 
-base::HttpClient::HttpClient()
+base::http::HttpClient::HttpClient()
 {
     /**
      * Default 5 milliseconds.
@@ -33,7 +33,7 @@ base::HttpClient::HttpClient()
     max_retry_ = 10;
 }
 
-void base::HttpClient::sync_get(HttpEntry &entry)
+void base::http::HttpClient::sync_get(HttpEntry &entry)
 {
     if (entry.domain().empty() || entry.uri().empty())
     {
@@ -54,7 +54,7 @@ void base::HttpClient::sync_get(HttpEntry &entry)
     sync_request(curl, entry);
 }
 
-void base::HttpClient::sync_post(HttpEntry &entry)
+void base::http::HttpClient::sync_post(HttpEntry &entry)
 {
     if (entry.domain().empty() || entry.uri().empty())
     {
@@ -76,7 +76,7 @@ void base::HttpClient::sync_post(HttpEntry &entry)
     sync_request(curl, entry);
 }
 
-void base::HttpClient::sync_options(HttpEntry &entry)
+void base::http::HttpClient::sync_options(HttpEntry &entry)
 {
     if (entry.domain().empty() || entry.uri().empty())
     {
@@ -97,7 +97,7 @@ void base::HttpClient::sync_options(HttpEntry &entry)
     sync_request(curl, entry);
 }
 
-void base::HttpClient::sync_patch(HttpEntry &entry)
+void base::http::HttpClient::sync_patch(HttpEntry &entry)
 {
     if (entry.domain().empty() || entry.uri().empty())
     {
@@ -118,7 +118,7 @@ void base::HttpClient::sync_patch(HttpEntry &entry)
     sync_request(curl, entry);
 }
 
-void base::HttpClient::sync_put(HttpEntry &entry)
+void base::http::HttpClient::sync_put(HttpEntry &entry)
 {
     if (entry.domain().empty() || entry.uri().empty())
     {
@@ -139,7 +139,7 @@ void base::HttpClient::sync_put(HttpEntry &entry)
     sync_request(curl, entry);
 }
 
-void base::HttpClient::sync_delete(HttpEntry &entry)
+void base::http::HttpClient::sync_delete(HttpEntry &entry)
 {
     if (entry.domain().empty() || entry.uri().empty())
     {
@@ -161,7 +161,7 @@ void base::HttpClient::sync_delete(HttpEntry &entry)
     sync_request(curl, entry);
 }
 
-void base::HttpClient::sync_request(CURL *curl, HttpEntry &entry)
+void base::http::HttpClient::sync_request(CURL *curl, HttpEntry &entry)
 {
     /**
      * Set timeout and connection timeout values.
@@ -197,9 +197,9 @@ void base::HttpClient::sync_request(CURL *curl, HttpEntry &entry)
      * Build request headers.
      * 
     */
-    std::vector<base::Header> &request_headers = entry.request_headers();
+    std::vector<base::http::Header> &request_headers = entry.request_headers();
     struct curl_slist *header_list = NULL;
-    for (base::Header &header : request_headers)
+    for (base::http::Header &header : request_headers)
     {
         const std::string &name = header.name();
         const std::string &value = header.value();
@@ -218,11 +218,11 @@ void base::HttpClient::sync_request(CURL *curl, HttpEntry &entry)
      * Build request cookies.
      * 
     */
-    std::vector<base::Cookie> &request_cookies = entry.request_cookies();
+    std::vector<base::http::Cookie> &request_cookies = entry.request_cookies();
     struct curl_slist *cookie_list = NULL;
     for (size_t i = 0; i < request_cookies.size(); i++)
     {
-        base::Cookie &cookie = request_cookies.at(i);
+        base::http::Cookie &cookie = request_cookies.at(i);
         if (cookie.name().empty() || cookie.value().empty())
         {
             entry.set_error("Invalid request cookies, cookie name or value is empty.");
@@ -347,13 +347,13 @@ void base::HttpClient::sync_request(CURL *curl, HttpEntry &entry)
     curl_easy_cleanup(curl);
 }
 
-size_t base::HttpClient::write_data(void *buffer, size_t size, size_t nmemb, std::string *data)
+size_t base::http::HttpClient::write_data(void *buffer, size_t size, size_t nmemb, std::string *data)
 {
     data->append(static_cast<char *>(buffer), size * nmemb);
     return size * nmemb;
 }
 
-void base::HttpClient::parse(CURL *curl, const std::string &header_string, const std::string &body_string, base::HttpEntry &entry)
+void base::http::HttpClient::parse(CURL *curl, const std::string &header_string, const std::string &body_string, base::http::HttpEntry &entry)
 {
     std::vector<std::string> lines;
     std::istringstream stream(header_string);
@@ -424,7 +424,7 @@ void base::HttpClient::parse(CURL *curl, const std::string &header_string, const
         std::string &value = tokens.back();
         tokens.pop_back();
         std::string &key = tokens.back();
-        base::Cookie cookie;
+        base::http::Cookie cookie;
         if (strcasecmp(key.c_str(), "domain") == 0)
         {
             cookie.set_domain(value.c_str());

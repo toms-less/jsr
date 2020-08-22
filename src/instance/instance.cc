@@ -120,7 +120,7 @@ void instance::Instance::compile(CompileContext &context)
         context.set_error("Compile error, current module status is not 'kUninstantiated'.");
         return;
     }
-    module->InstantiateModule(handle_context, module::ScriptModule::module_resolve);
+    module->InstantiateModule(handle_context, module::ScriptModule::resolve);
     // check exception.
     if (try_catch.HasCaught())
     {

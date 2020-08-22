@@ -124,6 +124,8 @@ filegroup(
     name = "module",
     srcs = [
         "src/module/module.cc",
+        "src/module/context.cc",
+        "src/module/parser.cc",
     ],
 )
 

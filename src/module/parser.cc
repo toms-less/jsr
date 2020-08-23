@@ -78,6 +78,18 @@ void module::ScriptModule::local_deps_parse(DepsParseContext &context)
 
 void module::ScriptModule::http_deps_parse(DepsParseContext &context)
 {
+    /**
+     * To make sure the dependency script is fixed,
+     * it can not be has the parameter options.
+     * 
+    */
+    if (context.specifier().find("?") != std::string::npos)
+    {
+        std::string error = "Compile error, current specifier '" + context.specifier() + "' has parameter character '?'.";
+        context.set_error(error.c_str());
+        return;
+    }
+
     base::http::HttpEntry entry(context.specifier().c_str());
     base::http::HttpClient client;
     client.sync_get(entry);

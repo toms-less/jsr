@@ -68,20 +68,62 @@ void module::ScriptModule::deps_parse(module::DepsParseContext &context)
 
 void module::ScriptModule::local_deps_parse(DepsParseContext &context)
 {
+    /**
+     * TODO:
+     * support it.
+     * 
+    */
+    context.set_error("Compile error, local dependency is unsupported now.");
 }
 
 void module::ScriptModule::http_deps_parse(DepsParseContext &context)
 {
+    base::http::HttpEntry entry(context.specifier().c_str());
+    base::http::HttpClient client;
+    client.sync_get(entry);
+    if (!entry.ok())
+    {
+        context.set_error(entry.error().c_str());
+        return;
+    }
+
+    const std::string &script_content = entry.response_content();
+    if (script_content.empty())
+    {
+        std::string error = "Compile error, current dependency script from current specifier '" + context.specifier() + "' is empty.";
+        context.set_error(error.c_str());
+        return;
+    }
+    context.set_script(script_content.c_str());
+    context.set_ok();
 }
 
 void module::ScriptModule::ftp_deps_parse(DepsParseContext &context)
 {
+    /**
+     * TODO:
+     * support it.
+     * 
+    */
+    context.set_error("Compile error, FTP dependency is unsupported now.");
 }
 
 void module::ScriptModule::sys_deps_parse(DepsParseContext &context)
 {
+    /**
+     * TODO:
+     * support it.
+     * 
+    */
+    context.set_error("Compile error, system dependency is unsupported now.");
 }
 
 void module::ScriptModule::third_deps_parse(DepsParseContext &context)
 {
+    /**
+     * TODO:
+     * support it.
+     * 
+    */
+    context.set_error("Compile error, third dependency is unsupported now.");
 }

@@ -35,7 +35,7 @@ cc_binary(
         "-std=c++11",
         "-I."
     ],
-    linkopts = ["-lpthread -lrt"],
+    linkopts = ["-lpthread -lrt -lcrypto -lssl"],
     deps = [
         ":main",
     ],

@@ -34,6 +34,16 @@ const std::string &instance::CompileContext::error()
     return this->error_;
 }
 
+void instance::CompileContext::set_script_content(std::string &content)
+{
+    script_content_ = content;
+}
+
+std::string &instance::CompileContext::script_content()
+{
+    return script_content_;
+}
+
 instance::UncompileContext::UncompileContext(const protos::JavaScript &script) : script_(script)
 {
 }

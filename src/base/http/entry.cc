@@ -1,10 +1,9 @@
 #include <include/base.h>
 
-base::http::HttpEntry::HttpEntry(const char *domain, const char *uri, bool https)
+base::http::HttpEntry::HttpEntry(const char *url)
 {
-    domain_.assign(domain);
-    uri_.assign(uri);
-    https_ = https;
+    url_.assign(url);
+    https_ = false;
     ok_ = false;
 
     /**
@@ -26,9 +25,24 @@ base::http::HttpEntry::HttpEntry(const char *domain, const char *uri, bool https
     retry_ = -1;
 }
 
+const std::string &base::http::HttpEntry::url()
+{
+    return url_;
+}
+
+void base::http::HttpEntry::set_domain(std::string &domain)
+{
+    domain_ = domain;
+}
+
 const std::string &base::http::HttpEntry::domain()
 {
     return domain_;
+}
+
+void base::http::HttpEntry::set_uri(std::string &uri)
+{
+    uri_ = uri;
 }
 
 const std::string &base::http::HttpEntry::uri()
@@ -36,14 +50,19 @@ const std::string &base::http::HttpEntry::uri()
     return uri_;
 }
 
+void base::http::HttpEntry::set_https()
+{
+    https_ = true;
+}
+
 const bool &base::http::HttpEntry::https()
 {
     return https_;
 }
 
-void base::http::HttpEntry::set_parameter_str(const char *str)
+void base::http::HttpEntry::set_parameter_str(std::string &str)
 {
-    parameter_str_.assign(str);
+    parameter_str_ = str;
 }
 
 const std::string &base::http::HttpEntry::parameter_str()

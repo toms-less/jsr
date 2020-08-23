@@ -428,12 +428,19 @@ namespace base
         class HttpEntry
         {
         public:
-            HttpEntry(const char *domain, const char *uri, bool https);
+            HttpEntry(const char *url);
+            const std::string &url();
+
+            void set_domain(std::string &domain);
             const std::string &domain();
+
+            void set_uri(std::string &uri);
             const std::string &uri();
+
+            void set_https();
             const bool &https();
 
-            void set_parameter_str(const char *str);
+            void set_parameter_str(std::string &str);
             const std::string &parameter_str();
 
             void set_request_header(const char *name, const char *value);
@@ -488,6 +495,12 @@ namespace base
             const long &redirect_count();
 
         private:
+            /**
+             * Request url, such as 'https://example.com/home?p=xx'
+             * 
+             */
+            std::string url_;
+
             /**
              * Request domain, such as 'https://example.com/home?p=xx',
              * domain is 'example.com'.
@@ -675,6 +688,12 @@ namespace base
             void sync_delete(HttpEntry &entry);
 
         private:
+            /**
+             * Parse the url string.
+             * 
+             */
+            bool url_parse(HttpEntry &entry);
+
             /**
              * Internal request synchronously.
              * 

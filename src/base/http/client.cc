@@ -35,9 +35,8 @@ base::http::HttpClient::HttpClient()
 
 void base::http::HttpClient::sync_get(HttpEntry &entry)
 {
-    if (entry.domain().empty() || entry.uri().empty())
+    if (!url_parse(entry))
     {
-        entry.set_error("Domain or uri is empty.");
         return;
     }
 
@@ -56,9 +55,8 @@ void base::http::HttpClient::sync_get(HttpEntry &entry)
 
 void base::http::HttpClient::sync_post(HttpEntry &entry)
 {
-    if (entry.domain().empty() || entry.uri().empty())
+    if (!url_parse(entry))
     {
-        entry.set_error("Domain or uri is empty.");
         return;
     }
 
@@ -78,9 +76,8 @@ void base::http::HttpClient::sync_post(HttpEntry &entry)
 
 void base::http::HttpClient::sync_options(HttpEntry &entry)
 {
-    if (entry.domain().empty() || entry.uri().empty())
+    if (!url_parse(entry))
     {
-        entry.set_error("Domain or uri is empty.");
         return;
     }
 
@@ -99,9 +96,8 @@ void base::http::HttpClient::sync_options(HttpEntry &entry)
 
 void base::http::HttpClient::sync_patch(HttpEntry &entry)
 {
-    if (entry.domain().empty() || entry.uri().empty())
+    if (!url_parse(entry))
     {
-        entry.set_error("Domain or uri is empty.");
         return;
     }
 
@@ -120,9 +116,8 @@ void base::http::HttpClient::sync_patch(HttpEntry &entry)
 
 void base::http::HttpClient::sync_put(HttpEntry &entry)
 {
-    if (entry.domain().empty() || entry.uri().empty())
+    if (!url_parse(entry))
     {
-        entry.set_error("Domain or uri is empty.");
         return;
     }
 
@@ -141,9 +136,8 @@ void base::http::HttpClient::sync_put(HttpEntry &entry)
 
 void base::http::HttpClient::sync_delete(HttpEntry &entry)
 {
-    if (entry.domain().empty() || entry.uri().empty())
+    if (!url_parse(entry))
     {
-        entry.set_error("Domain or uri is empty.");
         return;
     }
 
@@ -159,6 +153,67 @@ void base::http::HttpClient::sync_delete(HttpEntry &entry)
     curl_easy_setopt(curl, CURLOPT_NOBODY, 0L);
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
     sync_request(curl, entry);
+}
+
+bool base::http::HttpClient::url_parse(HttpEntry &entry)
+{
+    /**
+     * Parse domain, https, uri and parameter string.
+     * User valid url may be like below:
+     * 1. https://example.com?p=xxx
+     * 2. http://example.com?p=xxx
+     * 3. https://example.com/key1=value1&key2=value2?p=xxx
+     * 4. https://example.com/key1=value1&key2=value2
+     * 5. https://example.com/
+    */
+    if (entry.url().empty())
+    {
+        entry.set_error("Url is empty.");
+        return false;
+    }
+
+    const std::string http = "http://";
+    const std::string https = "https://";
+    bool normal_http = entry.url().find(http) == 0 ? true : false;
+    bool normal_https = entry.url().find(https) == 0 ? true : false;
+    if (!normal_http && !normal_https)
+    {
+        entry.set_error("HTTP request url is invalid, it should be start with 'http://' or 'https://'.");
+        return false;
+    }
+    std::string::size_type domain_start = normal_https ? https.length() : http.length();
+    std::string::size_type domain_end = entry.url().find("/", domain_start);
+    if (domain_end != std::string::npos)
+    {
+        std::string domain = entry.url().substr(domain_start, domain_end - domain_start);
+        entry.set_domain(domain);
+
+        std::string::size_type uri_end = entry.url().find("?", domain_end);
+        if (uri_end != std::string::npos)
+        {
+            std::string uri = entry.url().substr(domain_end + 1, uri_end - domain_end);
+            entry.set_uri(uri);
+            std::string parameter_str = entry.url().substr(uri_end + 1);
+            entry.set_parameter_str(parameter_str);
+        }
+        else
+        {
+            std::string uri = entry.url().substr(domain_end + 1);
+            entry.set_uri(uri);
+        }
+    }
+    else
+    {
+        std::string domain = entry.url().substr(domain_start);
+        entry.set_domain(domain);
+        std::string uri = "/";
+        entry.set_uri(uri);
+    }
+    if (normal_https)
+    {
+        entry.set_https();
+    }
+    return true;
 }
 
 void base::http::HttpClient::sync_request(CURL *curl, HttpEntry &entry)
@@ -267,23 +322,12 @@ void base::http::HttpClient::sync_request(CURL *curl, HttpEntry &entry)
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, cookie_list);
 
     /**
-     * Build request url.
-     * 
-    */
-    std::string url(entry.https() ? "https://" : "http://");
-    url.append(entry.domain()).append(entry.uri());
-    if (!entry.parameter_str().empty())
-    {
-        url.append("?").append(entry.parameter_str());
-    }
-
-    /**
      * Send request.
      * 
     */
     std::string header_string;
     std::string body_string;
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_URL, entry.url().c_str());
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &body_string);
     curl_easy_setopt(curl, CURLOPT_HEADERDATA, &header_string);

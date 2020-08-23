@@ -140,10 +140,14 @@ namespace instance
         void set_error(const char *error);
         const std::string &error();
 
+        void set_script_content(std::string &content);
+        std::string &script_content();
+
     private:
         bool ok_;
         std::string error_;
         const protos::JavaScript &script_;
+        std::string script_content_;
     };
 
     /**

@@ -1,4 +1,5 @@
 #include <include/server.h>
+#include <include/module.h>
 
 server::Context::Context(protos::RuntimeService::AsyncService *service, grpc::ServerCompletionQueue *cq, instance::IntanceManager *instances)
     : service_(service), cq_(cq), writer_(&ctx_), instances_(instances), status_(CREATE)
@@ -158,7 +159,24 @@ void server::Context::script_handler()
 
 bool server::Context::update_script(const protos::JavaScript &script)
 {
+    /**
+     * TODO:
+     * 1. add parsing cache;
+     * 2. parse script asynchronously.
+     * 
+    */
+    module::DepsParseContext parse_context(script.url().c_str());
+    module::ScriptModule script_module;
+    script_module.deps_parse(parse_context);
+    if (!parse_context.ok())
+    {
+        response_.set_status(protos::Common_Status::Common_Status_USER_ERROR);
+        response_.set_message(parse_context.error());
+        return false;
+    }
+
     instance::CompileContext context(script);
+    context.set_script_content(parse_context.script());
     instances_->compile(context);
     if (!context.ok())
     {
@@ -173,7 +191,24 @@ bool server::Context::update_script(const protos::JavaScript &script)
 
 bool server::Context::add_script(const protos::JavaScript &script)
 {
+    /**
+     * TODO:
+     * 1. add parsing cache;
+     * 2. parse script asynchronously.
+     * 
+    */
+    module::DepsParseContext parse_context(script.url().c_str());
+    module::ScriptModule script_module;
+    script_module.deps_parse(parse_context);
+    if (!parse_context.ok())
+    {
+        response_.set_status(protos::Common_Status::Common_Status_USER_ERROR);
+        response_.set_message(parse_context.error());
+        return false;
+    }
+
     instance::CompileContext context(script);
+    context.set_script_content(parse_context.script());
     instances_->compile(context);
     if (!context.ok())
     {

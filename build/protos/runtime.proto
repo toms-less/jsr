@@ -148,73 +148,56 @@ message JavaScript {
     /**
      * Module content.
      */
-    string script = 4;
+    string url = 4;
 
     /**
-     * 1. 'lib1.js'. In this example as below,
-     * 'ModuleDepsType' is 'Local'.
-     * ---lib1.js---
-     * import {foo} from '//mod/test'
-     * 
-     * 2. 'lib2.js'. In this example as below,
-     * 'ModuleDepsType' is 'HTTP'.
-     * ---lib2.js---
-     * import {foo} from 'https://test.com/mod/test.js'
-     *
-     * 3. 'lib3.js'. In this example as below,
-     * 'ModuleDepsType' is 'FTP'.
-     * ---lib3.js---
-     * import {foo} from 'ftp://test.com/mod/test.js' 
-     *
-     * 4. 'lib4.js'. In this example as below,
-     * 'ModuleDepsType' is 'STD'.
-     * ---lib4.js---
-     * import {foo1,foo2} from '@toms//std/net.js'
-     * 
-     * 5. 'lib5.js'. In this example as below,
-     * 'ModuleDepsType' is 'THIRD_PARTY'.
-     * ---lib5.js---
-     * import {foo1,foo2} from '@redux//lib/test.js' 
-     *
+     * 'workspace.jsr' file content in the root of user project.
      */
-    enum DepsType {
-        Local = 0;
-        HTTP = 1;
-        FTP = 2;
-        STD = 3;
-        THIRD_PARTY = 4;
-    }
+    WorkspaceJsr workspace = 5;
+}
+
+message WorkspaceJsr {
+    /**
+     * project name.
+     */
+    string name = 1;
 
     /**
-     * In this map, key is the url of this dependency.
-     * 1. 'lib1.js'. In this example as below,
-     * url value is '//mod/test'.
-     * ---lib1.js---
-     * import {foo} from '//mod/test'
-     * 
-     * 2. 'lib2.js'. In this example as below,
-     * url value is 'https://test.com/mod/test.js'.
-     * ---lib2.js---
-     * import {foo} from 'https://test.com/mod/test.js'
-     *
-     * 3. 'lib3.js'. In this example as below,
-     * url value is 'ftp://test.com/mod/test.js'.
-     * ---lib2.js---
-     * import {foo} from 'ftp://test.com/mod/test.js' 
-     *
-     * 4. 'lib4.js'. In this example as below,
-     * url value is '@toms//std/net.js'.
-     * ---lib4.js---
-     * import {foo1,foo2} from '@toms//std/net.js'
-     * 
-     * 5. 'lib5.js'. In this example as below,
-     * url value is '@toms//std/net.js'.
-     * ---lib5.js---
-     * import {foo1,foo2} from '@redux//lib/test.js' 
-     *
-     * The valu of this map is dependency object.
+     * project repository.
      */
-    map<string,JavaScript> deps = 5;
+    string repository = 2;
+
+    /**
+     * repository root of project.
+     */
+    string repoRoot = 3;
+
+    /**
+     * project license.
+     */
+    string license = 4;
+
+    /**
+     * project contributors.
+     */
+    repeated string contributors = 5;
+
+    /**
+     * project dependencies.
+     */
+    repeated DependencyJsr dependencies = 6;
+}
+
+message DependencyJsr {
+    /**
+     * Dependency name.
+     */
+    string name = 1;
+
+    /**
+     * Dependency version.
+     */
+    string version = 2;
 }
 
 message RuntimeResponse {

@@ -93,7 +93,7 @@ void instance::Instance::compile(CompileContext &context)
                             v8::Local<v8::Integer>(), v8::Local<v8::Boolean>(), v8::Local<v8::Integer>(),
                             v8::Local<v8::Value>(), v8::Local<v8::Boolean>(),
                             v8::Local<v8::Boolean>(), v8::True(isolate));
-    v8::ScriptCompiler::Source source(instance::Util::v8_str(isolate, script.script().c_str()), origin);
+    v8::ScriptCompiler::Source source(instance::Util::v8_str(isolate, context.script_content().c_str()), origin);
     v8::Local<v8::Module> module;
     if (!v8::ScriptCompiler::CompileModule(isolate, &source).ToLocal(&module))
     {

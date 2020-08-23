@@ -98,6 +98,11 @@ void module::ScriptModule::http_deps_parse(DepsParseContext &context)
         context.set_error(entry.error().c_str());
         return;
     }
+    if (entry.status() != 200)
+    {
+        context.set_error(entry.status_message().c_str());
+        return;
+    }
 
     const std::string &script_content = entry.response_content();
     if (script_content.empty())

@@ -1,6 +1,7 @@
 package(default_visibility = ["//visibility:public"])
 
 load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 load("@com_github_grpc_grpc//bazel:cc_grpc_library.bzl", "cc_grpc_library")
 load("//:build/workspace.bzl", "RELEASE_VERSION")
 
@@ -210,6 +211,19 @@ cc_library(
         "@com_github_grpc_grpc//:grpc++",
         "@com_github_grpc_grpc//:grpc++_reflection",
     ],
+)
+
+go_binary(
+    name = "code-server",
+    embed = [":libcode"],
+)
+
+go_library(
+    name = "libcode",
+    srcs = [
+        "test/common/http/server.go",
+    ],
+    importpath = "test/common/http",
 )
 
 #-------curl dependency-------

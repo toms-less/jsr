@@ -214,16 +214,27 @@ cc_library(
 )
 
 go_binary(
-    name = "code-server",
+    name = "module-server",
     embed = [":libcode"],
 )
 
 go_library(
     name = "libcode",
     srcs = [
-        "test/common/http/server.go",
+        "test/common/modules/server.go",
     ],
-    importpath = "test/common/http",
+    importpath = "modules",
+    deps = [
+        ":handlers"
+    ],
+)
+
+go_library(
+    name = "handlers",
+    srcs = [
+        "test/common/modules/handler/common_test.go",
+    ],
+    importpath = "modules/handler",
 )
 
 #-------curl dependency-------

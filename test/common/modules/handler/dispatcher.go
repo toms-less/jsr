@@ -10,7 +10,7 @@ const (
 	simple = "/simple"
 )
 
-// Dispatch of module server.
+// Dispatch the requests.
 func Dispatch(writer http.ResponseWriter, request *http.Request) {
 	uri := request.RequestURI
 	// simple test
@@ -18,7 +18,7 @@ func Dispatch(writer http.ResponseWriter, request *http.Request) {
 		simpleHandler(writer, request)
 		return
 	}
-	fmt.Printf("Unkown uri '%s'\n", uri)
+	fmt.Printf("Unknown uri '%s'\n", uri)
 	writer.WriteHeader(404)
-	writer.Write([]byte("Unkown uri '" + uri + "'\n"))
+	writer.Write([]byte("Unknown uri '" + uri + "'\n"))
 }

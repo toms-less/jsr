@@ -232,7 +232,8 @@ go_library(
 go_library(
     name = "handlers",
     srcs = [
-        "test/common/modules/handler/common_test.go",
+        "test/common/modules/handler/dispatcher.go",
+        "test/common/modules/handler/simple.go",
     ],
     importpath = "modules/handler",
 )

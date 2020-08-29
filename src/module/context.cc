@@ -1,9 +1,15 @@
 #include <include/module.h>
 
-module::DepsParseContext::DepsParseContext(const char *specifier)
+module::DepsParseContext::DepsParseContext(const char *repository, const char *specifier)
 {
+    repository_.assign(repository);
     specifier_.assign(specifier);
     ok_ = false;
+}
+
+std::string &module::DepsParseContext::repository()
+{
+    return repository_;
 }
 
 std::string &module::DepsParseContext::specifier()

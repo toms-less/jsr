@@ -85,6 +85,11 @@ void instance::Instance::compile(CompileContext &context)
     v8::TryCatch try_catch(isolate);
 
     v8::Local<v8::Context> handle_context = v8::Local<v8::Context>::New(isolate, context_);
+    /**
+     * Set the repository to the context for compiling modules.
+     * 
+    */
+    handle_context->SetEmbedderData(0, instance::Util::v8_str(isolate, context.script().workspace().repository().c_str()));
     v8::Context::Scope context_scope(handle_context);
 
     // compile function script.

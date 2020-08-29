@@ -52,7 +52,8 @@ namespace module
     class DepsParseContext
     {
     public:
-        DepsParseContext(const char *specifier);
+        DepsParseContext(const char *repository, const char *specifier);
+        std::string &repository();
 
         std::string &specifier();
 
@@ -69,6 +70,14 @@ namespace module
         std::string &error();
 
     private:
+        /**
+         * Repository is the root path of current project.
+         * It is used to make the absolutely module path
+         * to retrieve the script content.
+         * 
+        */
+        std::string repository_;
+
         /**
          * v8 module specifier string.
          * In this example as below,

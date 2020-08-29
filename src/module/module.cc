@@ -7,7 +7,16 @@ v8::MaybeLocal<v8::Module> module::ScriptModule::resolve(v8::Local<v8::Context> 
     v8::Isolate *isolate = context->GetIsolate();
     v8::TryCatch try_catch(isolate);
     v8::String::Utf8Value specifier_str(isolate, specifier);
-    module::DepsParseContext parse_context(*specifier_str);
+
+    v8::Local<v8::Value> repository = context->GetEmbedderData(0);
+    if (!repository->IsString())
+    {
+        std::string msg("Compile error, repository is not a string.");
+        isolate->ThrowException(instance::Util::error(isolate, "system", msg.c_str(), msg.c_str()));
+        return v8::MaybeLocal<v8::Module>();
+    }
+    v8::String::Utf8Value v8_repo(isolate, repository);
+    module::DepsParseContext parse_context(*v8_repo, *specifier_str);
 
     /**
      * Parse the dependencies.
@@ -23,7 +32,7 @@ v8::MaybeLocal<v8::Module> module::ScriptModule::resolve(v8::Local<v8::Context> 
 
     if (parse_context.type() == module::DepsType::UNKNOWN)
     {
-        std::string msg("Unkown specifier in the script, specifier '");
+        std::string msg("Compile error, unkown specifier in the script, specifier '");
         msg.append(*specifier_str).append("'.");
         isolate->ThrowException(instance::Util::error(isolate, "user", msg.c_str(), msg.c_str()));
         return v8::MaybeLocal<v8::Module>();

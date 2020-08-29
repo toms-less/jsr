@@ -168,24 +168,19 @@ message WorkspaceJsr {
     string repository = 2;
 
     /**
-     * repository root of project.
-     */
-    string repoRoot = 3;
-
-    /**
      * project license.
      */
-    string license = 4;
+    string license = 3;
 
     /**
      * project contributors.
      */
-    repeated string contributors = 5;
+    repeated string contributors = 4;
 
     /**
      * project dependencies.
      */
-    repeated DependencyJsr dependencies = 6;
+    repeated DependencyJsr dependencies = 5;
 }
 
 message DependencyJsr {

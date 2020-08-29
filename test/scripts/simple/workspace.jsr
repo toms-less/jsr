@@ -1,0 +1,14 @@
+name: simple_test
+version: 1.0.0
+repository: http://127.0.0.1:8080/simple
+license: Apache-2.0
+
+contributors:
+ -user01@example.com
+ -user02@example.com
+ -user03@example.com
+
+dependencies:
+ -toms: 1.0.0
+ -deps01: 1.0.1
+ -deps02: git@github.com:examples/deps02.git#4c3ecffa25f0144671c571636d5abcb4785e556b

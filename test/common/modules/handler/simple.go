@@ -12,7 +12,7 @@ func simpleHandler(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	path := base + request.RequestURI
+	path := base + scriptHome + request.RequestURI
 	content, err := ioutil.ReadFile(path)
 	if err != nil {
 		fmt.Printf("Error: %s\n", err)

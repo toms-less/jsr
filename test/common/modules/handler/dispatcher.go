@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	simple = "/simple"
+	simple     = "/simple"
+	scriptHome = "/scripts"
 )
 
 // Dispatch the requests.

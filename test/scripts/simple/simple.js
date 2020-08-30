@@ -1,4 +1,4 @@
-import { sum, div } from '//module/math.js'
+import { sum, div } from 'http://127.0.0.1/simple/module/math.js'
 import { append } from 'http://127.0.0.1/simple/module/strings.js'
 
 export function simple(request, response) {

@@ -482,8 +482,8 @@ void base::http::HttpClient::parse(CURL *curl, const std::string &header_string,
             cookie.set_value(value.c_str());
         }
         entry.set_request_cookie(cookie);
-        curl_slist_free_all(raw_cookies);
     }
+    curl_slist_free_all(raw_cookies);
 
     /**
      * Parse status.

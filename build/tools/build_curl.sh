@@ -10,7 +10,7 @@ cd `echo $CURL_HOME`
 
 # configure and compile.
 # TODO: make more options for different platforms or conditions.
-$CURL_HOME/configure --with-ssl
+$CURL_HOME/configure --without-ssl
 make
 
 if [ ! -f $LIBCURL_HOME/libcurl.a ]; then

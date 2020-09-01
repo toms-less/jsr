@@ -35,6 +35,7 @@ void server::Runtime::start()
 
 void server::Runtime::handler()
 {
+    curl_global_init(CURL_GLOBAL_NOTHING);
     unsigned cores = std::thread::hardware_concurrency();
     std::thread workers[cores];
     for (unsigned i = 0; i < cores; i++)

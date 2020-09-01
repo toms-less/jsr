@@ -40,8 +40,7 @@ void base::http::HttpClient::sync_get(HttpEntry &entry)
         return;
     }
 
-    CURL *curl;
-    curl = curl_easy_init();
+    CURL *curl = curl_easy_init();
     if (!curl)
     {
         entry.set_error("'libcurl' initialized error.");
@@ -60,8 +59,7 @@ void base::http::HttpClient::sync_post(HttpEntry &entry)
         return;
     }
 
-    CURL *curl;
-    curl = curl_easy_init();
+    CURL *curl = curl_easy_init();
     if (!curl)
     {
         entry.set_error("'libcurl' initialized error.");
@@ -81,8 +79,7 @@ void base::http::HttpClient::sync_options(HttpEntry &entry)
         return;
     }
 
-    CURL *curl;
-    curl = curl_easy_init();
+    CURL *curl = curl_easy_init();
     if (!curl)
     {
         entry.set_error("'libcurl' initialized error.");
@@ -101,8 +98,7 @@ void base::http::HttpClient::sync_patch(HttpEntry &entry)
         return;
     }
 
-    CURL *curl;
-    curl = curl_easy_init();
+    CURL *curl = curl_easy_init();
     if (!curl)
     {
         entry.set_error("'libcurl' initialized error.");
@@ -121,8 +117,7 @@ void base::http::HttpClient::sync_put(HttpEntry &entry)
         return;
     }
 
-    CURL *curl;
-    curl = curl_easy_init();
+    CURL *curl = curl_easy_init();
     if (!curl)
     {
         entry.set_error("'libcurl' initialized error.");
@@ -141,8 +136,7 @@ void base::http::HttpClient::sync_delete(HttpEntry &entry)
         return;
     }
 
-    CURL *curl;
-    curl = curl_easy_init();
+    CURL *curl = curl_easy_init();
     if (!curl)
     {
         entry.set_error("'libcurl' initialized error.");
@@ -222,6 +216,8 @@ void base::http::HttpClient::sync_request(CURL *curl, HttpEntry &entry)
      * Set timeout and connection timeout values.
      * 
     */
+    curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
+    curl_easy_setopt(curl, CURLOPT_ACCEPT_ENCODING, "");
     if (entry.timeout() < min_timeout_)
     {
         curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, min_timeout_);
@@ -338,7 +334,6 @@ void base::http::HttpClient::sync_request(CURL *curl, HttpEntry &entry)
     case CURLE_OK:
     {
         parse(curl, header_string, body_string, entry);
-        entry.set_ok();
         break;
     }
     case CURLE_UNSUPPORTED_PROTOCOL:
@@ -488,51 +483,52 @@ void base::http::HttpClient::parse(CURL *curl, const std::string &header_string,
         }
         entry.set_request_cookie(cookie);
         curl_slist_free_all(raw_cookies);
-
-        /**
-         * Parse status.
-         * 
-        */
-        int16_t status_code;
-        curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status_code);
-        entry.set_status(status_code);
-
-        /**
-         * Set body.
-         * 
-        */
-        entry.set_response_content(body_string.c_str());
-
-        /**
-         * Parse total time.
-         * 
-        */
-        double total_time;
-        curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &total_time);
-        entry.set_total_time(total_time);
-
-        /**
-         * Parse downloaded bytes size.
-         * 
-        */
-        curl_off_t download_bytes_size;
-        curl_easy_getinfo(curl, CURLINFO_SIZE_DOWNLOAD_T, &download_bytes_size);
-        entry.set_download_bytes_size(download_bytes_size);
-
-        /**
-         * Parse uploaded bytes size.
-         * 
-        */
-        curl_off_t upload_bytes_size;
-        curl_easy_getinfo(curl, CURLINFO_SIZE_UPLOAD_T, &upload_bytes_size);
-        entry.set_upload_bytes_size(upload_bytes_size);
-
-        /**
-         * Parse redirect count.
-         * 
-        */
-        long redirect_count;
-        curl_easy_getinfo(curl, CURLINFO_REDIRECT_COUNT, &redirect_count);
-        entry.set_redirect_count(redirect_count);
     }
+
+    /**
+     * Parse status.
+     * 
+     */
+    int16_t status_code;
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status_code);
+    entry.set_status(status_code);
+
+    /**
+     * Set body.
+     * 
+     */
+    entry.set_response_content(body_string.c_str());
+
+    /**
+     * Parse total time.
+     * 
+     */
+    double total_time;
+    curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &total_time);
+    entry.set_total_time(total_time);
+
+    /**
+     * Parse downloaded bytes size.
+     * 
+     */
+    curl_off_t download_bytes_size;
+    curl_easy_getinfo(curl, CURLINFO_SIZE_DOWNLOAD_T, &download_bytes_size);
+    entry.set_download_bytes_size(download_bytes_size);
+
+    /**
+     * Parse uploaded bytes size.
+     * 
+     */
+    curl_off_t upload_bytes_size;
+    curl_easy_getinfo(curl, CURLINFO_SIZE_UPLOAD_T, &upload_bytes_size);
+    entry.set_upload_bytes_size(upload_bytes_size);
+
+    /**
+     * Parse redirect count.
+     * 
+     */
+    long redirect_count;
+    curl_easy_getinfo(curl, CURLINFO_REDIRECT_COUNT, &redirect_count);
+    entry.set_redirect_count(redirect_count);
+    entry.set_ok();
 }

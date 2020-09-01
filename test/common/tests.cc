@@ -40,6 +40,7 @@ int main(int argc, char *argv[])
         std::cout << add_script_ctx.error() << std::endl;
         return 0;
     }
+    std::cout << add_script_res.message() << std::endl;
 
     /**
      * Build parameters.
@@ -50,7 +51,7 @@ int main(int argc, char *argv[])
     request.set_type(protos::Common_Type::Common_Type_CALL);
 
     protos::CallRequest *call = new protos::CallRequest();
-    call->set_function("home");
+    call->set_function("simple");
     call->set_version("1.0");
     call->set_group("group1");
     call->set_unit("unit1");
@@ -58,7 +59,7 @@ int main(int argc, char *argv[])
     call->set_method("POST");
     call->set_contenttype("application/json");
     (*call->mutable_headers())["sum1"] = "1";
-    (*call->mutable_headers())["sum1"] = "2";
+    (*call->mutable_headers())["sum2"] = "2";
     (*call->mutable_headers())["div1"] = "100";
     (*call->mutable_headers())["div2"] = "2";
     (*call->mutable_parameters())["p1"] = "v1";

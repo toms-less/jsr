@@ -1,8 +1,10 @@
 #include <include/module.h>
 
-module::DepsParseContext::DepsParseContext(const char *repository, const char *specifier)
+module::DepsParseContext::DepsParseContext(const char *repository, const char *ns, const char *project, const char *specifier)
 {
     repository_.assign(repository);
+    namespace_.assign(ns);
+    project_.assign(project);
     specifier_.assign(specifier);
     ok_ = false;
 }
@@ -15,6 +17,16 @@ std::string &module::DepsParseContext::repository()
 std::string &module::DepsParseContext::specifier()
 {
     return specifier_;
+}
+
+std::string &module::DepsParseContext::repo_ns()
+{
+    return namespace_;
+}
+
+std::string &module::DepsParseContext::project()
+{
+    return project_;
 }
 
 void module::DepsParseContext::set_type(DepsType type)

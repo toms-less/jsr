@@ -165,7 +165,7 @@ bool server::Context::update_script(const protos::JavaScript &script)
      * 2. parse script asynchronously.
      * 
     */
-    module::DepsParseContext parse_context(script.workspace().repository().c_str(), script.url().c_str());
+    module::DepsParseContext parse_context(script.repository().c_str(), script.namespace_().c_str(), script.workspace().name().c_str(), script.specifier().c_str());
     module::ScriptModule script_module;
     script_module.deps_parse(parse_context);
     if (!parse_context.ok())
@@ -197,7 +197,7 @@ bool server::Context::add_script(const protos::JavaScript &script)
      * 2. parse script asynchronously.
      * 
     */
-    module::DepsParseContext parse_context(script.workspace().repository().c_str(), script.url().c_str());
+    module::DepsParseContext parse_context(script.repository().c_str(), script.namespace_().c_str(), script.workspace().name().c_str(), script.specifier().c_str());
     module::ScriptModule script_module;
     script_module.deps_parse(parse_context);
     if (!parse_context.ok())

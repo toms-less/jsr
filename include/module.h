@@ -52,10 +52,11 @@ namespace module
     class DepsParseContext
     {
     public:
-        DepsParseContext(const char *repository, const char *specifier);
+        DepsParseContext(const char *repository, const char *ns, const char *project, const char *specifier);
         std::string &repository();
-
         std::string &specifier();
+        std::string &repo_ns();
+        std::string &project();
 
         void set_type(DepsType type);
         DepsType &type();
@@ -79,6 +80,16 @@ namespace module
         std::string repository_;
 
         /**
+         * Namesapce is the domain of projects and dependencies.
+         * In this system, there are maybe a lot of project
+         * and dependencies. To avoid the same name of projects
+         * or dependencies, jsr uses namespace as the domain of
+         * projects and dependencies.
+         * 
+        */
+        std::string namespace_;
+
+        /**
          * v8 module specifier string.
          * In this example as below,
          * 'specifier_' value is '//mod/test.js'.
@@ -87,6 +98,12 @@ namespace module
          * import {foo} from '//mod/test.js'
         */
         std::string specifier_;
+
+        /**
+         * Project name.
+         * 
+        */
+        std::string project_;
 
         /**
          * Dependency type.

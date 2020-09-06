@@ -1,6 +1,6 @@
-name: simple_test
+name: simple
 version: 1.0.0
-repository: http://127.0.0.1:8080/simple
+repository: https://github.com/example/simple.git
 license: Apache-2.0
 
 contributors:

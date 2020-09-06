@@ -146,39 +146,54 @@ message JavaScript {
      string version = 3;
 
     /**
-     * Module content.
+     * Module specifier.
      */
-    string url = 4;
+    string specifier = 4;
+
+    /**
+     * Repository of this system.
+     * It retrives project code and processes it, then jsr runtime
+     * retrives the processed project code.
+     */
+    string repository = 5;
+
+    /**
+     * Repository namespace.
+     */
+    string namespace = 6;
 
     /**
      * 'workspace.jsr' file content in the root of user project.
      */
-    WorkspaceJsr workspace = 5;
+    WorkspaceJsr workspace = 7;
 }
 
 message WorkspaceJsr {
     /**
-     * project name.
+     * Project name.
      */
     string name = 1;
 
     /**
-     * project repository.
+     * Project repository.
+     * This repository is defined in 'workspace.jsr'.
+     * It means the repository of user project and is used to
+     * retrive project code is this system.
      */
     string repository = 2;
 
     /**
-     * project license.
+     * Project license.
      */
     string license = 3;
 
     /**
-     * project contributors.
+     * Project contributors.
      */
     repeated string contributors = 4;
 
     /**
-     * project dependencies.
+     * Project dependencies.
      */
     repeated DependencyJsr dependencies = 5;
 }

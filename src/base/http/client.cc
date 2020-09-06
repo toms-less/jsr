@@ -263,14 +263,12 @@ void base::http::HttpClient::sync_request(CURL *curl, HttpEntry &entry)
         current.append(name).append(":").append(value);
         header_list = curl_slist_append(header_list, current.c_str());
     }
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, header_list);
 
     /**
      * Build request cookies.
      * 
     */
     std::vector<base::http::Cookie> &request_cookies = entry.request_cookies();
-    struct curl_slist *cookie_list = NULL;
     for (size_t i = 0; i < request_cookies.size(); i++)
     {
         base::http::Cookie &cookie = request_cookies.at(i);
@@ -278,7 +276,6 @@ void base::http::HttpClient::sync_request(CURL *curl, HttpEntry &entry)
         {
             entry.set_error("Invalid request cookies, cookie name or value is empty.");
             curl_slist_free_all(header_list);
-            curl_slist_free_all(cookie_list);
             curl_easy_cleanup(curl);
             return;
         }
@@ -313,9 +310,9 @@ void base::http::HttpClient::sync_request(CURL *curl, HttpEntry &entry)
          * Set cookie in the request header by header name 'set-cookie'.
          * 
         */
-        cookie_list = curl_slist_append(cookie_list, current.c_str());
+        header_list = curl_slist_append(header_list, current.c_str());
     }
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, cookie_list);
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, header_list);
 
     /**
      * Send request.
@@ -382,7 +379,6 @@ void base::http::HttpClient::sync_request(CURL *curl, HttpEntry &entry)
     // TODO: retry when current request is failure.
 
     curl_slist_free_all(header_list);
-    curl_slist_free_all(cookie_list);
     curl_easy_cleanup(curl);
 }
 

@@ -68,12 +68,62 @@ void module::ScriptModule::deps_parse(module::DepsParseContext &context)
 
 void module::ScriptModule::local_deps_parse(DepsParseContext &context)
 {
-    /**
-     * TODO:
-     * support it.
-     * 
-    */
-    context.set_error("Compile error, local dependency is unsupported now.");
+    if (context.repository().empty())
+    {
+        context.set_error("Compile error, repository is empty.");
+        return;
+    }
+    if (context.repo_ns().empty())
+    {
+        context.set_error("Compile error, repository namespace is empty.");
+        return;
+    }
+    if (context.specifier().length() <= 2)
+    {
+        context.set_error("Compile error, specifier is invalid.");
+        return;
+    }
+    if (context.project().empty())
+    {
+        context.set_error("Compile error, project name is empty in the 'workspace.jsr'.");
+        return;
+    }
+    std::string end = "/";
+    std::string url = context.repository();
+    if (end.size() < context.repository().size() && context.repository().rfind(end) == (context.repository().length() - end.length()))
+    {
+        // Repository is end of '/'.
+        url.append(context.project()).append("/").append(context.specifier().substr(2));
+    }
+    else
+    {
+        url.append("/").append(context.project()).append("/").append(context.specifier().substr(2));
+    }
+
+    base::http::HttpEntry entry(url.c_str());
+    entry.set_request_header("namespace", context.repo_ns().c_str());
+    base::http::HttpClient client;
+    client.sync_get(entry);
+    if (!entry.ok())
+    {
+        context.set_error(entry.error().c_str());
+        return;
+    }
+    if (entry.status() != 200)
+    {
+        context.set_error(entry.status_message().c_str());
+        return;
+    }
+
+    const std::string &script_content = entry.response_content();
+    if (script_content.empty())
+    {
+        std::string error = "Compile error, current dependency script from current specifier '" + context.specifier() + "' is empty.";
+        context.set_error(error.c_str());
+        return;
+    }
+    context.set_script(script_content.c_str());
+    context.set_ok();
 }
 
 void module::ScriptModule::http_deps_parse(DepsParseContext &context)

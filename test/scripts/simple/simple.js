@@ -1,5 +1,5 @@
-import { sum, div } from 'http://127.0.0.1:8080/simple/module/math.js'
-import { append } from 'http://127.0.0.1:8080/simple/module/strings.js'
+import { sum, div } from 'http://127.0.0.1:8080/scripts/simple/module/math.js'
+import { append } from '//module/strings.js'
 
 export function simple(request, response) {
     try {

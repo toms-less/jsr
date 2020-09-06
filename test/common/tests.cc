@@ -14,11 +14,13 @@ int main(int argc, char *argv[])
     script->set_name("simple.js");
     script->set_function("simple");
     script->set_version("1.0");
-    script->set_url("http://127.0.0.1:8080/simple/simple.js");
+    script->set_repository("http://127.0.0.1:8080");
+    script->set_namespace_("scripts");
+    script->set_specifier("//simple.js");
 
     protos::WorkspaceJsr *workspace = new protos::WorkspaceJsr();
-    workspace->set_name("simple_test");
-    workspace->set_repository("http://127.0.0.1:8080/simple");
+    workspace->set_name("simple");
+    workspace->set_repository("https://github.com/example/simple.git");
     script->set_allocated_workspace(workspace);
 
     protos::ScriptRequest *script_request = new protos::ScriptRequest();
@@ -40,7 +42,7 @@ int main(int argc, char *argv[])
         std::cout << add_script_ctx.error() << std::endl;
         return 0;
     }
-    std::cout << add_script_res.message() << std::endl;
+    std::cout << "--------" << add_script_res.message() << std::endl;
 
     /**
      * Build parameters.

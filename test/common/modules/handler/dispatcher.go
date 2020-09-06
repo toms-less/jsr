@@ -7,15 +7,15 @@ import (
 )
 
 const (
-	simple     = "/simple"
-	scriptHome = "/scripts"
+	simple              = "/simple"
+	simpleWithNamespace = "/scripts/simple"
 )
 
 // Dispatch the requests.
 func Dispatch(writer http.ResponseWriter, request *http.Request) {
 	uri := request.RequestURI
 	// simple test
-	if strings.HasPrefix(uri, simple) {
+	if strings.HasPrefix(uri, simple) || strings.HasPrefix(uri, simpleWithNamespace) {
 		simpleHandler(writer, request)
 		return
 	}

@@ -9,14 +9,18 @@ v8::MaybeLocal<v8::Module> module::ScriptModule::resolve(v8::Local<v8::Context> 
     v8::String::Utf8Value specifier_str(isolate, specifier);
 
     v8::Local<v8::Value> repository = context->GetEmbedderData(0);
-    if (!repository->IsString())
+    v8::Local<v8::Value> ns = context->GetEmbedderData(1);
+    v8::Local<v8::Value> project = context->GetEmbedderData(2);
+    if (!repository->IsString() || !ns->IsString() || !project->IsString())
     {
-        std::string msg("Compile error, repository is not a string.");
+        std::string msg("Compile error, repository, namespace or project name is not a string.");
         isolate->ThrowException(instance::Util::error(isolate, "system", msg.c_str(), msg.c_str()));
         return v8::MaybeLocal<v8::Module>();
     }
     v8::String::Utf8Value v8_repo(isolate, repository);
-    module::DepsParseContext parse_context(*v8_repo, *specifier_str);
+    v8::String::Utf8Value v8_ns(isolate, ns);
+    v8::String::Utf8Value v8_project(isolate, project);
+    module::DepsParseContext parse_context(*v8_repo, *v8_ns, *v8_project, *specifier_str);
 
     /**
      * Parse the dependencies.

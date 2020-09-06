@@ -1,6 +1,5 @@
 #pragma once
 #include <include/base.h>
-#include <include/sysfunc.h>
 #include <include/module.h>
 
 /**
@@ -15,7 +14,8 @@ namespace instance
     */
     class InstanceConfig;
     class CompileContext;
-    class BindContext;
+    class BindFunctionContext;
+    class BindObjectContext;
     class HttpRequest;
     class HttpResponse;
     class ExecuteContext;
@@ -177,26 +177,52 @@ namespace instance
      * system function bind context.
      * 
      */
-    class BindContext
+    class BindFunctionContext
     {
     public:
-        BindContext(std::vector<sysfunc::ObjectFunction> &objectFunctopmList, std::vector<sysfunc::PureFunction> &pureFunctionList);
-        ~BindContext();
+        BindFunctionContext(const char *function, void (*pfunc)(const v8::FunctionCallbackInfo<v8::Value> &));
 
-        void SetSuccess(bool success);
-        bool IsSuccess();
+        std::string &function();
+        void (*pfunc())(const v8::FunctionCallbackInfo<v8::Value> &);
 
-        void SetError(std::string &error);
-        const std::string &GetError();
+        void set_ok();
+        bool &ok();
 
-        std::vector<sysfunc::ObjectFunction> &GetObjectFunctopmList();
-        std::vector<sysfunc::PureFunction> &GetPureFunctionList();
+        void set_error(const char *error);
+        const std::string &error();
 
     private:
-        std::vector<sysfunc::ObjectFunction> &objectFunctopmList;
-        std::vector<sysfunc::PureFunction> &pureFunctionList;
-        bool success;
-        std::string error;
+        bool ok_;
+        std::string function_;
+        std::string error_;
+        void (*pfunc_)(const v8::FunctionCallbackInfo<v8::Value> &);
+    };
+
+    /**
+     * system object bind context.
+     * 
+     */
+    class BindObjectContext
+    {
+    public:
+        BindObjectContext(const char *object, const char *function, void (*pfunc)(const v8::FunctionCallbackInfo<v8::Value> &));
+
+        std::string &object();
+        std::string &function();
+        void (*pfunc())(const v8::FunctionCallbackInfo<v8::Value> &);
+
+        void set_ok();
+        bool &ok();
+
+        void set_error(const char *error);
+        const std::string &error();
+
+    private:
+        bool ok_;
+        std::string object_;
+        std::string function_;
+        std::string error_;
+        void (*pfunc_)(const v8::FunctionCallbackInfo<v8::Value> &);
     };
 
     /**
@@ -451,10 +477,16 @@ namespace instance
         void uncompile(UncompileContext &context);
 
         /**
-         * bind system functions.
+         * bind system function.
          * 
          */
-        void Bind(BindContext &context);
+        void bind_function(BindFunctionContext &context);
+
+        /**
+         * bind system object.
+         * 
+         */
+        void bind_object(BindObjectContext &context);
 
         /**
          * proccess function execution.
@@ -477,7 +509,7 @@ namespace instance
     class IntanceManager : public base::Module
     {
     public:
-        IntanceManager(InstanceConfig &config, sysfunc::SystemFuncManager &sysFuncManager);
+        IntanceManager(InstanceConfig &config);
         ~IntanceManager();
 
         /**
@@ -510,11 +542,16 @@ namespace instance
         */
         base::BlockingQueue<instance::Instance *> *queue();
 
+        /**
+         * Get the instance list.
+         * 
+        */
+        std::vector<instance::Instance *> &instances();
+
     private:
         bool inited = false;
         InstanceConfig config;
-        sysfunc::SystemFuncManager &sysFuncManager;
-        std::vector<instance::Instance *> instances;
+        std::vector<instance::Instance *> instances_;
 
         /**
          * queue for v8 instances.

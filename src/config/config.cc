@@ -36,10 +36,6 @@ bool config::ConfigManager::initialize()
     instanceConfig.SetInitialYoungGenerationSize(config["instance"]["initialYoungGenerationSize"].as<uint64_t>());
     instanceConfig.SetInstanceCount(config["instance"]["instanceCount"].as<uint32_t>());
     instanceConfig.SetInited(true);
-
-    sysfunctionConfig.SetRequireRemote(config["sysfunc"]["requireRemote"].as<bool>());
-    sysfunctionConfig.SetRequireRemoteServer(config["sysfunc"]["requireRemoteServer"].as<std::string>());
-    sysfunctionConfig.SetInited(true);
     return true;
 }
 
@@ -56,9 +52,4 @@ base::LogConfig &config::ConfigManager::GetLogConfig()
 instance::InstanceConfig &config::ConfigManager::GetInstanceConfig()
 {
     return this->instanceConfig;
-}
-
-sysfunc::SystemFunctionConfig &config::ConfigManager::GetSysFunctionConfig()
-{
-    return this->sysfunctionConfig;
 }

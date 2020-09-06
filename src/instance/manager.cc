@@ -1,18 +1,17 @@
 #include <include/instance.h>
 
-instance::IntanceManager::IntanceManager(InstanceConfig &_config, sysfunc::SystemFuncManager &_sysFuncManager)
-    : sysFuncManager(_sysFuncManager)
+instance::IntanceManager::IntanceManager(InstanceConfig &_config)
 {
     this->config = _config;
 }
 
 instance::IntanceManager::~IntanceManager()
 {
-    for (std::vector<instance::Instance *>::iterator it = instances.begin(); it != instances.end(); it++)
+    for (std::vector<instance::Instance *>::iterator it = instances_.begin(); it != instances_.end(); it++)
     {
         delete (*it);
     }
-    std::vector<instance::Instance *>().swap(instances);
+    std::vector<instance::Instance *>().swap(instances_);
     while (!queue_.empty())
     {
         queue_.pop();
@@ -45,40 +44,16 @@ bool instance::IntanceManager::initialize()
             instance_log->error("Instance initialize failure.\n");
             continue;
         }
-
-        // bind system functions.
-        instance::BindContext context(sysFuncManager.GetObjectFuncList(), sysFuncManager.GetPureFuncList());
-        current->Bind(context);
-        if (!context.IsSuccess())
-        {
-            delete current;
-            instance_log->error("Instance binding system functions failure, detail: {}.", context.GetError());
-            continue;
-        }
-        instances.push_back(current);
+        instances_.push_back(current);
         queue_.push_back(current);
     }
-    if (instances.empty())
+    if (instances_.empty())
     {
         instance_log->error("Instance initialize failure, current instance list is empty.");
         return false;
     }
 
-    // TODO: compile all function scripts, example for testing below.
-    // instance::CompileContext compile_ctx("function home(request, response) {try {let headers = request.headers();response.send(JSON.stringify(headers));} catch (error) {}}");
-    // for (int i = 0; i < instance_count; i++)
-    // {
-    //     instance::Instance *instance = instances[i];
-    //     instance->Compile(compile_ctx);
-    //     if (!compile_ctx.ok())
-    //     {
-    //         instance_log->error("Compile script error when initialized instance, error {}.", compile_ctx.error());
-    //         continue;
-    //     }
-    //     instance_log->info("Compile script sucessfully when initialized instance, script {}.", compile_ctx.script());
-    // }
-
-    instance_log->info("Instances initialized sucessfully, current instance list size is {}.", instances.size());
+    instance_log->info("Instances initialized sucessfully, current instance list size is {}.", instances_.size());
     inited = true;
     return inited;
 }
@@ -92,7 +67,7 @@ void instance::IntanceManager::compile(CompileContext &context)
     }
 
     // compile functions for all instances.
-    for (instance::Instance *instance : instances)
+    for (instance::Instance *instance : instances_)
     {
         instance->compile(context);
         if (!context.ok())
@@ -111,7 +86,7 @@ void instance::IntanceManager::uncompile(UncompileContext &context)
     }
 
     // Remove the compiled functions for all instances.
-    for (instance::Instance *instance : instances)
+    for (instance::Instance *instance : instances_)
     {
         instance->uncompile(context);
         if (!context.ok())
@@ -155,4 +130,9 @@ void instance::IntanceManager::execute(ExecuteContext &context)
 base::BlockingQueue<instance::Instance *> *instance::IntanceManager::queue()
 {
     return &queue_;
+}
+
+std::vector<instance::Instance *> &instance::IntanceManager::instances()
+{
+    return instances_;
 }

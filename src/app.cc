@@ -26,17 +26,17 @@ int main(int argc, char *argv[])
   }
   auto server_log = base::Log::server_logger();
 
-  sysfunc::SystemFuncManager sysfunc_manager(config_manager.GetSysFunctionConfig());
-  if (!sysfunc_manager.initialize())
-  {
-    server_log->error("System function manager initialized failure.");
-    return 1;
-  }
-
-  instance::IntanceManager instance_manager(config_manager.GetInstanceConfig(), sysfunc_manager);
+  instance::IntanceManager instance_manager(config_manager.GetInstanceConfig());
   if (!instance_manager.initialize())
   {
     server_log->error("Instance manager initialized failure.");
+    return 1;
+  }
+
+  sysfunc::SystemFuncManager sysfunc_manager(instance_manager);
+  if (!sysfunc_manager.initialize())
+  {
+    server_log->error("System function manager initialized failure.");
     return 1;
   }
 

@@ -44,10 +44,6 @@ public:
      *   maxZonePoolSize: 500
      *   instanceCount: 10
      * 
-     * sysfunc:
-     *   requireRemote: false
-     *   requireRemoteServer: ""
-     * 
     */
     virtual bool initialize();
 
@@ -69,12 +65,6 @@ public:
     */
     instance::InstanceConfig &GetInstanceConfig();
 
-    /**
-     * get system function configuration.
-     * 
-    */
-    sysfunc::SystemFunctionConfig &GetSysFunctionConfig();
-
 private:
     /**
      * runtime service configuration.
@@ -93,11 +83,5 @@ private:
      * 
     */
     instance::InstanceConfig instanceConfig;
-
-    /**
-     * system function configuration.
-     * 
-    */
-    sysfunc::SystemFunctionConfig sysfunctionConfig;
 };
 } // namespace config

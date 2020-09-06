@@ -105,7 +105,6 @@ filegroup(
         "src/config/server_config.cc",
         "src/config/log_config.cc",
         "src/config/instance_config.cc",
-        "src/config/sysfunc_config.cc",
     ],
 )
 
@@ -133,7 +132,7 @@ filegroup(
 filegroup(
     name = "sysfunc",
     srcs = [
-        "src/sysfunc/require.cc",
+        "src/sysfunc/sysfunc.cc",
         "src/sysfunc/console.cc",
         "src/sysfunc/http.cc",
         "src/sysfunc/manager.cc",

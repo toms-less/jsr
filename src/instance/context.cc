@@ -78,44 +78,83 @@ const std::string &instance::UncompileContext::error()
     return this->error_;
 }
 
-instance::BindContext::BindContext(std::vector<sysfunc::ObjectFunction> &_objectFunctopmList, std::vector<sysfunc::PureFunction> &_pureFunctionList)
-    : objectFunctopmList(_objectFunctopmList), pureFunctionList(_pureFunctionList)
+instance::BindFunctionContext::BindFunctionContext(const char *function, void (*pfunc)(const v8::FunctionCallbackInfo<v8::Value> &))
 {
-    this->success = false;
+    function_.assign(function);
+    pfunc_ = pfunc;
+    ok_ = false;
 }
 
-instance::BindContext::~BindContext()
+std::string &instance::BindFunctionContext::function()
 {
+    return function_;
+}
+void (*instance::BindFunctionContext::pfunc())(const v8::FunctionCallbackInfo<v8::Value> &)
+{
+    return pfunc_;
 }
 
-void instance::BindContext::SetSuccess(bool _success)
+void instance::BindFunctionContext::set_ok()
 {
-    this->success = _success;
+    ok_ = true;
 }
 
-bool instance::BindContext::IsSuccess()
+bool &instance::BindFunctionContext::ok()
 {
-    return this->success;
+    return ok_;
 }
 
-void instance::BindContext::SetError(std::string &_error)
+void instance::BindFunctionContext::set_error(const char *error)
 {
-    this->error = _error;
+    error_.assign(error);
 }
 
-const std::string &instance::BindContext::GetError()
+const std::string &instance::BindFunctionContext::error()
 {
-    return this->error;
+    return error_;
 }
 
-std::vector<sysfunc::ObjectFunction> &instance::BindContext::GetObjectFunctopmList()
+instance::BindObjectContext::BindObjectContext(const char *object, const char *function, void (*pfunc)(const v8::FunctionCallbackInfo<v8::Value> &))
 {
-    return this->objectFunctopmList;
+    object_.assign(object);
+    function_.assign(function);
+    pfunc_ = pfunc;
+    ok_ = false;
 }
 
-std::vector<sysfunc::PureFunction> &instance::BindContext::GetPureFunctionList()
+std::string &instance::BindObjectContext::object()
 {
-    return this->pureFunctionList;
+    return object_;
+}
+
+std::string &instance::BindObjectContext::function()
+{
+    return function_;
+}
+
+void (*instance::BindObjectContext::pfunc())(const v8::FunctionCallbackInfo<v8::Value> &)
+{
+    return pfunc_;
+}
+
+void instance::BindObjectContext::set_ok()
+{
+    ok_ = true;
+}
+
+bool &instance::BindObjectContext::ok()
+{
+    return ok_;
+}
+
+void instance::BindObjectContext::set_error(const char *error)
+{
+    error_.assign(error);
+}
+
+const std::string &instance::BindObjectContext::error()
+{
+    return error_;
 }
 
 instance::ExecuteContext::ExecuteContext(protos::RuntimeRequest *request, protos::RuntimeResponse *response,

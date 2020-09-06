@@ -243,12 +243,11 @@ void instance::Instance::uncompile(UncompileContext &context)
     context.set_ok();
 }
 
-void instance::Instance::Bind(BindContext &context)
+void instance::Instance::bind_function(BindFunctionContext &context)
 {
-    if (!inited)
+    if (context.function().empty())
     {
-        std::string error("Current instance has not been initialized.");
-        context.SetError(error);
+        context.set_error("Bind error, function name is empty.");
         return;
     }
 
@@ -256,118 +255,145 @@ void instance::Instance::Bind(BindContext &context)
     v8::Locker locker(isolate);
     isolate->SetStackLimit(config.GetStackLimit());
 
-    v8::HandleScope isolateScope(isolate);
-    v8::TryCatch tryCatch(isolate);
+    v8::HandleScope isolate_scope(isolate);
+    v8::TryCatch try_catch(isolate);
 
-    v8::Local<v8::Context> handleContext = v8::Local<v8::Context>::New(isolate, context_);
-    v8::Context::Scope contextScope(handleContext);
+    v8::Local<v8::Context> handle_context = v8::Local<v8::Context>::New(isolate, context_);
+    v8::Context::Scope contextScope(handle_context);
 
-    // bind pure functions.
-    std::vector<sysfunc::PureFunction> &pureFunctionList = context.GetPureFunctionList();
-    for (std::size_t i = 0; i < pureFunctionList.size(); i++)
+    v8::Local<v8::FunctionTemplate> funcTemp = v8::FunctionTemplate::New(isolate, context.pfunc());
+    v8::Local<v8::Function> func;
+    if (!funcTemp->GetFunction(handle_context).ToLocal(&func))
     {
-        sysfunc::PureFunction &pureFunc = pureFunctionList.at(i);
-        std::string &functionName = pureFunc.GetFunctionName();
-        if (functionName.empty())
-        {
-            continue;
-        }
-        v8::Local<v8::FunctionTemplate> funcTemp = v8::FunctionTemplate::New(isolate, pureFunc.GetFuncPointer());
-        v8::Local<v8::Function> func;
-        if (!funcTemp->GetFunction(handleContext).ToLocal(&func))
-        {
-            std::string error("Get function from template error, function name '");
-            error.append(functionName).append("'.");
-            context.SetError(error);
-            return;
-        }
-        if (!handleContext->Global()->Set(handleContext, instance::Util::v8_str(isolate, functionName.c_str()), func).FromJust())
-        {
-            std::string error("Set global function error, function name '");
-            error.append(functionName).append("'.");
-            context.SetError(error);
-            return;
-        }
+        std::string error = "Bind error, get function from template error, function name '" + context.function() + "'.";
+        context.set_error(error.c_str());
+        return;
+    }
+    if (!handle_context->Global()->Set(handle_context, instance::Util::v8_str(isolate, context.function().c_str()), func).FromJust())
+    {
+        std::string error = "Set global function error, function name '" + context.function() + "'.";
+        context.set_error(error.c_str());
+        return;
     }
 
-    // bind object function.
-    std::vector<sysfunc::ObjectFunction> &objectFunctionList = context.GetObjectFunctopmList();
-    for (std::size_t i = 0; i < objectFunctionList.size(); i++)
+    // check exception.
+    if (try_catch.HasCaught())
     {
-        sysfunc::ObjectFunction &objectFunc = objectFunctionList.at(i);
-        std::string &objectName = objectFunc.GetObjectName();
-        std::string &functionName = objectFunc.GetFunctionName();
-        if (objectName.empty() || functionName.empty())
+        v8::Local<v8::Value> stack;
+        if (try_catch.StackTrace(handle_context).ToLocal(&stack))
         {
-            continue;
-        }
-        v8::Local<v8::FunctionTemplate> funcTemp = v8::FunctionTemplate::New(isolate, objectFunc.GetFuncPointer());
-
-        v8::Local<v8::String> v8ObjectName = instance::Util::v8_str(isolate, objectName.c_str());
-        if (handleContext->Global()->Has(handleContext, v8ObjectName).FromJust())
-        {
-            // current object has been added, add current function to this object.
-            v8::Local<v8::Function> func;
-            if (!funcTemp->GetFunction(handleContext).ToLocal(&func))
-            {
-                std::string error("Get function from template error, object name '");
-                error.append(objectName).append("' function name '").append(functionName).append("'.");
-                context.SetError(error);
-                return;
-            }
-
-            v8::Local<v8::Value> value;
-            if (!handleContext->Global()->Get(handleContext, v8ObjectName).ToLocal(&value))
-            {
-                std::string error("Get v8 object error, object name '");
-                error.append(objectName).append("' function name '").append(functionName).append("'.");
-                context.SetError(error);
-                return;
-            }
-            v8::Local<v8::Object> objectInstance = value.As<v8::Object>();
-            objectInstance->Set(handleContext, instance::Util::v8_str(isolate, functionName.c_str()), func);
-            if (!handleContext->Global()->Set(handleContext, v8ObjectName, objectInstance).FromJust())
-            {
-                std::string error("Set global object function error, object name '");
-                error.append(objectName).append("' function name '").append(functionName).append("'.");
-                context.SetError(error);
-                return;
-            }
+            v8::String::Utf8Value error(isolate, stack);
+            context.set_error(*error);
         }
         else
         {
-            // first time to add object.
-            v8::Local<v8::ObjectTemplate> objectTemp = v8::ObjectTemplate::New(isolate);
-            objectTemp->Set(instance::Util::v8_str(isolate, functionName.c_str()), funcTemp);
+            v8::String::Utf8Value error(isolate, try_catch.Exception());
+            context.set_error(*error);
+        }
+        return;
+    }
+    context.set_ok();
+}
 
-            v8::Local<v8::Object> objectInstance;
-            if (!objectTemp->NewInstance(handleContext).ToLocal(&objectInstance))
-            {
-                v8::Local<v8::Value> stack;
-                if (tryCatch.StackTrace(handleContext).ToLocal(&stack))
-                {
-                    v8::String::Utf8Value errorStack(isolate, stack);
-                    std::string error(*errorStack);
-                    context.SetError(error);
-                }
-                else
-                {
-                    v8::String::Utf8Value errorStack(isolate, tryCatch.Exception());
-                    std::string error(*errorStack);
-                    context.SetError(error);
-                }
-                return;
-            }
-            if (!handleContext->Global()->Set(handleContext, v8ObjectName, objectInstance).FromJust())
-            {
-                std::string error("Set global object function error, object name '");
-                error.append(objectName).append("' function name '").append(functionName).append("'.");
-                context.SetError(error);
-                return;
-            }
+void instance::Instance::bind_object(BindObjectContext &context)
+{
+    if (context.object().empty())
+    {
+        context.set_error("Bind error, object name is empty.");
+        return;
+    }
+    if (context.function().empty())
+    {
+        context.set_error("Bind error, function name is empty.");
+        return;
+    }
+
+    // As v8 limited, this place should set stack limit for multi-thread.
+    v8::Locker locker(isolate);
+    isolate->SetStackLimit(config.GetStackLimit());
+
+    v8::HandleScope isolate_scope(isolate);
+    v8::TryCatch try_catch(isolate);
+
+    v8::Local<v8::Context> handle_context = v8::Local<v8::Context>::New(isolate, context_);
+    v8::Context::Scope context_scope(handle_context);
+
+    v8::Local<v8::FunctionTemplate> func_temp = v8::FunctionTemplate::New(isolate, context.pfunc());
+    v8::Local<v8::String> v8_object_name = instance::Util::v8_str(isolate, context.object().c_str());
+    if (handle_context->Global()->Has(handle_context, v8_object_name).FromJust())
+    {
+        // current object has been added, add current function to this object.
+        v8::Local<v8::Function> func;
+        if (!func_temp->GetFunction(handle_context).ToLocal(&func))
+        {
+            std::string error = "Bind error, get function from template error, object name '" + context.object() + "', function name '" + context.function() + "'.";
+            context.set_error(error.c_str());
+            return;
+        }
+
+        v8::Local<v8::Value> value;
+        if (!handle_context->Global()->Get(handle_context, v8_object_name).ToLocal(&value))
+        {
+            std::string error = "Bind error, get v8 object error, object name '" + context.object() + "', function name '" + context.function() + "'.";
+            context.set_error(error.c_str());
+            return;
+        }
+        v8::Local<v8::Object> object_instance = value.As<v8::Object>();
+        object_instance->Set(handle_context, instance::Util::v8_str(isolate, context.function().c_str()), func);
+        if (!handle_context->Global()->Set(handle_context, v8_object_name, object_instance).FromJust())
+        {
+            std::string error = "Bind error, set global object function error, object name '" + context.object() + "', function name '" + context.function() + "'.";
+            context.set_error(error.c_str());
+            return;
         }
     }
-    context.SetSuccess(true);
+    else
+    {
+        // first time to add object.
+        v8::Local<v8::ObjectTemplate> object_temp = v8::ObjectTemplate::New(isolate);
+        object_temp->Set(instance::Util::v8_str(isolate, context.function().c_str()), func_temp);
+
+        v8::Local<v8::Object> object_instance;
+        if (!object_temp->NewInstance(handle_context).ToLocal(&object_instance))
+        {
+            v8::Local<v8::Value> stack;
+            if (try_catch.StackTrace(handle_context).ToLocal(&stack))
+            {
+                v8::String::Utf8Value error_stack(isolate, stack);
+                context.set_error(*error_stack);
+            }
+            else
+            {
+                v8::String::Utf8Value error_stack(isolate, try_catch.Exception());
+                context.set_error(*error_stack);
+            }
+            return;
+        }
+        if (!handle_context->Global()->Set(handle_context, v8_object_name, object_instance).FromJust())
+        {
+            std::string error = "Bind error, set global object function error, object name '" + context.object() + "', function name '" + context.function() + "'.";
+            context.set_error(error.c_str());
+            return;
+        }
+    }
+
+    // check exception.
+    if (try_catch.HasCaught())
+    {
+        v8::Local<v8::Value> stack;
+        if (try_catch.StackTrace(handle_context).ToLocal(&stack))
+        {
+            v8::String::Utf8Value error(isolate, stack);
+            context.set_error(*error);
+        }
+        else
+        {
+            v8::String::Utf8Value error(isolate, try_catch.Exception());
+            context.set_error(*error);
+        }
+        return;
+    }
+    context.set_ok();
 }
 
 void instance::Instance::Execute(ExecuteContext &context)

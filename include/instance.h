@@ -180,7 +180,8 @@ namespace instance
     class BindFunctionContext
     {
     public:
-        BindFunctionContext(const char *function, void (*pfunc)(const v8::FunctionCallbackInfo<v8::Value> &));
+        BindFunctionContext(const char *function, void (*pfunc)(const v8::FunctionCallbackInfo<v8::Value> &), std::map<std::string, base::v8_cb> *sysfunc_map);
+        std::map<std::string, base::v8_cb> *sysfunc_map();
 
         std::string &function();
         void (*pfunc())(const v8::FunctionCallbackInfo<v8::Value> &);
@@ -196,6 +197,8 @@ namespace instance
         std::string function_;
         std::string error_;
         void (*pfunc_)(const v8::FunctionCallbackInfo<v8::Value> &);
+
+        std::map<std::string, base::v8_cb> *map_;
     };
 
     /**
@@ -205,7 +208,8 @@ namespace instance
     class BindObjectContext
     {
     public:
-        BindObjectContext(const char *object, const char *function, void (*pfunc)(const v8::FunctionCallbackInfo<v8::Value> &));
+        BindObjectContext(const char *object, const char *function, void (*pfunc)(const v8::FunctionCallbackInfo<v8::Value> &), std::map<std::string, base::v8_cb> *sysfunc_map);
+        std::map<std::string, base::v8_cb> *sysfunc_map();
 
         std::string &object();
         std::string &function();
@@ -223,6 +227,8 @@ namespace instance
         std::string function_;
         std::string error_;
         void (*pfunc_)(const v8::FunctionCallbackInfo<v8::Value> &);
+
+        std::map<std::string, base::v8_cb> *map_;
     };
 
     /**

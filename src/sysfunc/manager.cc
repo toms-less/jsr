@@ -17,13 +17,13 @@ bool sysfunc::SystemFuncManager::initialize()
      * 7. 'console.timeEnd';
      * 
     */
-    map_.insert(std::pair<std::string, pfunc>("sysfunc::Console::log", sysfunc::Console::log));
-    map_.insert(std::pair<std::string, pfunc>("sysfunc::Console::info", sysfunc::Console::info));
-    map_.insert(std::pair<std::string, pfunc>("sysfunc::Console::warn", sysfunc::Console::warn));
-    map_.insert(std::pair<std::string, pfunc>("sysfunc::Console::debug", sysfunc::Console::debug));
-    map_.insert(std::pair<std::string, pfunc>("sysfunc::Console::error", sysfunc::Console::error));
-    map_.insert(std::pair<std::string, pfunc>("sysfunc::Console::time", sysfunc::Console::time));
-    map_.insert(std::pair<std::string, pfunc>("sysfunc::Console::timeEnd", sysfunc::Console::timeEnd));
+    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Console::log", sysfunc::Console::log));
+    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Console::info", sysfunc::Console::info));
+    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Console::warn", sysfunc::Console::warn));
+    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Console::debug", sysfunc::Console::debug));
+    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Console::error", sysfunc::Console::error));
+    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Console::time", sysfunc::Console::time));
+    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Console::timeEnd", sysfunc::Console::timeEnd));
 
     /**
      * build system function of 'http'.
@@ -35,17 +35,17 @@ bool sysfunc::SystemFuncManager::initialize()
      * 6. 'http.delete()';
      * 
     */
-    map_.insert(std::pair<std::string, pfunc>("sysfunc::Http::get", sysfunc::Http::get));
-    map_.insert(std::pair<std::string, pfunc>("sysfunc::Http::post", sysfunc::Http::post));
-    map_.insert(std::pair<std::string, pfunc>("sysfunc::Http::options", sysfunc::Http::options));
-    map_.insert(std::pair<std::string, pfunc>("sysfunc::Http::patch", sysfunc::Http::patch));
-    map_.insert(std::pair<std::string, pfunc>("sysfunc::Http::put", sysfunc::Http::put));
-    map_.insert(std::pair<std::string, pfunc>("sysfunc::Http::del", sysfunc::Http::del));
+    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Http::get", sysfunc::Http::get));
+    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Http::post", sysfunc::Http::post));
+    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Http::options", sysfunc::Http::options));
+    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Http::patch", sysfunc::Http::patch));
+    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Http::put", sysfunc::Http::put));
+    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Http::del", sysfunc::Http::del));
 
     auto instance_log = base::Log::instance_logger();
     for (instance::Instance *instance : instance_manager_.instances())
     {
-        instance::BindObjectContext deps_ctx("sysfunc", "deps", sysfunc::SysFunc::deps);
+        instance::BindObjectContext deps_ctx("sysfunc", "deps", sysfunc::SysFunc::deps, &map_);
         instance->bind_object(deps_ctx);
         if (!deps_ctx.ok())
         {
@@ -53,7 +53,7 @@ bool sysfunc::SystemFuncManager::initialize()
             continue;
         }
 
-        instance::BindObjectContext bind_ctx("sysfunc", "bind", sysfunc::SysFunc::bind);
+        instance::BindObjectContext bind_ctx("sysfunc", "bind", sysfunc::SysFunc::bind, &map_);
         instance->bind_object(deps_ctx);
         if (!bind_ctx.ok())
         {

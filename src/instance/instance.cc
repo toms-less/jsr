@@ -261,7 +261,11 @@ void instance::Instance::bind_function(BindFunctionContext &context)
     v8::Local<v8::Context> handle_context = v8::Local<v8::Context>::New(isolate, context_);
     v8::Context::Scope contextScope(handle_context);
 
-    v8::Local<v8::FunctionTemplate> funcTemp = v8::FunctionTemplate::New(isolate, context.pfunc());
+    /**
+     * Set the initialized map of system function for user binding.
+     * 
+    */
+    v8::Local<v8::FunctionTemplate> funcTemp = v8::FunctionTemplate::New(isolate, context.pfunc(), v8::External::New(isolate, context.sysfunc_map()));
     v8::Local<v8::Function> func;
     if (!funcTemp->GetFunction(handle_context).ToLocal(&func))
     {
@@ -318,7 +322,11 @@ void instance::Instance::bind_object(BindObjectContext &context)
     v8::Local<v8::Context> handle_context = v8::Local<v8::Context>::New(isolate, context_);
     v8::Context::Scope context_scope(handle_context);
 
-    v8::Local<v8::FunctionTemplate> func_temp = v8::FunctionTemplate::New(isolate, context.pfunc());
+    /**
+     * Set the initialized map of system function for user binding.
+     * 
+    */
+    v8::Local<v8::FunctionTemplate> func_temp = v8::FunctionTemplate::New(isolate, context.pfunc(), v8::External::New(isolate, context.sysfunc_map()));
     v8::Local<v8::String> v8_object_name = instance::Util::v8_str(isolate, context.object().c_str());
     if (handle_context->Global()->Has(handle_context, v8_object_name).FromJust())
     {

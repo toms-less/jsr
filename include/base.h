@@ -27,7 +27,6 @@
 
 namespace base
 {
-
     /**
      * base module.
      * 
@@ -759,4 +758,10 @@ namespace base
             void parse(CURL *curl, const std::string &header_string, const std::string &body_string, HttpEntry &entry);
         };
     } // namespace http
+
+    /**
+     * Type of v8 function callback.
+     * 
+    */
+    typedef void (*v8_cb)(const v8::FunctionCallbackInfo<v8::Value> &);
 } // namespace base

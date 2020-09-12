@@ -126,8 +126,7 @@ namespace sysfunc
     private:
         instance::IntanceManager &instance_manager_;
 
-        typedef void (*pfunc)(const v8::FunctionCallbackInfo<v8::Value> &);
-        std::map<std::string, pfunc> map_;
+        std::map<std::string, base::v8_cb> map_;
     };
 
     /**

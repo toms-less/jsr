@@ -45,7 +45,7 @@ bool sysfunc::SystemFuncManager::initialize()
     auto instance_log = base::Log::instance_logger();
     for (instance::Instance *instance : instance_manager_.instances())
     {
-        instance::BindObjectContext deps_ctx("sysfunc", "deps", sysfunc::SysFunc::deps, &map_);
+        instance::BindObjectContext deps_ctx("sysfunc", "deps", sysfunc::SysFunc::deps, &instance_manager_, &map_);
         instance->bind_object(deps_ctx);
         if (!deps_ctx.ok())
         {
@@ -53,7 +53,7 @@ bool sysfunc::SystemFuncManager::initialize()
             continue;
         }
 
-        instance::BindObjectContext bind_ctx("sysfunc", "bind", sysfunc::SysFunc::bind, &map_);
+        instance::BindObjectContext bind_ctx("sysfunc", "bind", sysfunc::SysFunc::bind, &instance_manager_, &map_);
         instance->bind_object(deps_ctx);
         if (!bind_ctx.ok())
         {

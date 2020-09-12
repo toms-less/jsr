@@ -78,12 +78,18 @@ const std::string &instance::UncompileContext::error()
     return this->error_;
 }
 
-instance::BindFunctionContext::BindFunctionContext(const char *function, void (*pfunc)(const v8::FunctionCallbackInfo<v8::Value> &), std::map<std::string, base::v8_cb> *sysfunc_map)
+instance::BindFunctionContext::BindFunctionContext(const char *function, void (*pfunc)(const v8::FunctionCallbackInfo<v8::Value> &), instance::IntanceManager *instance_manager, std::map<std::string, base::v8_cb> *sysfunc_map)
 {
     function_.assign(function);
     pfunc_ = pfunc;
+    instance_manager_ = instance_manager;
     map_ = sysfunc_map;
     ok_ = false;
+}
+
+instance::IntanceManager *instance::BindFunctionContext::instance_manager()
+{
+    return instance_manager_;
 }
 
 std::map<std::string, base::v8_cb> *instance::BindFunctionContext::sysfunc_map()
@@ -120,13 +126,19 @@ const std::string &instance::BindFunctionContext::error()
     return error_;
 }
 
-instance::BindObjectContext::BindObjectContext(const char *object, const char *function, void (*pfunc)(const v8::FunctionCallbackInfo<v8::Value> &), std::map<std::string, base::v8_cb> *sysfunc_map)
+instance::BindObjectContext::BindObjectContext(const char *object, const char *function, void (*pfunc)(const v8::FunctionCallbackInfo<v8::Value> &), instance::IntanceManager *instance_manager, std::map<std::string, base::v8_cb> *sysfunc_map)
 {
     object_.assign(object);
     function_.assign(function);
     pfunc_ = pfunc;
+    instance_manager_ = instance_manager;
     map_ = sysfunc_map;
     ok_ = false;
+}
+
+instance::IntanceManager *instance::BindObjectContext::instance_manager()
+{
+    return instance_manager_;
 }
 
 std::map<std::string, base::v8_cb> *instance::BindObjectContext::sysfunc_map()

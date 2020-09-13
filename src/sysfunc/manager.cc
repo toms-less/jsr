@@ -54,7 +54,7 @@ bool sysfunc::SystemFuncManager::initialize()
         }
 
         instance::BindObjectContext bind_ctx("sysfunc", "bind", sysfunc::SysFunc::bind, &instance_manager_, &map_);
-        instance->bind_object(deps_ctx);
+        instance->bind_object(bind_ctx);
         if (!bind_ctx.ok())
         {
             instance_log->error(bind_ctx.error());

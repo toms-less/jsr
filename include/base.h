@@ -1,6 +1,9 @@
 #pragma once
 #include <stdio.h>
 #include <unistd.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <time.h>
 #include <queue>
 #include <deque>
@@ -348,6 +351,30 @@ namespace base
          * 
          */
         static std::string cwd();
+
+        /**
+         * Get all files of the specific directory path.
+         * 
+        */
+        static void list_files(std::string &dir_path, std::vector<std::string> &files);
+
+        /**
+         * Read file content.
+         * 
+        */
+        static std::string read_file(std::string &file);
+
+        /**
+         * Check whether the string is started with an another string.
+         * 
+        */
+        static bool start_with(std::string &str, std::string &start);
+
+        /**
+         * Check whether the string is ended with an another string.
+         * 
+        */
+        static bool end_with(std::string &str, std::string &end);
 
         /**
          * Get current timeStamp

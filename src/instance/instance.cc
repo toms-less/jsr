@@ -410,6 +410,87 @@ void instance::Instance::bind_object(BindObjectContext &context)
     context.set_ok();
 }
 
+void instance::Instance::load_binding(LoadBindingContext &context)
+{
+    std::string &script = context.script();
+    if (script.empty())
+    {
+        context.set_error("Load binding script error, script content is empty.");
+        return;
+    }
+    if (script.length() > v8::String::kMaxLength)
+    {
+        std::string error = "Load binding script error, script is too long, max script length is '" + std::to_string(v8::String::kMaxLength) + "'.";
+        context.set_error(error.c_str());
+        return;
+    }
+
+    // As v8 limited, this place should set stack limit for multi-thread.
+    v8::Locker locker(isolate);
+    isolate->SetStackLimit(config.GetStackLimit());
+
+    v8::HandleScope isolate_scope(isolate);
+    v8::TryCatch try_catch(isolate);
+
+    v8::Local<v8::Context> handle_context = v8::Local<v8::Context>::New(isolate, context_);
+    v8::Context::Scope context_scope(handle_context);
+
+    // compile function script.
+    v8::Local<v8::String> source = instance::Util::v8_str(isolate, script.c_str());
+    v8::Local<v8::Script> compiled_script;
+    if (!v8::Script::Compile(handle_context, source).ToLocal(&compiled_script))
+    {
+        v8::Local<v8::Value> stack;
+        if (try_catch.StackTrace(handle_context).ToLocal(&stack))
+        {
+            v8::String::Utf8Value error(isolate, stack);
+            context.set_error(*error);
+        }
+        else
+        {
+            v8::String::Utf8Value error(isolate, try_catch.Exception());
+            context.set_error(*error);
+        }
+        return;
+    }
+
+    // run compiled function script for calling later.
+    v8::Local<v8::Value> result;
+    if (!compiled_script->Run(handle_context).ToLocal(&result))
+    {
+        v8::Local<v8::Value> stack;
+        if (try_catch.StackTrace(handle_context).ToLocal(&stack))
+        {
+            v8::String::Utf8Value error(isolate, stack);
+            context.set_error(*error);
+        }
+        else
+        {
+            v8::String::Utf8Value error(isolate, try_catch.Exception());
+            context.set_error(*error);
+        }
+        return;
+    }
+
+    // check exception.
+    if (try_catch.HasCaught())
+    {
+        v8::Local<v8::Value> stack;
+        if (try_catch.StackTrace(handle_context).ToLocal(&stack))
+        {
+            v8::String::Utf8Value error(isolate, stack);
+            context.set_error(*error);
+        }
+        else
+        {
+            v8::String::Utf8Value error(isolate, try_catch.Exception());
+            context.set_error(*error);
+        }
+        return;
+    }
+    context.set_ok();
+}
+
 void instance::Instance::Execute(ExecuteContext &context)
 {
     // As v8 limited, this place should set stack limit for multi-thread.

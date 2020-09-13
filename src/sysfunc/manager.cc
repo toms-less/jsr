@@ -61,5 +61,43 @@ bool sysfunc::SystemFuncManager::initialize()
             continue;
         }
     }
+
+    /**
+     * Read all the 'binding.js' files in the standard libraries directory.
+     * 
+    */
+    std::string std_path = base::Util::cwd() + "/std";
+    std::vector<std::string> std_files;
+    base::Util::list_files(std_path, std_files);
+    if (std_files.size() == 0)
+    {
+        std::string error = "There is no standard libaries file in the standard libaries home '" + std_path + "'.";
+        instance_log->error(error);
+        return false;
+    }
+
+    /**
+     * Load the 'binding.js' of all the standard libraries. 
+     * 
+    */
+    std::string bindfile = "binding.js";
+    for (instance::Instance *instance : instance_manager_.instances())
+    {
+        for (std::string &file : std_files)
+        {
+            if (!base::Util::end_with(file, bindfile))
+            {
+                continue;
+            }
+            std::string bind_script = base::Util::read_file(file);
+            instance::LoadBindingContext context(bind_script);
+            instance->load_binding(context);
+            if (!context.ok())
+            {
+                instance_log->error(context.error().c_str());
+                return false;
+            }
+        }
+    }
     return true;
 }

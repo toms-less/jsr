@@ -16,6 +16,7 @@ namespace instance
     class CompileContext;
     class BindFunctionContext;
     class BindObjectContext;
+    class LoadBindingContext;
     class HttpRequest;
     class HttpResponse;
     class ExecuteContext;
@@ -124,7 +125,7 @@ namespace instance
     };
 
     /**
-     * function compile context.
+     * Function compile context.
      * 
      */
     class CompileContext
@@ -151,7 +152,7 @@ namespace instance
     };
 
     /**
-     * function uncompile context.
+     * Function uncompile context.
      * 
      */
     class UncompileContext
@@ -174,7 +175,7 @@ namespace instance
     };
 
     /**
-     * system function bind context.
+     * System function bind context.
      * 
      */
     class BindFunctionContext
@@ -204,7 +205,7 @@ namespace instance
     };
 
     /**
-     * system object bind context.
+     * System object bind context.
      * 
      */
     class BindObjectContext
@@ -233,6 +234,28 @@ namespace instance
         void (*pfunc_)(const v8::FunctionCallbackInfo<v8::Value> &);
         instance::IntanceManager *instance_manager_;
         std::map<std::string, base::v8_cb> *map_;
+    };
+
+    /**
+     * Load binding context.
+     * 
+    */
+    class LoadBindingContext
+    {
+    public:
+        LoadBindingContext(std::string &script);
+        std::string &script();
+
+        void set_ok();
+        bool &ok();
+
+        void set_error(const char *error);
+        const std::string &error();
+
+    private:
+        bool ok_;
+        std::string error_;
+        std::string &script_;
     };
 
     /**
@@ -487,16 +510,22 @@ namespace instance
         void uncompile(UncompileContext &context);
 
         /**
-         * bind system function.
+         * Bind system function.
          * 
          */
         void bind_function(BindFunctionContext &context);
 
         /**
-         * bind system object.
+         * Bind system object.
          * 
          */
         void bind_object(BindObjectContext &context);
+
+        /**
+         * Load binding files.
+         * 
+        */
+        void load_binding(LoadBindingContext &context);
 
         /**
          * proccess function execution.

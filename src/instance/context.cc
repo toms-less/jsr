@@ -181,6 +181,36 @@ const std::string &instance::BindObjectContext::error()
     return error_;
 }
 
+instance::LoadBindingContext::LoadBindingContext(std::string &script) : script_(script)
+{
+    ok_ = false;
+}
+
+std::string &instance::LoadBindingContext::script()
+{
+    return script_;
+}
+
+void instance::LoadBindingContext::set_ok()
+{
+    ok_ = true;
+}
+
+bool &instance::LoadBindingContext::ok()
+{
+    return ok_;
+}
+
+void instance::LoadBindingContext::set_error(const char *error)
+{
+    error_.assign(error);
+}
+
+const std::string &instance::LoadBindingContext::error()
+{
+    return error_;
+}
+
 instance::ExecuteContext::ExecuteContext(protos::RuntimeRequest *request, protos::RuntimeResponse *response,
                                          grpc::ServerAsyncResponseWriter<protos::RuntimeResponse> *writer,
                                          base::BlockingQueue<instance::Instance *> *queue, intptr_t ctx_ptr)

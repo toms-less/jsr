@@ -2,7 +2,7 @@
  * 
  * Bind the system functions.
 */
-sysfunc.bind("console",
+toms.bind("console",
     {
         "log": "sysfunc::Console::log",
         "info": "sysfunc::Console::info",

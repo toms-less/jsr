@@ -91,7 +91,7 @@ void sysfunc::SysFunc::bind(const v8::FunctionCallbackInfo<v8::Value> &args)
      * Check whether current binding is user level.
      * 
     */
-    bool with_lib = args.This()->Get(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "libstr")).ToLocalChecked()->IsNullOrUndefined();
+    bool with_lib = !args.This()->Get(isolate->GetCurrentContext(), instance::Util::v8_str(isolate, "libstr")).ToLocalChecked()->IsNullOrUndefined();
     if (args_length == 1)
     {
         /**
@@ -232,7 +232,7 @@ void sysfunc::SysFunc::bind_object_without_deps(const v8::FunctionCallbackInfo<v
         */
         for (instance::Instance *instance : instance_manager->instances())
         {
-            instance::BindObjectContext bind_ctx(*object_name, *name_str, map->at(value_str), instance_manager, map);
+            instance::BindObjectContext bind_ctx(*object_name, *name_str, *(map->at(value_str)), instance_manager, map);
             instance->bind_object(bind_ctx);
             if (!bind_ctx.ok())
             {

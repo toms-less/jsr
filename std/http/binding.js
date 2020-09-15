@@ -2,7 +2,7 @@
  * 
  * Bind the system functions.
 */
-sysfunc.bind("http",
+toms.bind("http",
     {
         "get": "sysfunc::Http::get",
         "post": "sysfunc::Http::post",

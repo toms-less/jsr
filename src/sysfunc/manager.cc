@@ -50,7 +50,7 @@ bool sysfunc::SystemFuncManager::initialize()
         if (!deps_ctx.ok())
         {
             instance_log->error(deps_ctx.error());
-            continue;
+            return false;
         }
 
         instance::BindObjectContext bind_ctx("toms", "bind", sysfunc::SysFunc::bind, &instance_manager_, &map_);
@@ -58,7 +58,7 @@ bool sysfunc::SystemFuncManager::initialize()
         if (!bind_ctx.ok())
         {
             instance_log->error(bind_ctx.error());
-            continue;
+            return false;
         }
     }
 

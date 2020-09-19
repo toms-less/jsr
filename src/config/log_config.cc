@@ -1,59 +1,51 @@
 #include <include/base.h>
 
-base::LogConfig::LogConfig()
+void base::LogConfig::set_debug_log(const std::string &file)
 {
+    debug_log_file_ = file;
 }
 
-base::LogConfig::~LogConfig()
+std::string &base::LogConfig::debug_log()
 {
+    return debug_log_file_;
 }
 
-void base::LogConfig::SetDebugLog(const std::string &_debugLog)
+void base::LogConfig::set_server_log(const std::string &file)
 {
-    this->debugLog = _debugLog;
+    server_log_file_ = file;
 }
 
-std::string &base::LogConfig::GetDebugLog()
+std::string &base::LogConfig::server_log()
 {
-    return this->debugLog;
+    return server_log_file_;
 }
 
-void base::LogConfig::SetServerLog(const std::string &_serverLog)
+void base::LogConfig::set_instance_log(const std::string &file)
 {
-    this->serverLog = _serverLog;
+    instance_log_file_ = file;
 }
 
-std::string &base::LogConfig::GetServerLog()
+std::string &base::LogConfig::instance_log()
 {
-    return this->serverLog;
+    return instance_log_file_;
 }
 
-void base::LogConfig::SetInstanceLog(const std::string &_instanceLog)
+void base::LogConfig::set_max_size(int size)
 {
-    this->instanceLog = _instanceLog;
+    max_size_ = size;
 }
 
-std::string &base::LogConfig::GetInstanceLog()
+int base::LogConfig::max_size()
 {
-    return this->instanceLog;
+    return max_size_;
 }
 
-void base::LogConfig::SetMaxSize(int _size)
+void base::LogConfig::set_rotate(int rotate)
 {
-    this->maxSize = _size;
+    rotate_ = rotate;
 }
 
-int base::LogConfig::GetMaxSize()
+int base::LogConfig::rotate()
 {
-    return this->maxSize;
-}
-
-void base::LogConfig::SetRotate(int _rotate)
-{
-    this->rotate = _rotate;
-}
-
-int base::LogConfig::GetRotate()
-{
-    return this->rotate;
+    return rotate_;
 }

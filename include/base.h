@@ -31,125 +31,64 @@
 namespace base
 {
     /**
-     * base module.
-     * 
-     */
-    class Module
-    {
-    public:
-        Module();
-        ~Module();
-
-        /**
-         * initialize module.
-         * 
-         */
-        virtual bool initialize() = 0;
-
-        /**
-         * set the status of initialization.
-         *
-         */
-        void SetInited(bool inited);
-
-        /**
-         * get the status of initialization.
-         * 
-         */
-        bool IsInited();
-
-    protected:
-        bool inited;
-    };
-
-    /**
-     * base configuation.
-     * 
-     */
-    class BaseConfig
-    {
-    public:
-        BaseConfig();
-        ~BaseConfig();
-
-        /**
-         * set the status of initialization.
-         * 
-         */
-        void SetInited(bool inited);
-
-        /**
-         * get the status of initialization.
-         * 
-         */
-        bool IsInited();
-
-    protected:
-        bool inited;
-    };
-
-    /**
      * logger configuration.
      * 
      */
-    class LogConfig : public base::BaseConfig
+    class LogConfig
     {
     public:
-        LogConfig();
-        ~LogConfig();
+        void set_debug_log(const std::string &file);
+        std::string &debug_log();
 
-        void SetDebugLog(const std::string &debugLog);
-        std::string &GetDebugLog();
+        void set_server_log(const std::string &file);
+        std::string &server_log();
 
-        void SetServerLog(const std::string &serverLog);
-        std::string &GetServerLog();
+        void set_instance_log(const std::string &file);
+        std::string &instance_log();
 
-        void SetInstanceLog(const std::string &instanceLog);
-        std::string &GetInstanceLog();
+        void set_max_size(int size);
+        int max_size();
 
-        void SetMaxSize(int size);
-        int GetMaxSize();
-
-        void SetRotate(int rotate);
-        int GetRotate();
+        void set_rotate(int rotate);
+        int rotate();
 
     private:
         /**
          * path of debug log.
          *
          */
-        std::string debugLog;
+        std::string debug_log_file_;
 
         /**
          * path of server log.
          *  
          */
-        std::string serverLog;
+        std::string server_log_file_;
 
         /**
          * path of instance log.
          * 
          */
-        std::string instanceLog;
+        std::string instance_log_file_;
 
         /**
          * max size of log in MB.
          * 
          */
-        int maxSize;
+        int max_size_;
 
         /**
          * rotated files.
          * 
          */
-        int rotate;
+        int rotate_;
     };
 
     /**
      * basic log for logging.
      *
      */
-    class Log : public base::Module
+    class Log
     {
     public:
         Log(base::LogConfig *config);
@@ -158,7 +97,7 @@ namespace base
          * initialize logger.
          *  
          */
-        virtual bool initialize();
+        bool initialize();
 
         /**
          * get debug logger for logging.

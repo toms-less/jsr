@@ -4,92 +4,92 @@ instance::InstanceConfig::InstanceConfig()
 {
 }
 
-void instance::InstanceConfig::SetStartupData(const std::string &_startupData)
+void instance::InstanceConfig::set_startup_data(const std::string &startup_data)
 {
-    this->startupData = _startupData;
+    startup_data_ = startup_data;
 }
 
-std::string &instance::InstanceConfig::GetStartupData()
+std::string &instance::InstanceConfig::startup_data()
 {
-    return this->startupData;
+    return startup_data_;
 }
 
-void instance::InstanceConfig::SetStackLimit(uint32_t _stackLimit)
+void instance::InstanceConfig::set_stack_limit(uint32_t limit)
 {
-    this->stackLimit = _stackLimit;
+    stack_limit_ = limit;
 }
 
-uint32_t instance::InstanceConfig::GetStackLimit()
+uint32_t instance::InstanceConfig::stack_limit()
 {
-    return this->stackLimit;
+    return stack_limit_;
 }
 
-void instance::InstanceConfig::SetPhysicalMemory(uint64_t _physicalMemory)
+void instance::InstanceConfig::set_physical_memory(uint64_t memory)
 {
-    this->physicalMemory = _physicalMemory;
+    physical_memory_ = memory;
 }
 
-uint64_t instance::InstanceConfig::GetPhysicalMemory()
+uint64_t instance::InstanceConfig::physical_memory()
 {
-    return this->physicalMemory;
+    return physical_memory_;
 }
 
-void instance::InstanceConfig::SetVirtualMemoryLimit(uint64_t _virtualMemoryLimit)
+void instance::InstanceConfig::set_virtual_memory_limit(uint64_t limit)
 {
-    this->virtualMemoryLimit = _virtualMemoryLimit;
+    virtual_memory_limit_ = limit;
 }
 
-uint64_t instance::InstanceConfig::GetVirtualMemoryLimit()
+uint64_t instance::InstanceConfig::virtual_memory_limit()
 {
-    return this->virtualMemoryLimit;
+    return virtual_memory_limit_;
 }
 
-void instance::InstanceConfig::SetMaxOldeGenerationSize(uint64_t _maxOldeGenerationSize)
+void instance::InstanceConfig::set_max_old_generation_size(uint64_t size)
 {
-    this->maxOldeGenerationSize = _maxOldeGenerationSize;
+    max_old_generation_size_ = size;
 }
 
-uint64_t instance::InstanceConfig::GetMaxOldeGenerationSize()
+uint64_t instance::InstanceConfig::max_old_generation_size()
 {
-    return this->maxOldeGenerationSize;
+    return max_old_generation_size_;
 }
 
-void instance::InstanceConfig::SetInitialOldGenerationSize(uint64_t _initialOldGenerationSize)
+void instance::InstanceConfig::set_initial_old_generation_size(uint64_t size)
 {
-    this->initialOldGenerationSize = _initialOldGenerationSize;
+    initial_old_generation_size_ = size;
 }
 
-uint64_t instance::InstanceConfig::GetInitialOldGenerationSize()
+uint64_t instance::InstanceConfig::initial_old_generation_size()
 {
-    return this->initialOldGenerationSize;
+    return initial_old_generation_size_;
 }
 
-void instance::InstanceConfig::SetMaxYounGenerationSize(uint64_t _maxYounGenerationSize)
+void instance::InstanceConfig::set_max_young_generation_size(uint64_t size)
 {
-    this->maxYounGenerationSize = _maxYounGenerationSize;
+    max_young_generation_size_ = size;
 }
 
-uint64_t instance::InstanceConfig::GetMaxYounGenerationSize()
+uint64_t instance::InstanceConfig::max_young_generation_size()
 {
-    return this->maxYounGenerationSize;
+    return max_young_generation_size_;
 }
 
-void instance::InstanceConfig::SetInitialYoungGenerationSize(uint64_t _initialYoungGenerationSize)
+void instance::InstanceConfig::set_initial_young_generation_size(uint64_t size)
 {
-    this->initialYoungGenerationSize = _initialYoungGenerationSize;
+    initial_young_generation_size_ = size;
 }
 
-uint64_t instance::InstanceConfig::GetInitialYoungGenerationSize()
+uint64_t instance::InstanceConfig::initial_young_generation_size()
 {
-    return this->initialYoungGenerationSize;
+    return initial_young_generation_size_;
 }
 
-void instance::InstanceConfig::SetInstanceCount(uint32_t _instanceCount)
+void instance::InstanceConfig::set_instance_count(uint32_t count)
 {
-    this->instanceCount = _instanceCount;
+    instance_count_ = count;
 }
 
-uint32_t instance::InstanceConfig::GetInstanceCount()
+uint32_t instance::InstanceConfig::instance_count()
 {
-    return this->instanceCount;
+    return instance_count_;
 }

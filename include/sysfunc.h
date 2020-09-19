@@ -116,12 +116,12 @@ namespace sysfunc
      * 2. manager all system functions.
      * 
      */
-    class SystemFuncManager : public base::Module
+    class SystemFuncManager
     {
     public:
         SystemFuncManager(instance::IntanceManager &instance_manager);
 
-        virtual bool initialize();
+        bool initialize();
 
     private:
         instance::IntanceManager &instance_manager_;

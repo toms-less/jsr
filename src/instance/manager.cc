@@ -21,13 +21,7 @@ instance::IntanceManager::~IntanceManager()
 bool instance::IntanceManager::initialize()
 {
     auto instance_log = base::Log::instance_logger();
-    if (!config.IsInited())
-    {
-        instance_log->error("Instance configuration has not been initialized.");
-        return false;
-    }
-
-    int instance_count = config.GetInstanceCount();
+    int instance_count = config.instance_count();
     if (instance_count == 0)
     {
         instance_log->error("Instance count in the configuration is invalid, current count is 0.");
@@ -60,12 +54,6 @@ bool instance::IntanceManager::initialize()
 
 void instance::IntanceManager::compile(CompileContext &context)
 {
-    if (!config.IsInited())
-    {
-        context.set_error("Instance manager has not been initialized.");
-        return;
-    }
-
     // compile functions for all instances.
     for (instance::Instance *instance : instances_)
     {
@@ -79,12 +67,6 @@ void instance::IntanceManager::compile(CompileContext &context)
 
 void instance::IntanceManager::uncompile(UncompileContext &context)
 {
-    if (!config.IsInited())
-    {
-        context.set_error("Instance manager has not been initialized.");
-        return;
-    }
-
     // Remove the compiled functions for all instances.
     for (instance::Instance *instance : instances_)
     {

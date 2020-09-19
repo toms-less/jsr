@@ -7,81 +7,76 @@
 namespace config
 {
 
-/**
+    /**
  * configuration manager.
  * 
 */
-class ConfigManager : public base::Module
-{
-public:
-    ConfigManager();
-    ~ConfigManager();
+    class ConfigManager
+    {
+    public:
+        ConfigManager();
+        ~ConfigManager();
 
-    /**
-     * initialize configuration.
-     * configuration like below in 'config.yaml'.
-     * 
-     * server:
-     *   port: 6666
-     * 
-     * log:
-     *   debug: "logs/debug.log"
-     *   server: "logs/server.log"
-     *   instance: "logs/instance.log"
-     *   maxSize: 50
-     *   rotate: 10
-     * 
-     * instance:
-     *   startupData: "data/"
-     *   stackLimit: 1000
-     *   physicalMemory: 2048
-     *   virtualMemoryLimit: 0
-     *   maxOldeGenerationSize: 500
-     *   initialOldGenerationSize: 200
-     *   maxYounGenerationSize: 500
-     *   initialYoungGenerationSize: 200
-     *   codeRangeSize: 500
-     *   maxZonePoolSize: 500
-     *   instanceCount: 10
-     * 
-    */
-    virtual bool initialize();
+        /**
+         * Initialize configuration.
+         * configuration like below in 'config.yaml'.
+         * 
+         * server:
+         *   port: 6666
+         * log:
+         *   debug: logs/debug.log
+         *   server: logs/server.log
+         *   instance: logs/instance.log
+         *   max_size: 50 # in MB.
+         *   rotate: 10
+         * instance:
+         *   startup_data: data/
+         *   stack_limit: 1000
+         *   physical_memory: 2048
+         *   virtual_memory_limit: 0
+         *   max_old_generation_size: 500
+         *   initial_old_generation_size: 200
+         *   max_young_generation_size: 500
+         *   initial_young_generation_size: 200
+         *   instance_count: 10
+         */
+        bool initialize();
 
-    /**
-     * get server configuration.
-     * 
-    */
-    server::ServerConfig &GetServerConfig();
+        /**
+         * get server configuration.
+         * 
+         */
+        server::ServerConfig &server_config();
 
-    /**
-     * get log configuration.
-     * 
-    */
-    base::LogConfig &GetLogConfig();
+        /**
+         * get log configuration.
+         * 
+         */
+        base::LogConfig &log_config();
 
-    /**
-     * get v8 instance configuration.
-     * 
-    */
-    instance::InstanceConfig &GetInstanceConfig();
+        /**
+         * get v8 instance configuration.
+         * 
+         */
+        instance::InstanceConfig &instance_config();
 
-private:
-    /**
-     * runtime service configuration.
-     * 
-    */
-    server::ServerConfig serverConfig;
+    private:
+        /**
+         * runtime service configuration.
+         *
+         */
+        server::ServerConfig server_config_;
 
-    /**
-     * log configuration.
-     * 
-    */
-    base::LogConfig logConfig;
+        /**
+         * log configuration.
+         *
+         */
+        base::LogConfig log_config_;
 
-    /**
-     * v8 instance configuration.
-     * 
-    */
-    instance::InstanceConfig instanceConfig;
-};
+        /**
+         * v8 instance configuration.
+         *
+         */
+        instance::InstanceConfig instance_config_;
+    };
 } // namespace config

@@ -1,11 +1,11 @@
 #include <include/server.h>
 
-void server::ServerConfig::SetPort(int _port)
+void server::ServerConfig::set_port(int port)
 {
-    this->port = _port;
+    port_ = port;
 }
 
-int server::ServerConfig::GetPort()
+int server::ServerConfig::port()
 {
-    return this->port;
+    return port_;
 }

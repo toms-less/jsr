@@ -16,40 +16,37 @@ bool config::ConfigManager::initialize()
     YAML::Node server = config["server"];
 
     // set configuration to internal class.
-    serverConfig.SetPort(config["server"]["port"].as<int>());
-    serverConfig.SetInited(true);
+    server_config_.set_port(config["server"]["port"].as<int>());
 
-    logConfig.SetDebugLog(config["log"]["debug"].as<std::string>());
-    logConfig.SetServerLog(config["log"]["server"].as<std::string>());
-    logConfig.SetInstanceLog(config["log"]["instance"].as<std::string>());
-    logConfig.SetMaxSize(config["log"]["maxSize"].as<int>());
-    logConfig.SetRotate(config["log"]["rotate"].as<int>());
-    logConfig.SetInited(true);
+    log_config_.set_debug_log(config["log"]["debug"].as<std::string>());
+    log_config_.set_server_log(config["log"]["server"].as<std::string>());
+    log_config_.set_instance_log(config["log"]["instance"].as<std::string>());
+    log_config_.set_max_size(config["log"]["max_size"].as<int>());
+    log_config_.set_rotate(config["log"]["rotate"].as<int>());
 
-    instanceConfig.SetStartupData(config["instance"]["startupData"].as<std::string>());
-    instanceConfig.SetStackLimit(config["instance"]["stackLimit"].as<uint32_t>());
-    instanceConfig.SetPhysicalMemory(config["instance"]["physicalMemory"].as<uint64_t>());
-    instanceConfig.SetVirtualMemoryLimit(config["instance"]["virtualMemoryLimit"].as<uint64_t>());
-    instanceConfig.SetMaxOldeGenerationSize(config["instance"]["maxOldeGenerationSize"].as<uint64_t>());
-    instanceConfig.SetInitialOldGenerationSize(config["instance"]["initialOldGenerationSize"].as<uint64_t>());
-    instanceConfig.SetMaxYounGenerationSize(config["instance"]["maxYounGenerationSize"].as<uint64_t>());
-    instanceConfig.SetInitialYoungGenerationSize(config["instance"]["initialYoungGenerationSize"].as<uint64_t>());
-    instanceConfig.SetInstanceCount(config["instance"]["instanceCount"].as<uint32_t>());
-    instanceConfig.SetInited(true);
+    instance_config_.set_startup_data(config["instance"]["startup_data"].as<std::string>());
+    instance_config_.set_stack_limit(config["instance"]["stack_limit"].as<uint32_t>());
+    instance_config_.set_physical_memory(config["instance"]["physical_memory"].as<uint64_t>());
+    instance_config_.set_virtual_memory_limit(config["instance"]["virtual_memory_limit"].as<uint64_t>());
+    instance_config_.set_max_old_generation_size(config["instance"]["max_old_generation_size"].as<uint64_t>());
+    instance_config_.set_initial_old_generation_size(config["instance"]["initial_old_generation_size"].as<uint64_t>());
+    instance_config_.set_max_young_generation_size(config["instance"]["max_young_generation_size"].as<uint64_t>());
+    instance_config_.set_initial_young_generation_size(config["instance"]["initial_young_generation_size"].as<uint64_t>());
+    instance_config_.set_instance_count(config["instance"]["instance_count"].as<uint32_t>());
     return true;
 }
 
-server::ServerConfig &config::ConfigManager::GetServerConfig()
+server::ServerConfig &config::ConfigManager::server_config()
 {
-    return this->serverConfig;
+    return server_config_;
 }
 
-base::LogConfig &config::ConfigManager::GetLogConfig()
+base::LogConfig &config::ConfigManager::log_config()
 {
-    return this->logConfig;
+    return log_config_;
 }
 
-instance::InstanceConfig &config::ConfigManager::GetInstanceConfig()
+instance::InstanceConfig &config::ConfigManager::instance_config()
 {
-    return this->instanceConfig;
+    return instance_config_;
 }

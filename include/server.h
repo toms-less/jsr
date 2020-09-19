@@ -12,27 +12,27 @@ namespace server
      * runtime server configuration.
      *  
      */
-    class ServerConfig : public base::BaseConfig
+    class ServerConfig
     {
     public:
         /**
          * set runtime service port.
          * 
          */
-        void SetPort(int port);
+        void set_port(int port);
 
         /**
          * get runtime service port.
          * 
          */
-        int GetPort();
+        int port();
 
     private:
         /**
          * runtime service port.
          * 
          */
-        int port;
+        int port_;
     };
 
     /**

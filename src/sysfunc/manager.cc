@@ -66,12 +66,12 @@ bool sysfunc::SystemFuncManager::initialize()
      * Read all the 'binding.js' files in the standard libraries directory.
      * 
     */
-    std::string std_path = base::Util::cwd() + "/binding";
+    std::string binding_path = base::Util::cwd() + "/binding";
     std::vector<std::string> std_files;
-    base::Util::list_files(std_path, std_files);
+    base::Util::list_files(binding_path, std_files);
     if (std_files.size() == 0)
     {
-        std::string error = "There is no standard libaries file in the standard libaries home '" + std_path + "'.";
+        std::string error = "There is no standard libaries file in the standard libaries home '" + binding_path + "'.";
         instance_log->error(error);
         return false;
     }

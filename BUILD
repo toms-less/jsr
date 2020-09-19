@@ -90,7 +90,6 @@ filegroup(
         "src/base/http/cookie.cc",
         "src/base/http/entry.cc",
         "src/base/http/header.cc",
-        "src/base/module.cc",
         "src/base/log.cc",
         "src/base/thread_pool.cc",
         "src/base/util.cc",
@@ -100,7 +99,6 @@ filegroup(
 filegroup(
     name = "config",
     srcs = [
-        "src/config/base_config.cc",
         "src/config/config.cc",
         "src/config/server_config.cc",
         "src/config/log_config.cc",

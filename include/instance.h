@@ -24,104 +24,92 @@ namespace instance
     class IntanceManager;
     class Util;
 
-    class InstanceConfig : public base::BaseConfig
+    class InstanceConfig
     {
     public:
         InstanceConfig();
 
-        void SetStartupData(const std::string &startupData);
-        std::string &GetStartupData();
+        void set_startup_data(const std::string &startup_data);
+        std::string &startup_data();
 
-        void SetStackLimit(uint32_t stackLimit);
-        uint32_t GetStackLimit();
+        void set_stack_limit(uint32_t limit);
+        uint32_t stack_limit();
 
-        void SetPhysicalMemory(uint64_t physicalMemory);
-        uint64_t GetPhysicalMemory();
+        void set_physical_memory(uint64_t memory);
+        uint64_t physical_memory();
 
-        void SetVirtualMemoryLimit(uint64_t virtualMemoryLimit);
-        uint64_t GetVirtualMemoryLimit();
+        void set_virtual_memory_limit(uint64_t limit);
+        uint64_t virtual_memory_limit();
 
-        void SetMaxOldeGenerationSize(uint64_t maxOldeGenerationSize);
-        uint64_t GetMaxOldeGenerationSize();
+        void set_max_old_generation_size(uint64_t size);
+        uint64_t max_old_generation_size();
 
-        void SetInitialOldGenerationSize(uint64_t initialOldGenerationSize);
-        uint64_t GetInitialOldGenerationSize();
+        void set_initial_old_generation_size(uint64_t size);
+        uint64_t initial_old_generation_size();
 
-        void SetMaxYounGenerationSize(uint64_t maxYounGenerationSize);
-        uint64_t GetMaxYounGenerationSize();
+        void set_max_young_generation_size(uint64_t size);
+        uint64_t max_young_generation_size();
 
-        void SetInitialYoungGenerationSize(uint64_t initialYoungGenerationSize);
-        uint64_t GetInitialYoungGenerationSize();
+        void set_initial_young_generation_size(uint64_t size);
+        uint64_t initial_young_generation_size();
 
-        void SetInstanceCount(uint32_t instanceCount);
-        uint32_t GetInstanceCount();
+        void set_instance_count(uint32_t count);
+        uint32_t instance_count();
 
     private:
         /**
          *  path of startup cache.
          *  
          */
-        std::string startupData;
+        std::string startup_data_;
 
         /**
          * stack limited size, deep of stack, default 1000.
          * 
          */
-        uint32_t stackLimit = 1000;
+        uint32_t stack_limit_ = 1000;
 
         /**
          * total amount of physical memory in MB on the current device, default 2GB.
          * 
          */
-        uint64_t physicalMemory = 2048;
+        uint64_t physical_memory_ = 2048;
 
         /**
          * the amount of virtual memory on the current device in bytes. if there is no limit, default value is 0.
          * 
          */
-        uint64_t virtualMemoryLimit = 0;
+        uint64_t virtual_memory_limit_ = 0;
 
         /**
          * max old generation size in MB, default value is 500.
          * 
          */
-        uint64_t maxOldeGenerationSize = 500;
+        uint64_t max_old_generation_size_ = 500;
 
         /**
          * initial old generation size in MB, default value is 200.
          * 
          */
-        uint64_t initialOldGenerationSize = 200;
+        uint64_t initial_old_generation_size_ = 200;
 
         /**
          * max young generation size in MB, default value is 500.
          * 
          */
-        uint64_t maxYounGenerationSize = 500;
+        uint64_t max_young_generation_size_ = 500;
 
         /**
          * initial young generation size in MB, default value is 200.
          * 
          */
-        uint64_t initialYoungGenerationSize = 200;
-
-        /**
-         * code range size in MB, default value is 500.
-         * 
-         */
-        uint64_t codeRangeSize = 500;
-
-        /**
-         * max zone pool size in MB, default value is 500.
-         * 
-         */
-        uint64_t maxZonePoolSize = 500;
+        uint64_t initial_young_generation_size_ = 200;
 
         /**
          * intance count, default value is 50.
          * 
          */
-        uint32_t instanceCount = 50;
+        uint32_t instance_count_ = 50;
     };
 
     /**
@@ -545,7 +533,7 @@ namespace instance
      * instance manager.
      *  
      */
-    class IntanceManager : public base::Module
+    class IntanceManager
     {
     public:
         IntanceManager(InstanceConfig &config);
@@ -555,7 +543,7 @@ namespace instance
          * initialize many v8 instances with configurations.
          * 
          */
-        virtual bool initialize();
+        bool initialize();
 
         /**
          * compile functions in all instances.

@@ -9,9 +9,9 @@ base::Log::Log(base::LogConfig *config)
 
 bool base::Log::initialize()
 {
-    std::shared_ptr<spdlog::logger> debug_logger = spdlog::rotating_logger_mt("debug.log", base::Log::config_->GetDebugLog(), 1048576 * base::Log::config_->GetMaxSize(), base::Log::config_->GetRotate());
-    std::shared_ptr<spdlog::logger> server_logger = spdlog::rotating_logger_mt("server.log", base::Log::config_->GetServerLog(), 1048576 * base::Log::config_->GetMaxSize(), base::Log::config_->GetRotate());
-    std::shared_ptr<spdlog::logger> instance_logger = spdlog::rotating_logger_mt("instance.log", base::Log::config_->GetInstanceLog(), 1048576 * base::Log::config_->GetMaxSize(), base::Log::config_->GetRotate());
+    std::shared_ptr<spdlog::logger> debug_logger = spdlog::rotating_logger_mt("debug.log", base::Log::config_->debug_log(), 1048576 * base::Log::config_->max_size(), base::Log::config_->rotate());
+    std::shared_ptr<spdlog::logger> server_logger = spdlog::rotating_logger_mt("server.log", base::Log::config_->server_log(), 1048576 * base::Log::config_->max_size(), base::Log::config_->rotate());
+    std::shared_ptr<spdlog::logger> instance_logger = spdlog::rotating_logger_mt("instance.log", base::Log::config_->instance_log(), 1048576 * base::Log::config_->max_size(), base::Log::config_->rotate());
 
     debug_logger->set_level(spdlog::level::debug);
     server_logger->set_level(spdlog::level::info);
@@ -24,8 +24,6 @@ bool base::Log::initialize()
     debug_logger->flush_on(spdlog::level::debug);
     server_logger->flush_on(spdlog::level::info);
     instance_logger->flush_on(spdlog::level::info);
-
-    this->inited = true;
     return true;
 }
 

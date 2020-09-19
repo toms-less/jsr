@@ -13,14 +13,8 @@ server::Runtime::~Runtime()
 void server::Runtime::start()
 {
     auto serverLog = base::Log::server_logger();
-    if (!config.IsInited())
-    {
-        serverLog->error("current runtime server configuration has not been initialized.");
-        return;
-    }
-
     std::string address("127.0.0.1:");
-    address.append(std::to_string(config.GetPort()));
+    address.append(std::to_string(config.port()));
 
     grpc::ServerBuilder builder;
     builder.AddListeningPort(address, grpc::InsecureServerCredentials());
@@ -28,7 +22,7 @@ void server::Runtime::start()
 
     cq_ = builder.AddCompletionQueue();
     server_ = builder.BuildAndStart();
-    serverLog->info("runtime server started and listening on '{}' port.", config.GetPort());
+    serverLog->info("runtime server started and listening on '{}' port.", config.port());
 
     handler();
 }

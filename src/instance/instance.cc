@@ -17,19 +17,19 @@ bool instance::Instance::Initialize()
     params.array_buffer_allocator = v8::ArrayBuffer::Allocator::NewDefaultAllocator();
     allocator_ = params.array_buffer_allocator;
 
-    uint32_t stackLimit = config.GetStackLimit();
+    uint32_t stackLimit = config.stack_limit();
     // bytes.
-    uint64_t physicalMemory = config.GetPhysicalMemory() * 1024 * 1024;
+    uint64_t physicalMemory = config.physical_memory() * 1024 * 1024;
     // bytes.
-    uint64_t virtualMemoryLimit = config.GetVirtualMemoryLimit() * 1024 * 1024;
+    uint64_t virtualMemoryLimit = config.virtual_memory_limit() * 1024 * 1024;
     // bytes.
-    uint64_t maxOldeGenerationSize = config.GetMaxOldeGenerationSize() * 1024 * 1024;
+    uint64_t maxOldeGenerationSize = config.max_old_generation_size() * 1024 * 1024;
     // bytes.
-    uint64_t initialOldGenerationSize = config.GetInitialOldGenerationSize() * 1024 * 1024;
+    uint64_t initialOldGenerationSize = config.initial_old_generation_size() * 1024 * 1024;
     // bytes.
-    uint64_t maxYounGenerationSize = config.GetMaxYounGenerationSize() * 1024 * 1024;
+    uint64_t maxYounGenerationSize = config.max_young_generation_size() * 1024 * 1024;
     // bytes.
-    uint64_t initialYoungGenerationSize = config.GetInitialYoungGenerationSize() * 1024 * 1024;
+    uint64_t initialYoungGenerationSize = config.initial_young_generation_size() * 1024 * 1024;
 
     if (physicalMemory > 0 && virtualMemoryLimit >= 0)
     {
@@ -79,7 +79,7 @@ void instance::Instance::compile(CompileContext &context)
 
     // As v8 limited, this place should set stack limit for multi-thread.
     v8::Locker locker(isolate);
-    isolate->SetStackLimit(config.GetStackLimit());
+    isolate->SetStackLimit(config.stack_limit());
 
     v8::HandleScope isolate_scope(isolate);
     v8::TryCatch try_catch(isolate);
@@ -215,7 +215,7 @@ void instance::Instance::uncompile(UncompileContext &context)
 
     // As v8 limited, this place should set stack limit for multi-thread.
     v8::Locker locker(isolate);
-    isolate->SetStackLimit(config.GetStackLimit());
+    isolate->SetStackLimit(config.stack_limit());
 
     v8::HandleScope isolate_scope(isolate);
     v8::TryCatch try_catch(isolate);
@@ -253,7 +253,7 @@ void instance::Instance::bind_function(BindFunctionContext &context)
 
     // As v8 limited, this place should set stack limit for multi-thread.
     v8::Locker locker(isolate);
-    isolate->SetStackLimit(config.GetStackLimit());
+    isolate->SetStackLimit(config.stack_limit());
 
     v8::HandleScope isolate_scope(isolate);
     v8::TryCatch try_catch(isolate);
@@ -317,7 +317,7 @@ void instance::Instance::bind_object(BindObjectContext &context)
 
     // As v8 limited, this place should set stack limit for multi-thread.
     v8::Locker locker(isolate);
-    isolate->SetStackLimit(config.GetStackLimit());
+    isolate->SetStackLimit(config.stack_limit());
 
     v8::HandleScope isolate_scope(isolate);
     v8::TryCatch try_catch(isolate);
@@ -427,7 +427,7 @@ void instance::Instance::load_binding(LoadBindingContext &context)
 
     // As v8 limited, this place should set stack limit for multi-thread.
     v8::Locker locker(isolate);
-    isolate->SetStackLimit(config.GetStackLimit());
+    isolate->SetStackLimit(config.stack_limit());
 
     v8::HandleScope isolate_scope(isolate);
     v8::TryCatch try_catch(isolate);
@@ -495,7 +495,7 @@ void instance::Instance::Execute(ExecuteContext &context)
 {
     // As v8 limited, this place should set stack limit for multi-thread.
     v8::Locker loker(isolate);
-    isolate->SetStackLimit(config.GetStackLimit());
+    isolate->SetStackLimit(config.stack_limit());
 
     v8::HandleScope isolateScope(isolate);
     v8::TryCatch tryCatch(isolate);

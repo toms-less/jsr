@@ -12,21 +12,21 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  v8::V8::InitializeExternalStartupData(config_manager.GetInstanceConfig()
-                                            .GetStartupData()
+  v8::V8::InitializeExternalStartupData(config_manager.instance_config()
+                                            .startup_data()
                                             .c_str());
   std::unique_ptr<v8::Platform> platform(v8::platform::NewDefaultPlatform());
   v8::V8::InitializePlatform(platform.get());
   v8::V8::Initialize();
 
-  base::Log logger(&config_manager.GetLogConfig());
+  base::Log logger(&config_manager.log_config());
   if (!logger.initialize())
   {
     return 1;
   }
   auto server_log = base::Log::server_logger();
 
-  instance::IntanceManager instance_manager(config_manager.GetInstanceConfig());
+  instance::IntanceManager instance_manager(config_manager.instance_config());
   if (!instance_manager.initialize())
   {
     server_log->error("Instance manager initialized failure.");
@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  server::Runtime runtime(config_manager.GetServerConfig(), &instance_manager);
+  server::Runtime runtime(config_manager.server_config(), &instance_manager);
   runtime.start();
   return 0;
 }

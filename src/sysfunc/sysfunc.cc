@@ -232,6 +232,11 @@ void sysfunc::SysFunc::bind_object_without_deps(const v8::FunctionCallbackInfo<v
         */
         for (instance::Instance *instance : instance_manager->instances())
         {
+            /**
+             * In the v8 callback mapping, the value is the pointer of function pointer,
+             * so it should use '*(map->at(value_str))' to get the function pointer.
+             * 
+            */
             instance::BindObjectContext bind_ctx(*object_name, *name_str, *(map->at(value_str)), instance_manager, map);
             instance->bind_object(bind_ctx);
             if (!bind_ctx.ok())
@@ -315,7 +320,12 @@ void sysfunc::SysFunc::bind_function_without_deps(const v8::FunctionCallbackInfo
         */
         for (instance::Instance *instance : instance_manager->instances())
         {
-            instance::BindFunctionContext bind_ctx(*name_str, map->at(value_str), instance_manager, map);
+            /**
+             * In the v8 callback mapping, the value is the pointer of function pointer,
+             * so it should use '*(map->at(value_str))' to get the function pointer.
+             * 
+            */
+            instance::BindFunctionContext bind_ctx(*name_str, *(map->at(value_str)), instance_manager, map);
             instance->bind_function(bind_ctx);
             if (!bind_ctx.ok())
             {

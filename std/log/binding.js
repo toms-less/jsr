@@ -2,7 +2,7 @@
  * 
  * Bind the system functions.
 */
-toms.bind("console",
+jsr.bind("console",
     {
         "log": "sysfunc::Console::log",
         "info": "sysfunc::Console::info",

@@ -133,10 +133,10 @@ namespace sysfunc
      * This class is used in the basic modules to load
      * the local and third party dependencies. For example:
      * 
-     * 1. toms.deps('libxxx.so').bind('kafka',{'send':'Kafka::send','comsumer':'Kafka::comsumer'});
-     * 2. toms.deps('libxxx.so').bind({'kafkaSend':'Kafka::send','kafkaComsumer':'Kafka::comsumer'});
-     * 3. toms.bind('http',{'get':'Http::get','post':'Http::post'});
-     * 4. toms.bind({'httpGet':'Http::get','httpPost':'Http::post'});
+     * 1. jsr.deps('libxxx.so').bind('kafka',{'send':'Kafka::send','comsumer':'Kafka::comsumer'});
+     * 2. jsr.deps('libxxx.so').bind({'kafkaSend':'Kafka::send','kafkaComsumer':'Kafka::comsumer'});
+     * 3. jsr.bind('http',{'get':'Http::get','post':'Http::post'});
+     * 4. jsr.bind({'httpGet':'Http::get','httpPost':'Http::post'});
      * 
     */
     class SysFunc
@@ -158,28 +158,28 @@ namespace sysfunc
     private:
         /**
          * Bind object without dependency. For example:
-         * toms.bind('http',{'get':'Http::get','post':'Http::post'})
+         * jsr.bind('http',{'get':'Http::get','post':'Http::post'})
          * 
         */
         static void bind_object_without_deps(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * Bind function without dependency. For example:
-         * toms.bind({'httpGet':'Http::get','httpPost':'Http::post'});
+         * jsr.bind({'httpGet':'Http::get','httpPost':'Http::post'});
          * 
         */
         static void bind_function_without_deps(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * Bind object with dependency. For example:
-         * toms.deps('libxxx.so').bind('kafka',{'send':'Kafka::send','comsumer':'Kafka::comsumer'})
+         * jsr.deps('libxxx.so').bind('kafka',{'send':'Kafka::send','comsumer':'Kafka::comsumer'})
          * 
         */
         static void bind_object_with_deps(const v8::FunctionCallbackInfo<v8::Value> &args);
 
         /**
          * Bind function with function. For example:
-         * toms.bind('http',{'get':'Http::get','post':'Http::post'})
+         * jsr.bind('http',{'get':'Http::get','post':'Http::post'})
          * 
         */
         static void bind_function_with_deps(const v8::FunctionCallbackInfo<v8::Value> &args);

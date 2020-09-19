@@ -45,7 +45,7 @@ bool sysfunc::SystemFuncManager::initialize()
     auto instance_log = base::Log::instance_logger();
     for (instance::Instance *instance : instance_manager_.instances())
     {
-        instance::BindObjectContext deps_ctx("toms", "deps", sysfunc::SysFunc::deps, &instance_manager_, &map_);
+        instance::BindObjectContext deps_ctx("jsr", "deps", sysfunc::SysFunc::deps, &instance_manager_, &map_);
         instance->bind_object(deps_ctx);
         if (!deps_ctx.ok())
         {
@@ -53,7 +53,7 @@ bool sysfunc::SystemFuncManager::initialize()
             return false;
         }
 
-        instance::BindObjectContext bind_ctx("toms", "bind", sysfunc::SysFunc::bind, &instance_manager_, &map_);
+        instance::BindObjectContext bind_ctx("jsr", "bind", sysfunc::SysFunc::bind, &instance_manager_, &map_);
         instance->bind_object(bind_ctx);
         if (!bind_ctx.ok())
         {
@@ -66,7 +66,7 @@ bool sysfunc::SystemFuncManager::initialize()
      * Read all the 'binding.js' files in the standard libraries directory.
      * 
     */
-    std::string std_path = base::Util::cwd() + "/std";
+    std::string std_path = base::Util::cwd() + "/binding";
     std::vector<std::string> std_files;
     base::Util::list_files(std_path, std_files);
     if (std_files.size() == 0)

@@ -10,7 +10,7 @@ void sysfunc::SysFunc::deps(const v8::FunctionCallbackInfo<v8::Value> &args)
 
     if (args.Length() != 1)
     {
-        const char *msg = "'toms.deps()' execution error, parameter size is not 1, it should be like 'toms.deps('libxxx.so')'.";
+        const char *msg = "'jsr.deps()' execution error, parameter size is not 1, it should be like 'jsr.deps('libxxx.so')'.";
         v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
         isolate->ThrowException(error);
         return;
@@ -18,21 +18,21 @@ void sysfunc::SysFunc::deps(const v8::FunctionCallbackInfo<v8::Value> &args)
     v8::Local<v8::Value> parameter = args[0];
     if (parameter->IsUndefined())
     {
-        const char *msg = "'toms.deps()' execution error, parameter is undefined, it should be like 'toms.deps('libxxx.so')'.";
+        const char *msg = "'jsr.deps()' execution error, parameter is undefined, it should be like 'jsr.deps('libxxx.so')'.";
         v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
         isolate->ThrowException(error);
         return;
     }
     if (parameter->IsNull())
     {
-        const char *msg = "'toms.deps()' execution error, parameter is null, it should be like 'toms.deps('libxxx.so')'.";
+        const char *msg = "'jsr.deps()' execution error, parameter is null, it should be like 'jsr.deps('libxxx.so')'.";
         v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
         isolate->ThrowException(error);
         return;
     }
     if (!parameter->IsString())
     {
-        const char *msg = "'toms.deps()' execution error, parameter is not a string, it should be like 'toms.deps('libxxx.so')'.";
+        const char *msg = "'jsr.deps()' execution error, parameter is not a string, it should be like 'jsr.deps('libxxx.so')'.";
         v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
         isolate->ThrowException(error);
         return;
@@ -81,7 +81,7 @@ void sysfunc::SysFunc::bind(const v8::FunctionCallbackInfo<v8::Value> &args)
     const int args_length = args.Length();
     if (args_length != 1 && args_length != 2)
     {
-        const char *msg = "'toms.bind()' or 'toms.deps('libxxx.so').bind()' execution error, 'bind()' parameter size is invalid.";
+        const char *msg = "'jsr.bind()' or 'jsr.deps('libxxx.so').bind()' execution error, 'bind()' parameter size is invalid.";
         v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
         isolate->ThrowException(error);
         return;
@@ -102,7 +102,7 @@ void sysfunc::SysFunc::bind(const v8::FunctionCallbackInfo<v8::Value> &args)
         v8::Local<v8::Value> function_info = args[0];
         if (!function_info->IsObject())
         {
-            const char *msg = "'toms.bind()' or 'toms.deps('libxxx.so').bind()' execution error, 'bind()' parameter is not an object type.";
+            const char *msg = "'jsr.bind()' or 'jsr.deps('libxxx.so').bind()' execution error, 'bind()' parameter is not an object type.";
             v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
             isolate->ThrowException(error);
             return;
@@ -128,7 +128,7 @@ void sysfunc::SysFunc::bind(const v8::FunctionCallbackInfo<v8::Value> &args)
         v8::Local<v8::Value> function_info = args[1];
         if (!object_name->IsString())
         {
-            const char *msg = "'toms.bind()' or 'toms.deps('libxxx.so').bind()' execution error, 'bind()' first parameter is not a string type.";
+            const char *msg = "'jsr.bind()' or 'jsr.deps('libxxx.so').bind()' execution error, 'bind()' first parameter is not a string type.";
             v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
             isolate->ThrowException(error);
             return;
@@ -136,14 +136,14 @@ void sysfunc::SysFunc::bind(const v8::FunctionCallbackInfo<v8::Value> &args)
         v8::String::Utf8Value object_name_str(isolate, object_name);
         if (std::string(*object_name_str).empty())
         {
-            const char *msg = "'toms.bind()' or 'toms.deps('libxxx.so').bind()' execution error, 'bind()' first parameter is an empty string.";
+            const char *msg = "'jsr.bind()' or 'jsr.deps('libxxx.so').bind()' execution error, 'bind()' first parameter is an empty string.";
             v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
             isolate->ThrowException(error);
             return;
         }
         if (!function_info->IsObject())
         {
-            const char *msg = "'toms.bind()' or 'toms.deps('libxxx.so').bind()' execution error, 'bind()' second parameter is not an object type.";
+            const char *msg = "'jsr.bind()' or 'jsr.deps('libxxx.so').bind()' execution error, 'bind()' second parameter is not an object type.";
             v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
             isolate->ThrowException(error);
             return;
@@ -186,7 +186,7 @@ void sysfunc::SysFunc::bind_object_without_deps(const v8::FunctionCallbackInfo<v
         v8::Local<v8::Value> name = names->Get(isolate->GetCurrentContext(), i).ToLocalChecked();
         if (!name->IsString())
         {
-            const char *msg = "'toms.bind()' or 'toms.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the key which type is not string.";
+            const char *msg = "'jsr.bind()' or 'jsr.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the key which type is not string.";
             v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
             isolate->ThrowException(error);
             return;
@@ -194,7 +194,7 @@ void sysfunc::SysFunc::bind_object_without_deps(const v8::FunctionCallbackInfo<v
         v8::String::Utf8Value name_str(isolate, name);
         if (std::string(*name_str).empty())
         {
-            const char *msg = "'toms.bind()' or 'toms.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the key which is empty.";
+            const char *msg = "'jsr.bind()' or 'jsr.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the key which is empty.";
             v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
             isolate->ThrowException(error);
             return;
@@ -203,14 +203,14 @@ void sysfunc::SysFunc::bind_object_without_deps(const v8::FunctionCallbackInfo<v
         v8::Local<v8::Value> value = function_info->Get(isolate->GetCurrentContext(), name).ToLocalChecked();
         if (value->IsNullOrUndefined())
         {
-            const char *msg = "'toms.bind()' or 'toms.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the value of the key is null or undefined.";
+            const char *msg = "'jsr.bind()' or 'jsr.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the value of the key is null or undefined.";
             v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
             isolate->ThrowException(error);
             return;
         }
         if (!value->IsString())
         {
-            const char *msg = "'toms.bind()' or 'toms.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the value of the key is not string.";
+            const char *msg = "'jsr.bind()' or 'jsr.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the value of the key is not string.";
             v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
             isolate->ThrowException(error);
             return;
@@ -220,7 +220,7 @@ void sysfunc::SysFunc::bind_object_without_deps(const v8::FunctionCallbackInfo<v
         std::string value_str(*value_v8_str);
         if (map->count(value_str) == 0)
         {
-            std::string msg = "'toms.bind()' or 'toms.deps('libxxx.so').bind()' execution error, local function is not found, local function is '" + value_str + "'.";
+            std::string msg = "'jsr.bind()' or 'jsr.deps('libxxx.so').bind()' execution error, local function is not found, local function is '" + value_str + "'.";
             v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg.c_str(), msg.c_str());
             isolate->ThrowException(error);
             return;
@@ -269,7 +269,7 @@ void sysfunc::SysFunc::bind_function_without_deps(const v8::FunctionCallbackInfo
         v8::Local<v8::Value> name = names->Get(isolate->GetCurrentContext(), i).ToLocalChecked();
         if (!name->IsString())
         {
-            const char *msg = "'toms.bind()' or 'toms.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the key which type is not string.";
+            const char *msg = "'jsr.bind()' or 'jsr.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the key which type is not string.";
             v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
             isolate->ThrowException(error);
             return;
@@ -277,7 +277,7 @@ void sysfunc::SysFunc::bind_function_without_deps(const v8::FunctionCallbackInfo
         v8::String::Utf8Value name_str(isolate, name);
         if (std::string(*name_str).empty())
         {
-            const char *msg = "'toms.bind()' or 'toms.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the key which is empty.";
+            const char *msg = "'jsr.bind()' or 'jsr.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the key which is empty.";
             v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
             isolate->ThrowException(error);
             return;
@@ -286,14 +286,14 @@ void sysfunc::SysFunc::bind_function_without_deps(const v8::FunctionCallbackInfo
         v8::Local<v8::Value> value = function_info->Get(isolate->GetCurrentContext(), name).ToLocalChecked();
         if (value->IsNullOrUndefined())
         {
-            const char *msg = "'toms.bind()' or 'toms.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the value of the key is null or undefined.";
+            const char *msg = "'jsr.bind()' or 'jsr.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the value of the key is null or undefined.";
             v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
             isolate->ThrowException(error);
             return;
         }
         if (!value->IsString())
         {
-            const char *msg = "'toms.bind()' or 'toms.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the value of the key is not string.";
+            const char *msg = "'jsr.bind()' or 'jsr.deps('libxxx.so').bind()' execution error, 'bind()' second parameter has the value of the key is not string.";
             v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg, msg);
             isolate->ThrowException(error);
             return;
@@ -303,7 +303,7 @@ void sysfunc::SysFunc::bind_function_without_deps(const v8::FunctionCallbackInfo
         std::string value_str(*value_v8_str);
         if (map->count(value_str) == 0)
         {
-            std::string msg = "'toms.bind()' or 'toms.deps('libxxx.so').bind()' execution error, local function is not found, local function is '" + value_str + "'.";
+            std::string msg = "'jsr.bind()' or 'jsr.deps('libxxx.so').bind()' execution error, local function is not found, local function is '" + value_str + "'.";
             v8::Local<v8::Object> error = instance::Util::error(isolate, "user", msg.c_str(), msg.c_str());
             isolate->ThrowException(error);
             return;

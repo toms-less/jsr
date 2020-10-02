@@ -1,6 +1,6 @@
-#include <include/sysfunc.h>
+#include <include/binding.h>
 
-void sysfunc::SysFunc::deps(const v8::FunctionCallbackInfo<v8::Value> &args)
+void binding::Binding::deps(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
     // Prepare v8 context.
     v8::Isolate *isolate = args.GetIsolate();
@@ -42,7 +42,7 @@ void sysfunc::SysFunc::deps(const v8::FunctionCallbackInfo<v8::Value> &args)
      * Make a new object for returning.
      * 
     */
-    v8::Local<v8::FunctionTemplate> func_temp = v8::FunctionTemplate::New(isolate, sysfunc::SysFunc::bind, args.Data());
+    v8::Local<v8::FunctionTemplate> func_temp = v8::FunctionTemplate::New(isolate, binding::Binding::bind, args.Data());
     v8::Local<v8::ObjectTemplate> object_temp = v8::ObjectTemplate::New(isolate);
     object_temp->Set(instance::Util::v8_str(isolate, "bind"), func_temp);
     v8::Local<v8::Object> object_instance;
@@ -71,7 +71,7 @@ void sysfunc::SysFunc::deps(const v8::FunctionCallbackInfo<v8::Value> &args)
     args.GetReturnValue().Set(object_instance);
 }
 
-void sysfunc::SysFunc::bind(const v8::FunctionCallbackInfo<v8::Value> &args)
+void binding::Binding::bind(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
     // Prepare v8 context.
     v8::Isolate *isolate = args.GetIsolate();
@@ -160,7 +160,7 @@ void sysfunc::SysFunc::bind(const v8::FunctionCallbackInfo<v8::Value> &args)
     }
 }
 
-void sysfunc::SysFunc::bind_object_without_deps(const v8::FunctionCallbackInfo<v8::Value> &args)
+void binding::Binding::bind_object_without_deps(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
     // Prepare v8 context.
     v8::Isolate *isolate = args.GetIsolate();
@@ -249,7 +249,7 @@ void sysfunc::SysFunc::bind_object_without_deps(const v8::FunctionCallbackInfo<v
     }
 }
 
-void sysfunc::SysFunc::bind_function_without_deps(const v8::FunctionCallbackInfo<v8::Value> &args)
+void binding::Binding::bind_function_without_deps(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
     // Prepare v8 context.
     v8::Isolate *isolate = args.GetIsolate();
@@ -337,10 +337,10 @@ void sysfunc::SysFunc::bind_function_without_deps(const v8::FunctionCallbackInfo
     }
 }
 
-void sysfunc::SysFunc::bind_object_with_deps(const v8::FunctionCallbackInfo<v8::Value> &args)
+void binding::Binding::bind_object_with_deps(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
 }
 
-void sysfunc::SysFunc::bind_function_with_deps(const v8::FunctionCallbackInfo<v8::Value> &args)
+void binding::Binding::bind_function_with_deps(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
 }

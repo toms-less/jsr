@@ -57,7 +57,7 @@ cc_library(
         ":config",
         ":instance",
         ":module",
-        ":sysfunc",
+        ":binding",
         ":server",
     ],
     deps = [
@@ -79,7 +79,7 @@ filegroup(
         "include/server.h",
         "include/instance.h",
         "include/module.h",
-        "include/sysfunc.h",
+        "include/binding.h",
     ],
 )
 
@@ -128,12 +128,12 @@ filegroup(
 )
 
 filegroup(
-    name = "sysfunc",
+    name = "binding",
     srcs = [
-        "src/sysfunc/sysfunc.cc",
-        "src/sysfunc/console.cc",
-        "src/sysfunc/http.cc",
-        "src/sysfunc/manager.cc",
+        "src/binding/binding.cc",
+        "src/binding/console.cc",
+        "src/binding/http.cc",
+        "src/binding/manager.cc",
     ],
 )
 

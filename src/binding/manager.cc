@@ -1,10 +1,10 @@
-#include <include/sysfunc.h>
+#include <include/binding.h>
 
-sysfunc::SystemFuncManager::SystemFuncManager(instance::IntanceManager &instance_manager) : instance_manager_(instance_manager)
+binding::SystemFuncManager::SystemFuncManager(instance::IntanceManager &instance_manager) : instance_manager_(instance_manager)
 {
 }
 
-bool sysfunc::SystemFuncManager::initialize()
+bool binding::SystemFuncManager::initialize()
 {
     /**
      * build system function of 'console'.
@@ -17,13 +17,13 @@ bool sysfunc::SystemFuncManager::initialize()
      * 7. 'console.timeEnd';
      * 
     */
-    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Console::log", sysfunc::Console::log));
-    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Console::info", sysfunc::Console::info));
-    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Console::warn", sysfunc::Console::warn));
-    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Console::debug", sysfunc::Console::debug));
-    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Console::error", sysfunc::Console::error));
-    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Console::time", sysfunc::Console::time));
-    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Console::timeEnd", sysfunc::Console::timeEnd));
+    map_.insert(std::pair<std::string, base::v8_cb>("binding::Console::log", binding::Console::log));
+    map_.insert(std::pair<std::string, base::v8_cb>("binding::Console::info", binding::Console::info));
+    map_.insert(std::pair<std::string, base::v8_cb>("binding::Console::warn", binding::Console::warn));
+    map_.insert(std::pair<std::string, base::v8_cb>("binding::Console::debug", binding::Console::debug));
+    map_.insert(std::pair<std::string, base::v8_cb>("binding::Console::error", binding::Console::error));
+    map_.insert(std::pair<std::string, base::v8_cb>("binding::Console::time", binding::Console::time));
+    map_.insert(std::pair<std::string, base::v8_cb>("binding::Console::timeEnd", binding::Console::timeEnd));
 
     /**
      * build system function of 'http'.
@@ -35,17 +35,17 @@ bool sysfunc::SystemFuncManager::initialize()
      * 6. 'http.delete()';
      * 
     */
-    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Http::get", sysfunc::Http::get));
-    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Http::post", sysfunc::Http::post));
-    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Http::options", sysfunc::Http::options));
-    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Http::patch", sysfunc::Http::patch));
-    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Http::put", sysfunc::Http::put));
-    map_.insert(std::pair<std::string, base::v8_cb>("sysfunc::Http::del", sysfunc::Http::del));
+    map_.insert(std::pair<std::string, base::v8_cb>("binding::Http::get", binding::Http::get));
+    map_.insert(std::pair<std::string, base::v8_cb>("binding::Http::post", binding::Http::post));
+    map_.insert(std::pair<std::string, base::v8_cb>("binding::Http::options", binding::Http::options));
+    map_.insert(std::pair<std::string, base::v8_cb>("binding::Http::patch", binding::Http::patch));
+    map_.insert(std::pair<std::string, base::v8_cb>("binding::Http::put", binding::Http::put));
+    map_.insert(std::pair<std::string, base::v8_cb>("binding::Http::del", binding::Http::del));
 
     auto instance_log = base::Log::instance_logger();
     for (instance::Instance *instance : instance_manager_.instances())
     {
-        instance::BindObjectContext deps_ctx("jsr", "deps", sysfunc::SysFunc::deps, &instance_manager_, &map_);
+        instance::BindObjectContext deps_ctx("jsr", "deps", binding::Binding::deps, &instance_manager_, &map_);
         instance->bind_object(deps_ctx);
         if (!deps_ctx.ok())
         {
@@ -53,7 +53,7 @@ bool sysfunc::SystemFuncManager::initialize()
             return false;
         }
 
-        instance::BindObjectContext bind_ctx("jsr", "bind", sysfunc::SysFunc::bind, &instance_manager_, &map_);
+        instance::BindObjectContext bind_ctx("jsr", "bind", binding::Binding::bind, &instance_manager_, &map_);
         instance->bind_object(bind_ctx);
         if (!bind_ctx.ok())
         {

@@ -1,7 +1,7 @@
 #pragma once
 #include <include/instance.h>
 
-namespace sysfunc
+namespace binding
 {
     /**
      * system functions about 'console'.
@@ -139,7 +139,7 @@ namespace sysfunc
      * 4. jsr.bind({'httpGet':'Http::get','httpPost':'Http::post'});
      * 
     */
-    class SysFunc
+    class Binding
     {
     public:
         /**
@@ -185,4 +185,4 @@ namespace sysfunc
         static void bind_function_with_deps(const v8::FunctionCallbackInfo<v8::Value> &args);
     };
 
-} // namespace sysfunc
+} // namespace binding

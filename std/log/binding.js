@@ -4,12 +4,12 @@
 */
 jsr.bind("console",
     {
-        "log": "sysfunc::Console::log",
-        "info": "sysfunc::Console::info",
-        "warn": "sysfunc::Console::warn",
-        "debug": "sysfunc::Console::debug",
-        "error": "sysfunc::Console::error",
-        "time": "sysfunc::Console::time",
-        "timeEnd": "sysfunc::Console::timeEnd"
+        "log": "binding::Console::log",
+        "info": "binding::Console::info",
+        "warn": "binding::Console::warn",
+        "debug": "binding::Console::debug",
+        "error": "binding::Console::error",
+        "time": "binding::Console::time",
+        "timeEnd": "binding::Console::timeEnd"
     }
 );

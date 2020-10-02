@@ -1,7 +1,7 @@
 #include <include/base.h>
 #include <include/config.h>
 #include <include/server.h>
-#include <include/sysfunc.h>
+#include <include/binding.h>
 #include <include/instance.h>
 
 int main(int argc, char *argv[])
@@ -33,8 +33,8 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  sysfunc::SystemFuncManager sysfunc_manager(instance_manager);
-  if (!sysfunc_manager.initialize())
+  binding::SystemFuncManager binding_manager(instance_manager);
+  if (!binding_manager.initialize())
   {
     server_log->error("System function manager initialized failure.");
     return 1;
